@@ -20,7 +20,7 @@ DynaShape
 
 ============================================================
 
-For the mouse interaction to work, for now you will need to manually edit the AssemblyPath inside the DynaShape_ViewExtensionDefinition.xml (provided with the Visual Studio  solution) so that it points correctly to the DynaShape.dll within the package folder, and then place this xml into to [DynamoCoreMainFolder]\viewExtensions
+For the mouse interaction to work, for now you will need to manually edit the AssemblyPath inside the DynaShape_ViewExtensionDefinition.xml (provided with the Visual Studio  solution) so that it points correctly to the DynaShape.dll within the package folder, and then place this xml into [DynamoCoreMainFolder]\viewExtensions
 
 If you have questions, feel free to contact me at longnguyen.gigabidea@gmail.com or on Twitter (@LongNguyenP)
 
