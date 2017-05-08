@@ -8,15 +8,15 @@ After you have successfully built DynaShape.dll from the source, you can assembl
 
 DynaShape
 
-- pkg.json (provided with the Visual Studio solution)
+-- pkg.json (provided with the Visual Studio solution)
 
-- bin
+-- bin
 
- - DynaShape.dll
+---- DynaShape.dll
  
- - DynaShape_DynamoCustomization.xml (provided with the Visual Studio  solution)
+---- DynaShape_DynamoCustomization.xml (provided with the Visual Studio  solution)
  
- - MathNet.Numerics.dll
+---- MathNet.Numerics.dll
 
 ============================================================
 
