@@ -31,5 +31,5 @@ I would like to acknowledge the following people:
 http://www.grasshopper3d.com/group/kangaroo
 - Autodesk (particularly Phil Mueller and Matt Jezyk) for co-organizing and co-sponsring AEC Hackathon Munich 2017, where DynaShape was born.
 - My parents Thien, Van, and my younger sister Thu. They came from architecture backgrounds and have been significantly influencing me to bring my computer science background to the architecture field.
-- My colleauges and professor at ICD Stuttgart for giving me further exposure to the field of computaional design and fabrication.
+- My colleauges and professor at ICD Stuttgart for giving me further exposure to the field of computaional design and fabrication. http://icd.uni-stuttgart.de/
 
