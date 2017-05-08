@@ -2,11 +2,11 @@ DynaShape is an open-sourced plugin for Dynamo the can be used for constraint-ba
 
 The source code is written entirely in Visual C#. All the dependent dll files can be found in the the Dynamo Core main folder (e.g. C:\Program Files\Dynamo\Dynamo Core\1.x), except mathnet.numerics.dll (which can be downloaded from NuGet, recommeded version 3.11 or above)
 
-After you have successfully built DynaShape.dll from the source. You can assemble the Dynamo package folder according to the following structure
+After you have successfully built DynaShape.dll from the source, you can assemble the Dynamo package folder according to the following structure
 
 ============================================================
 
-DynaShapePackage
+DynaShape
 
 -- pkg.json (provided with the Visual Studio solution)
 
