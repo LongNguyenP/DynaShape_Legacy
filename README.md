@@ -12,12 +12,12 @@ Alternatively, all the dependent dll files (except Math.NET numerics) can be fou
 After you have successfully built DynaShape.dll from the source. You can assemble the package follow in the following structure
 
 DynaShapePackage
-..bin
-....DynaShape.dll
-....DynaShape_DynamoCustomization.xml (provided along with the source code)
-....MathNet.Numerics.dll
-..pkg.json (provided along with the source code)
+--pkg.json (provided with the VS solution)
+--bin
+----DynaShape.dll
+----DynaShape_DynamoCustomization.xml (provided with the VS solution)
+----MathNet.Numerics.dll
 
-For the mouse interaction to work, you need to manually edit the AssemblyPath inside the DynaShape_ViewExtensionDefinition.xml (provided along with the source code) so that it point correctly to the DynaShape.dll within the package folder, then place this xml into to [DynamoCoreMainFolder]\viewExtensions
+For the mouse interaction to work, you need to manually edit the AssemblyPath inside the DynaShape_ViewExtensionDefinition.xml (provided with the VS solution) so that it points correctly to the DynaShape.dll within the package folder, then place this xml into to [DynamoCoreMainFolder]\viewExtensions
 
 If you have questions, feel free to contact me at longnguyen.gigabidea@gmail.com or on Twitter (@LongNguyenP)
