@@ -24,6 +24,8 @@ namespace DynaShape.GeometryBinders
 
         public override void DrawGraphics(IRenderPackage package, TessellationParameters parameters, List<Node> allNodes)
         {
+            // THIS IS NOT WORKING PROPERLY YET
+
             //this.mesh.Tessellate(package, parameters);
             //return;
 
