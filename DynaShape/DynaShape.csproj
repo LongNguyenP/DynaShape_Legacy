@@ -51,36 +51,36 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DSCoreNodes">
-      <HintPath>..\ReferencedAssemblies\DynamoCore_1.2.0\DSCoreNodes.dll</HintPath>
+      <HintPath>..\..\ReferencedAssemblies\DynamoCore_1.2.0\DSCoreNodes.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DynamoCore">
-      <HintPath>..\ReferencedAssemblies\DynamoCore_1.2.0\DynamoCore.dll</HintPath>
+      <HintPath>..\..\ReferencedAssemblies\DynamoCore_1.2.0\DynamoCore.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DynamoCoreWpf">
-      <HintPath>..\ReferencedAssemblies\DynamoCore_1.2.0\DynamoCoreWpf.dll</HintPath>
+      <HintPath>..\..\ReferencedAssemblies\DynamoCore_1.2.0\DynamoCoreWpf.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DynamoServices">
-      <HintPath>..\ReferencedAssemblies\DynamoCore_1.2.0\DynamoServices.dll</HintPath>
+      <HintPath>..\..\ReferencedAssemblies\DynamoCore_1.2.0\DynamoServices.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="HelixToolkit.Wpf.SharpDX">
-      <HintPath>..\ReferencedAssemblies\DynamoCore_1.2.0\HelixToolkit.Wpf.SharpDX.dll</HintPath>
+      <HintPath>..\..\ReferencedAssemblies\DynamoCore_1.2.0\HelixToolkit.Wpf.SharpDX.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="MathNet.Numerics">
-      <HintPath>..\ReferencedAssemblies\MathNet.Numerics_3.11.0\MathNet.Numerics.dll</HintPath>
+      <HintPath>..\..\ReferencedAssemblies\MathNet.Numerics_3.11.0\MathNet.Numerics.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="ProtoCore">
-      <HintPath>..\ReferencedAssemblies\DynamoCore_1.2.0\ProtoCore.dll</HintPath>
+      <HintPath>..\..\ReferencedAssemblies\DynamoCore_1.2.0\ProtoCore.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ProtoGeometry">
-      <HintPath>..\ReferencedAssemblies\DynamoCore_1.2.0\ProtoGeometry.dll</HintPath>
+      <HintPath>..\..\ReferencedAssemblies\DynamoCore_1.2.0\ProtoGeometry.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -131,7 +131,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>Copy "$(TargetPath)" "D:\Cloud Storage\Mega\Researchs\DynaShape\DynamoPackageTest\DynaShape\bin\DynaShape.dll"
+    <PostBuildEvent>Copy "$(TargetPath)" "D:\Cloud Storage\Dropbox\Projects\DynaShape\DynaShapePackage\bin\DynaShape.dll"
 </PostBuildEvent>
   </PropertyGroup>
 </Project>
