@@ -1,4 +1,4 @@
-DynaShape is a WIP open-source plugin for Dynamo the can be used for constraint-based form finding, as well as physics simulation.
+DynaShape is a WIP open-source plugin for Dynamo the can be used for constraint-based form finding and optimization, as well as physics simulation.
 
 The source code is written entirely in Visual C#. All the dependent dll files can be found in the the Dynamo Core main folder (e.g. C:\Program Files\Dynamo\Dynamo Core\1.x), except mathnet.numerics.dll (which can be downloaded from NuGet, recommeded version 3.11 or above)
 
@@ -18,7 +18,7 @@ DynaShape
 ---- MathNet.Numerics.dll
 
 
-Once the package folder has been assembled, you can "install" it to Dynamo by to "Dynamo Main Menu > Settings > Manage Node and Package Paths...", and add a path to the package folder
+Once the package folder has been assembled, you can "install" the package to Dynamo by to "Dynamo Main Menu > Settings > Manage Node and Package Paths...", and add a path to the package folder.
 
 For the mouse interaction to work, for now you will need to manually edit the AssemblyPath inside the DynaShape_ViewExtensionDefinition.xml (provided with the Visual Studio  solution) so that it points correctly to the DynaShape.dll within the package folder, and then place this xml into [DynamoCoreMainFolder]\viewExtensions, and restart Dynamo Studio and/or Revit
 

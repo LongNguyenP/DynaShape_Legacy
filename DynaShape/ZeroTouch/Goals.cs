@@ -12,6 +12,12 @@ namespace DynaShape.ZeroTouch
         // Change the weight value of a goal (of any type)
         //==================================================================
 
+        /// <summary>
+        /// Change the weight value of a goal (of any kind)
+        /// </summary>
+        /// <param name="goal"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
         public static Goal Goal_ChangeWeight(Goal goal, double weight)
         {
             goal.Weight = (float)weight;
@@ -23,6 +29,14 @@ namespace DynaShape.ZeroTouch
         // Anchor
         //==================================================================
 
+        /// <summary>
+        /// Keep a node an a specified anchor point.
+        /// By default the weight for this goal set very high to ensure the node really "sticks" to the anchor
+        /// </summary>
+        /// <param name="startPosition"></param>
+        /// <param name="anchor"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
         public static AnchorGoal AnchorGoal_Create(
             Point startPosition,
             [DefaultArgument("null")] Point anchor,
@@ -35,6 +49,13 @@ namespace DynaShape.ZeroTouch
         }
 
 
+        /// <summary>
+        /// Change the goal's paramters while the solver is running.
+        /// </summary>
+        /// <param name="anchorGoal"></param>
+        /// <param name="anchor"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
         public static AnchorGoal AnchorGoal_Change(
             AnchorGoal anchorGoal,
             [DefaultArgument("null")] Point anchor,
@@ -58,6 +79,12 @@ namespace DynaShape.ZeroTouch
         }
 
 
+        /// <summary>
+        /// Change the goal's paramters while the solver is running.
+        /// </summary>
+        /// <param name="cyclicPolygonGoal"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
         public static CoCircularGoal CoCircularGoal_Change(
            CoCircularGoal cyclicPolygonGoal,
            [DefaultArgument("-1.0")] double weight)
@@ -79,6 +106,12 @@ namespace DynaShape.ZeroTouch
         }
 
 
+        /// <summary>
+        /// Change the goal's paramters while the solver is running.
+        /// </summary>
+        /// <param name="coLinearGoal"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
         public static CoLinearGoal CoLinearGoal_Change(
             CoLinearGoal coLinearGoal,
             [DefaultArgument("-1.0")] double weight)
@@ -100,6 +133,13 @@ namespace DynaShape.ZeroTouch
             return new ConstantGoal(startPositions.ToTriples(), constant.ToTriple(), (float)weight);
         }
 
+        /// <summary>
+        /// Change the goal's paramters while the solver is running.
+        /// </summary>
+        /// <param name="constantGoal"></param>
+        /// <param name="constant"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
         public static ConstantGoal ConstantGoal_Change(
             ConstantGoal constantGoal,
             [DefaultArgument("null")] Vector constant,
@@ -123,6 +163,12 @@ namespace DynaShape.ZeroTouch
         }
 
 
+        /// <summary>
+        /// Change the goal's paramters while the solver is running.
+        /// </summary>
+        /// <param name="coPlanarGoal"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
         public static CoPlanarGoal CoPlanarGoal_Change(
             CoPlanarGoal coPlanarGoal,
             [DefaultArgument("-1.0")] double weight)
@@ -144,6 +190,12 @@ namespace DynaShape.ZeroTouch
         }
 
 
+        /// <summary>
+        /// Change the goal's paramters while the solver is running.
+        /// </summary>
+        /// <param name="coSphericalGoal"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
         public static CoSphericalGoal CoSphericalGoal_Change(
             CoSphericalGoal coSphericalGoal,
             [DefaultArgument("-1.0")] double weight)

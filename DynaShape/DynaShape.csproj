@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\bin\DynaShape.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -131,7 +132,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>Copy "$(TargetPath)" "D:\Cloud Storage\Dropbox\Projects\DynaShape\DynaShapePackage\bin\DynaShape.dll"
+    <PostBuildEvent>Copy "$(TargetPath)" "D:\Cloud Storage\Dropbox\Projects\DynaShape\DynaShape_DynamoPackage\DynaShape\bin\DynaShape.dll"
+Copy "$(TargetDir)\DynaShape.xml" "D:\Cloud Storage\Dropbox\Projects\DynaShape\DynaShape_DynamoPackage\DynaShape\bin\DynaShape.xml"
 </PostBuildEvent>
   </PropertyGroup>
 </Project>
