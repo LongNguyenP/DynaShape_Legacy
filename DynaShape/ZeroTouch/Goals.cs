@@ -223,6 +223,13 @@ namespace DynaShape.ZeroTouch
         }
 
 
+        /// <summary>
+        /// Change the goal's paramters while the solver is running.
+        /// </summary>
+        /// <param name="directionGoal"></param>
+        /// <param name="targetDirection"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
         public static DirectionGoal DirectionGoal_Change(
             DirectionGoal directionGoal,
             [DefaultArgument("null")]Vector targetDirection,
@@ -246,6 +253,26 @@ namespace DynaShape.ZeroTouch
         }
 
 
+        public static EqualLengthsGoal EqualLengthsGoal_Create(
+            List<Line> lines,
+            [DefaultArgument("1.0")] double weight)
+        {
+            List<Triple> startPositions = new List<Triple>();
+            foreach (Line line in lines)
+            {
+                startPositions.Add(line.StartPoint.ToTriple());
+                startPositions.Add(line.EndPoint.ToTriple());
+            }
+            return new EqualLengthsGoal(startPositions, (float)weight);
+        }
+
+
+        /// <summary>
+        /// Change the goal's paramters while the solver is running.
+        /// </summary>
+        /// <param name="equalLengthsGoal"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
         public static EqualLengthsGoal EqualLengthsGoal_Change(
             EqualLengthsGoal equalLengthsGoal,
             [DefaultArgument("-1.0")] double weight)
@@ -286,6 +313,13 @@ namespace DynaShape.ZeroTouch
         }
 
 
+        /// <summary>
+        /// Change the goal's paramters while the solver is running.
+        /// </summary>
+        /// <param name="lengthGoal"></param>
+        /// <param name="targetLength"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
         public static LengthGoal LengthGoal_Change(
             LengthGoal lengthGoal,
             [DefaultArgument("-1.0")] double targetLength,
@@ -309,6 +343,12 @@ namespace DynaShape.ZeroTouch
         }
 
 
+        /// <summary>
+        /// Change the goal's paramters while the solver is running.
+        /// </summary>
+        /// <param name="mergeGoal"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
         public static MergeGoal MergeGoal_Change(
             MergeGoal mergeGoal,
             [DefaultArgument("-1.0")] double weight)
@@ -331,6 +371,13 @@ namespace DynaShape.ZeroTouch
         }
 
 
+        /// <summary>
+        /// Change the goal's paramters while the solver is running.
+        /// </summary>
+        /// <param name="onCurveGoal"></param>
+        /// <param name="targetCurve"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
         public static OnCurveGoal OnCurveGoal_Change(
             OnCurveGoal onCurveGoal,
             [DefaultArgument("null")] Curve targetCurve,
@@ -360,6 +407,13 @@ namespace DynaShape.ZeroTouch
         }
 
 
+        /// <summary>
+        /// Change the goal's paramters while the solver is running.
+        /// </summary>
+        /// <param name="startPositions"></param>
+        /// <param name="targetLine"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
         public static OnLineGoal OnLineGoal_Create(
             List<Point> startPositions,
             [DefaultArgument("Line.ByStartPointEndPoint(Point.Origin(), Point.ByCoordinates(1.0, 0.0, 0.0))")] Line targetLine,
@@ -382,6 +436,13 @@ namespace DynaShape.ZeroTouch
         }
 
 
+        /// <summary>
+        /// Change the goal's paramters while the solver is running.
+        /// </summary>
+        /// <param name="onLineGoal"></param>
+        /// <param name="targetLine"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
         public static OnLineGoal OnLineGoal_Change(
             OnLineGoal onLineGoal,
             [DefaultArgument("null")] Line targetLine,
@@ -424,6 +485,14 @@ namespace DynaShape.ZeroTouch
         }
 
 
+        /// <summary>
+        /// Change the goal's paramters while the solver is running.
+        /// </summary>
+        /// <param name="onPlaneGoal"></param>
+        /// <param name="targetPlaneOrigin"></param>
+        /// <param name="targetPlaneNormal"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
         public static OnPlaneGoal OnPlaneGoal_Change(
             OnPlaneGoal onPlaneGoal,
             [DefaultArgument("null")] Point targetPlaneOrigin,
@@ -437,6 +506,13 @@ namespace DynaShape.ZeroTouch
         }
 
 
+        /// <summary>
+        /// Change the goal's paramters while the solver is running.
+        /// </summary>
+        /// <param name="onPlaneGoal"></param>
+        /// <param name="targetPlane"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
         public static OnPlaneGoal OnPlaneGoal_Change(
             OnPlaneGoal onPlaneGoal,
             [DefaultArgument("null")] Plane targetPlane,
@@ -464,6 +540,12 @@ namespace DynaShape.ZeroTouch
         }
 
 
+        /// <summary>
+        /// Change the goal's paramters while the solver is running.
+        /// </summary>
+        /// <param name="parallelLinesGoal"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
         public static ParallelLinesGoal ParallelLinesGoal_Change(
             ParallelLinesGoal parallelLinesGoal,
             [DefaultArgument("-1.0")] double weight)
@@ -489,6 +571,14 @@ namespace DynaShape.ZeroTouch
         }
 
 
+        /// <summary>
+        /// Change the goal's paramters while the solver is running.
+        /// </summary>
+        /// <param name="shapeMatchingGoal"></param>
+        /// <param name="targetShapePoints"></param>
+        /// <param name="allowScaling"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
         public static ShapeMatchingGoal ShapeMatchingGoal_Change(
             ShapeMatchingGoal shapeMatchingGoal,
             [DefaultArgument("null")] List<Point> targetShapePoints,
