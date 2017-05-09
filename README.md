@@ -4,7 +4,6 @@ The source code is written entirely in Visual C#. All the dependent dll files ca
 
 After you have successfully built DynaShape.dll from the source, you can assemble the Dynamo package folder according to the following structure:
 
----------------------------------------------------------------------------------------
 
 DynaShape
 
@@ -18,7 +17,6 @@ DynaShape
  
 ---- MathNet.Numerics.dll
 
----------------------------------------------------------------------------------------
 
 For the mouse interaction to work, for now you will need to manually edit the AssemblyPath inside the DynaShape_ViewExtensionDefinition.xml (provided with the Visual Studio  solution) so that it points correctly to the DynaShape.dll within the package folder, and then place this xml into [DynamoCoreMainFolder]\viewExtensions
 
