@@ -2,7 +2,7 @@ DynaShape is an open-source plugin for Dynamo the can be used for constraint-bas
 
 The source code is written entirely in Visual C#. All the dependent dll files can be found in the the Dynamo Core main folder (e.g. C:\Program Files\Dynamo\Dynamo Core\1.x), except mathnet.numerics.dll (which can be downloaded from NuGet, recommeded version 3.11 or above)
 
-After you have successfully built DynaShape.dll from the source, you can assemble the Dynamo package folder according to the following structure
+After you have successfully built DynaShape.dll from the source, you can assemble the Dynamo package folder according to the following structure:
 
 ---------------------------------------------------------------------------------------
 
@@ -22,7 +22,15 @@ DynaShape
 
 For the mouse interaction to work, for now you will need to manually edit the AssemblyPath inside the DynaShape_ViewExtensionDefinition.xml (provided with the Visual Studio  solution) so that it points correctly to the DynaShape.dll within the package folder, and then place this xml into [DynamoCoreMainFolder]\viewExtensions
 
-If you have questions, feel free to contact me at longnguyen.gigabidea@gmail.com or on Twitter (@LongNguyenP)
+Once the package has been installed. You can start to create goals in Dynamo and plug them to the DynaShape solver node. The solver needs to be reset once at the beginning of every scenerio, then set the "reset" to false and enable periodic update mode and see the solver iteratively move the nodes/vertices to their desired positions.
+
+To grab and pull the node/vertices, make sure that DynaShape_ViewExtensionDefinition.xml has been set up correctly as explained above, and the mouseInteract input to the DynaShape solver is set to true, then you can switch to background view navigation and start interacting with the nodes. Enjoy! 
+
+============================================================================================================
+
+Contact Info:
+- Email: longnguyen.gigabidea@gmail.com
+- Twitter: @LongNguyenP
 
 ============================================================================================================
 
