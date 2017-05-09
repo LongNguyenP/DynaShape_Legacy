@@ -26,14 +26,13 @@ Once the package has been installed. You can start to create goals in Dynamo and
 
 To grab and pull the node/vertices, make sure that DynaShape_ViewExtensionDefinition.xml has been set up correctly as explained above, and the mouseInteract input to the DynaShape solver is set to true, then you can switch to background view navigation and start interacting with the nodes. Enjoy! 
 
-============================================================================================================
+==========================================================
 
 Contact Info:
 - Email: longnguyen.gigabidea@gmail.com
 - Twitter: @LongNguyenP
 
-============================================================================================================
-
+==========================================================
 Acknowledgements:
 
 I would like to acknowledge the following people:
