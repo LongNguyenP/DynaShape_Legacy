@@ -20,7 +20,7 @@ DynaShape
 
 Once the package folder has been assembled, you can "install" it to Dynamo by to "Dynamo Main Menu > Settings > Manage Node and Package Paths...", and add a path to the package folder
 
-For the mouse interaction to work, for now you will need to manually edit the AssemblyPath inside the DynaShape_ViewExtensionDefinition.xml (provided with the Visual Studio  solution) so that it points correctly to the DynaShape.dll within the package folder, and then place this xml into [DynamoCoreMainFolder]\viewExtensions, and restart Dynamo.
+For the mouse interaction to work, for now you will need to manually edit the AssemblyPath inside the DynaShape_ViewExtensionDefinition.xml (provided with the Visual Studio  solution) so that it points correctly to the DynaShape.dll within the package folder, and then place this xml into [DynamoCoreMainFolder]\viewExtensions, and restart Dynamo Studio and/or Revit
 
 
 Once the package has been installed. You can start to create goals in Dynamo and plug them to the Solver.Execute node. The solver needs to be reset once at the beginning of every scenerio, then set the "reset" to false and enable periodic update mode and see the solver iteratively move the nodes/vertices to their desired positions.
