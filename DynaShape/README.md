@@ -1,13 +1,11 @@
-MIT License, Copyright 2017 Long Nguyen
-
-DynaShape is a WIP open-source Dynamo plugin constraint-based form finding and optimization, as well as physics simulation.
+DynaShape is a WIP open-source Dynamo plugin for constraint-based form finding and optimization, as well as physics simulation.
 
 DynaShape source code is written entirely in Visual C#. All the dependent dll files can be found in the the Dynamo Core main folder (e.g. C:\Program Files\Dynamo\Dynamo Core\1.x), except mathnet.numerics.dll (which can be downloaded from NuGet, recommeded version 3.11 or above)
 
 After you have successfully built DynaShape.dll from the source, you can assemble the Dynamo package folder according to the following structure:
 
 
-DynaShapem
+DynaShape
 
 -- pkg.json (provided with the Visual Studio solution)
 
@@ -47,3 +45,6 @@ http://www.grasshopper3d.com/group/kangaroo.
 - Autodesk (particularly Phil Mueller and Matt Jezyk) for co-organizing and co-sponsoring AEC Hackathon Munich 2017, where DynaShape was originally born.
 - My parents Thien, Van, and my younger sister Thu. They came from architecture backgrounds and have been significantly influencing me to bring my computer science background to the architecture field.
 - My colleauges and professor at ICD Stuttgart for giving me further exposure to the field of computational design and fabrication. http://icd.uni-stuttgart.de/
+
+
+[This project is published under MIT License, Copyright 2017 Long Nguyen]
