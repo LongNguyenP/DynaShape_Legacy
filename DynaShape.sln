@@ -12,10 +12,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ManifestFiles", "ManifestFi
 		ManifestFiles\pkg.json = ManifestFiles\pkg.json
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Misc", "Misc", "{EDD23AF3-BFB5-460A-9807-75B7D45D41EA}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Misc", "Misc", "{2765222E-C2CE-4778-BF25-ABD05D98F7BC}"
 	ProjectSection(SolutionItems) = preProject
-		Misc\LICENSE.txt = Misc\LICENSE.txt
-		Misc\README.md = Misc\README.md
+		LICENSE.txt = LICENSE.txt
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global
