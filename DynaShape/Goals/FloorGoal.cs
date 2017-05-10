@@ -7,9 +7,12 @@ namespace DynaShape.Goals
     [IsVisibleInDynamoLibrary(false)]
     public class FloorGoal : Goal
     {
-        public FloorGoal(List<Triple> nodeStartingPositions, float weight = 1000f)
+        public float FloorHeight;
+
+        public FloorGoal(List<Triple> nodeStartingPositions, float floorHeight = 0f, float weight = 1000f)
         {
             Weight = weight;
+            FloorHeight = floorHeight;
             StartingPositions = nodeStartingPositions.ToArray();
             Moves = new Triple[NodeCount];
         }
@@ -17,9 +20,9 @@ namespace DynaShape.Goals
         public override void Compute(List<Node> allNodes)
         {
             for (int i = 0; i < NodeCount; i++)
-                Moves[i] = allNodes[i].Position.Z > 0f
+                Moves[i] = allNodes[i].Position.Z > FloorHeight
                     ? Triple.Zero
-                    : new Triple(0f, 0f, -allNodes[i].Position.Z);
+                    : new Triple(0f, 0f, FloorHeight - allNodes[i].Position.Z);
         }
     }
 }

@@ -19,6 +19,11 @@ namespace DynaShape
         public static Triple ToTriple(this Point point) => new Triple(point.X, point.Y, point.Z);
         public static Triple ToTriple(this Vector vector) => new Triple(vector.X, vector.Y, vector.Z);
 
+        public static bool IsAlmostZero(this float number, float tolerance = 1e-6f) => -tolerance < number && number < tolerance;
+        public static bool IsAlmostZero(this double number, double tolerance = 1.0e-6) => -tolerance < number && number < tolerance;
+
+        public static bool IsNotAlmostZero(this float number, float tolerance = 1e-6f) => -number < tolerance || tolerance < number;
+        public static bool IsNotAlmostZero(this double number, double tolerance = 1.0e-6) => -number < tolerance || tolerance < number;
 
         public static List<Triple> ToTriples(this IEnumerable<Point> points)
         {

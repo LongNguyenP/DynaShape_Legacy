@@ -12,6 +12,7 @@ namespace DynaShape.Goals
     public class ShapeMatchingGoal : Goal
     {
         private Triple[] targetShapePoints;
+        private bool is2D;
         private float sigmaInversed;
         public bool AllowScaling;
 
@@ -54,25 +55,47 @@ namespace DynaShape.Goals
                 sigma += targetShapePoints[i].LengthSquared;
 
             sigmaInversed = 1f / sigma;
+
+
+            //===================================================================================================================
+            // Determine if the target shape is 2D, as this case required special handling when doing shape matching operator
+            //===================================================================================================================
+
+            Matrix<float> covariance = Matrix<float>.Build.Dense(3, 3);
+
+            for (int i = 0; i < NodeCount; i++)
+            {
+                covariance[0, 0] += targetShapePoints[i].X * targetShapePoints[i].X;
+                covariance[0, 1] += targetShapePoints[i].X * targetShapePoints[i].Y;
+                covariance[0, 2] += targetShapePoints[i].X * targetShapePoints[i].Z;
+
+                covariance[1, 0] += targetShapePoints[i].Y * targetShapePoints[i].X;
+                covariance[1, 1] += targetShapePoints[i].Y * targetShapePoints[i].Y;
+                covariance[1, 2] += targetShapePoints[i].Y * targetShapePoints[i].Z;
+
+                covariance[2, 0] += targetShapePoints[i].Z * targetShapePoints[i].X;
+                covariance[2, 1] += targetShapePoints[i].Z * targetShapePoints[i].Y;
+                covariance[2, 2] += targetShapePoints[i].Z * targetShapePoints[i].Z;
+            }
+
+            is2D = covariance.Determinant().IsAlmostZero();
         }
 
 
 
         internal void ShapeMatch(Triple[] positions)
         {
-            // Here we compute the most optimal translation, rotation (and optionally scalling) that match the targetShapePoints to the current node positions
+            // Here we compute the most optimal translation, rotation (and optionally scalling) that bring the targetShapePoints as close as possible to the current node positions
             // Reference: Umeyama S. 1991, Least-Squares Estimation of Transformation Paramters Between Two Point Patterns
 
+
             //==========================================================================================
-            // Compute the center of the current positions
+            // Compute the center of the current node positions
             //==========================================================================================
 
-            Triple Center = Triple.Zero;
-
-            for (int i = 0; i < NodeCount; i++)
-                Center += positions[i];
-
-            Center /= NodeCount;
+            Triple center = Triple.Zero;
+            for (int i = 0; i < NodeCount; i++) center += positions[i];
+            center /= NodeCount;
 
 
             //==========================================================================================
@@ -84,39 +107,39 @@ namespace DynaShape.Goals
 
             for (int i = 0; i < NodeCount; i++)
                 positionsCentered[i] = new Triple(
-                   positions[i].X - Center.X,
-                   positions[i].Y - Center.Y,
-                   positions[i].Z - Center.Z);
+                   positions[i].X - center.X,
+                   positions[i].Y - center.Y,
+                   positions[i].Z - center.Z);
 
 
             //================================================================================================================
             // Compute the rotation matrix that bring the original rest positions to the current positions as close as possible
             //================================================================================================================
 
-            Matrix<float> A = Matrix<float>.Build.Dense(3, 3);
+            Matrix<float> covariance = Matrix<float>.Build.Dense(3, 3);
 
             for (int i = 0; i < NodeCount; i++)
             {
-                A[0, 0] += positionsCentered[i].X * targetShapePoints[i].X;
-                A[0, 1] += positionsCentered[i].X * targetShapePoints[i].Y;
-                A[0, 2] += positionsCentered[i].X * targetShapePoints[i].Z;
+                covariance[0, 0] += positionsCentered[i].X * targetShapePoints[i].X;
+                covariance[0, 1] += positionsCentered[i].X * targetShapePoints[i].Y;
+                covariance[0, 2] += positionsCentered[i].X * targetShapePoints[i].Z;
 
-                A[1, 0] += positionsCentered[i].Y * targetShapePoints[i].X;
-                A[1, 1] += positionsCentered[i].Y * targetShapePoints[i].Y;
-                A[1, 2] += positionsCentered[i].Y * targetShapePoints[i].Z;
+                covariance[1, 0] += positionsCentered[i].Y * targetShapePoints[i].X;
+                covariance[1, 1] += positionsCentered[i].Y * targetShapePoints[i].Y;
+                covariance[1, 2] += positionsCentered[i].Y * targetShapePoints[i].Z;
 
-                A[2, 0] += positionsCentered[i].Z * targetShapePoints[i].X;
-                A[2, 1] += positionsCentered[i].Z * targetShapePoints[i].Y;
-                A[2, 2] += positionsCentered[i].Z * targetShapePoints[i].Z;
+                covariance[2, 0] += positionsCentered[i].Z * targetShapePoints[i].X;
+                covariance[2, 1] += positionsCentered[i].Z * targetShapePoints[i].Y;
+                covariance[2, 2] += positionsCentered[i].Z * targetShapePoints[i].Z;
             }
 
-            Svd<float> svd = A.Svd();
+            Svd<float> svd = covariance.Svd();
 
             Matrix<float> R = svd.U * svd.VT;
 
             float indicator = 1f;
 
-            if (R.Determinant() < 0f)
+            if (R.Determinant() < 0f && !is2D)
             {
                 R[2, 0] *= -1f;
                 R[2, 1] *= -1f;
@@ -127,6 +150,7 @@ namespace DynaShape.Goals
             if (AllowScaling)
                 R *= sigmaInversed * (indicator * svd.S[0] + svd.S[1] + svd.S[2]);
 
+
             //=========================================================================
             // Apply the rotation and translation to obtain the target rest positions,
             // And find the move vectors
@@ -134,9 +158,9 @@ namespace DynaShape.Goals
 
             for (int i = 0; i < NodeCount; i++)
             {
-                Moves[i].X = R[0, 0] * targetShapePoints[i].X + R[0, 1] * targetShapePoints[i].Y + R[0, 2] * targetShapePoints[i].Z + Center.X - positions[i].X;
-                Moves[i].Y = R[1, 0] * targetShapePoints[i].X + R[1, 1] * targetShapePoints[i].Y + R[1, 2] * targetShapePoints[i].Z + Center.Y - positions[i].Y;
-                Moves[i].Z = R[2, 0] * targetShapePoints[i].X + R[2, 1] * targetShapePoints[i].Y + R[2, 2] * targetShapePoints[i].Z + Center.Z - positions[i].Z;
+                Moves[i].X = R[0, 0] * targetShapePoints[i].X + R[0, 1] * targetShapePoints[i].Y + R[0, 2] * targetShapePoints[i].Z + center.X - positions[i].X;
+                Moves[i].Y = R[1, 0] * targetShapePoints[i].X + R[1, 1] * targetShapePoints[i].Y + R[1, 2] * targetShapePoints[i].Z + center.Y - positions[i].Y;
+                Moves[i].Z = R[2, 0] * targetShapePoints[i].X + R[2, 1] * targetShapePoints[i].Y + R[2, 2] * targetShapePoints[i].Z + center.Z - positions[i].Z;
             }
 
         }
