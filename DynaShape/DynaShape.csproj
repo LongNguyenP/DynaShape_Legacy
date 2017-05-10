@@ -131,9 +131,6 @@
     <Compile Include="Util.cs" />
     <Compile Include="DynaShapeViewExtension.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="README.md" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>Copy "$(TargetPath)" "D:\Cloud Storage\Dropbox\Projects\DynaShape\DynaShape_DynamoPackage\DynaShape\bin\DynaShape.dll"

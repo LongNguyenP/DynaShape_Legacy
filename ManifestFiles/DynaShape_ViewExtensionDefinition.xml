@@ -1,4 +1,4 @@
 <ViewExtensionDefinition>
-   <AssemblyPath>D:\Cloud Storage\Dropbox\Projects\DynaShape\DynaShape_DynamoPackage\bin\DynaShape.dll</AssemblyPath>
+   <AssemblyPath>[DynamoCoreAppData]\packages\DynaShape\bin\DynaShape.dll</AssemblyPath>
   <TypeName>DynaShape.DynaShapeViewExtension</TypeName>
 </ViewExtensionDefinition>
