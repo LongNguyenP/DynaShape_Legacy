@@ -1,4 +1,4 @@
-DynaShape is a WIP open-source plugin for Dynamo the can be used for constraint-based form finding and optimization, as well as physics simulation.
+DynaShape is a WIP open-source Dynamo plugin for constraint-based form finding, optimization, and physics simulation.
 
 The source code is written entirely in Visual C#. All the dependent dll files can be found in the the Dynamo Core main folder (e.g. C:\Program Files\Dynamo\Dynamo Core\1.x), except mathnet.numerics.dll (which can be downloaded from NuGet, recommeded version 3.11 or above)
 
