@@ -9,7 +9,7 @@ namespace DynaShape.GeometryBinders
     [IsVisibleInDynamoLibrary(false)]
     public class MeshBinder : GeometryBinder
     {
-        private Mesh mesh;
+        private Mesh mesh = null;
 
         public MeshBinder(Mesh mesh)
         {
@@ -19,47 +19,37 @@ namespace DynaShape.GeometryBinders
 
         public override List<Geometry> GetGeometries(List<Node> allNodes)
         {
+            // Build Dynamo Mesh
             return null;
         }
 
         public override void DrawGraphics(IRenderPackage package, TessellationParameters parameters, List<Node> allNodes)
         {
-            // THIS IS NOT WORKING PROPERLY YET
 
-            //this.mesh.Tessellate(package, parameters);
-            //return;
-
-            //List<Point> vertices = new List<Point>();
-            //foreach (int i in NodeIndices)
-            //   vertices.Add(allNodes[NodeIndices[i]].Position.ToPoint());
-
-            //Mesh mesh = Mesh.ByPointsFaceIndices(vertices, new [] { IndexGroup.ByIndices(0, 1, 2, 3) });
-            //mesh.Tessellate(package, parameters);
-
-            //return;
-
-
-            foreach (IndexGroup indexGroup in mesh.FaceIndices)
+            foreach (IndexGroup face in mesh.FaceIndices)
             {
-                Triple vertex = allNodes[NodeIndices[indexGroup.A]].Position;
-                package.AddTriangleVertex(vertex.X, vertex.Y, vertex.Z);
-                package.AddTriangleVertexColor(128, 128, 128, 64);
-                package.AddTriangleVertexNormal(0.0, 0.0, 1.0);
-                package.AddTriangleVertexUV(0.0, 0.0);
+                Triple A = allNodes[NodeIndices[face.A]].Position;
+                Triple B = allNodes[NodeIndices[face.B]].Position;
+                Triple C = allNodes[NodeIndices[face.C]].Position;
 
-                vertex = allNodes[NodeIndices[indexGroup.B]].Position;
-                package.AddTriangleVertex(vertex.X, vertex.Y, vertex.Z);
-                package.AddTriangleVertexColor(128, 128, 128, 64);
-                package.AddTriangleVertexNormal(0.0, 0.0, 1.0);
-                package.AddTriangleVertexUV(0.0, 0.0);
+                Triple n = (B - A).Cross(C - A).Normalise();
 
-                vertex = allNodes[NodeIndices[indexGroup.C]].Position;
-                package.AddTriangleVertex(vertex.X, vertex.Y, vertex.Z);
-                package.AddTriangleVertexColor(128, 128, 128, 64);
-                package.AddTriangleVertexNormal(0.0, 0.0, 1.0);
+                package.AddTriangleVertex(A.X, A.Y, A.Z);
+                package.AddTriangleVertex(B.X, B.Y, B.Z);
+                package.AddTriangleVertex(C.X, C.Y, C.Z);
+
+                package.AddTriangleVertexNormal(n.X, n.Y, n.Z);
+                package.AddTriangleVertexNormal(n.X, n.Y, n.Z);
+                package.AddTriangleVertexNormal(n.X, n.Y, n.Z);
+
+                package.AddTriangleVertexColor(GeometryRender.DefaultMeshFaceColor.A, GeometryRender.DefaultMeshFaceColor.R, GeometryRender.DefaultMeshFaceColor.G, GeometryRender.DefaultMeshFaceColor.B);
+                package.AddTriangleVertexColor(GeometryRender.DefaultMeshFaceColor.A, GeometryRender.DefaultMeshFaceColor.R, GeometryRender.DefaultMeshFaceColor.G, GeometryRender.DefaultMeshFaceColor.B);
+                package.AddTriangleVertexColor(GeometryRender.DefaultMeshFaceColor.A, GeometryRender.DefaultMeshFaceColor.R, GeometryRender.DefaultMeshFaceColor.G, GeometryRender.DefaultMeshFaceColor.B);
+
+                package.AddTriangleVertexUV(0.0, 0.0);
+                package.AddTriangleVertexUV(0.0, 0.0);
                 package.AddTriangleVertexUV(0.0, 0.0);
             }
-
 
         }
     }

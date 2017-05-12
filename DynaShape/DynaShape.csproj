@@ -80,10 +80,6 @@
       <HintPath>..\..\ReferencedAssemblies\MathNet.Numerics_3.11.0\MathNet.Numerics.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="MeshToolkit">
-      <HintPath>C:\Users\Long\AppData\Roaming\Dynamo\Dynamo Core\1.3\packages\MeshToolkit\bin\MeshToolkit.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="ProtoCore">
       <HintPath>..\..\ReferencedAssemblies\DynamoCore_1.2.0\ProtoCore.dll</HintPath>
@@ -141,7 +137,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>Copy "$(TargetPath)" "D:\Cloud Storage\Dropbox\Projects\DynaShape\DynaShape_DynamoPackage\DynaShape\bin\DynaShape.dll"
+Copy "$(TargetDir)\DynaShape.xml" "D:\Cloud Storage\Dropbox\Projects\DynaShape\DynaShape_DynamoPackage\DynaShape\bin\DynaShape.xml"
+
+Copy "$(TargetPath)" "D:\Cloud Storage\Dropbox\Projects\DynaShape\DynaShapeSetup_VS\DynaShapeSetup\Resources\DynaShape.dll"
+Copy "$(TargetDir)\DynaShape.xml" "D:\Cloud Storage\Dropbox\Projects\DynaShape\DynaShapeSetup_VS\DynaShapeSetup\Resources\DynaShape.xml"</PostBuildEvent>
   </PropertyGroup>
 </Project>

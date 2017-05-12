@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Interfaces;
 using Autodesk.DesignScript.Runtime;
 using DynaShape;
@@ -148,6 +149,16 @@ namespace DynaShape.ZeroTouch
                 {"goals", goals},
                 {"geometryBinders", geometryBinders},
                 {"anchorGoals", anchorGoals}
+            };
+        }
+
+        [MultiReturn("goals", "geometryBinders")]
+        public static Dictionary<string, object> MeshBinders(Mesh mesh)
+        {
+            return new Dictionary<string, object>
+            {
+                {"goals", new ShapeMatchingGoal(mesh.VertexPositions.ToTriples())},
+                {"geometryBinders", new MeshBinder(mesh)},
             };
         }
     }
