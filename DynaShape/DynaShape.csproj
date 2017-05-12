@@ -133,7 +133,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>Copy "$(TargetPath)" "D:\Cloud Storage\Dropbox\Projects\DynaShape\DynaShape_DynamoPackage\DynaShape\bin\DynaShape.dll"
+Copy "$(TargetDir)\DynaShape.xml" "D:\Cloud Storage\Dropbox\Projects\DynaShape\DynaShape_DynamoPackage\DynaShape\bin\DynaShape.xml"
+
+Copy "$(TargetPath)" "D:\Cloud Storage\Dropbox\Projects\DynaShape\DynaShapeSetup_VS\DynaShapeSetup\Resources\DynaShape.dll"
+Copy "$(TargetDir)\DynaShape.xml" "D:\Cloud Storage\Dropbox\Projects\DynaShape\DynaShapeSetup_VS\DynaShapeSetup\Resources\DynaShape.xml"</PostBuildEvent>
   </PropertyGroup>
 </Project>
