@@ -16,7 +16,7 @@ namespace DynaShape
     {
         public static Color DefaultPointColor = Color.FromArgb(255, 255, 0, 0);
         public static Color DefaultLineColor = Color.FromArgb(255, 80, 180, 200);
-        public  static Color DefaultMeshFaceColor = Color.FromArgb(192, 60, 180, 250);
+        
 
         public static void DrawPoint(IRenderPackage package, Triple point, Color color)
         {
