@@ -20,12 +20,12 @@ namespace DynaShape.GeometryBinders
 
         public override List<Geometry> GetGeometries(List<Node> allNodes)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Mesh Binider has not been implemented");
         }
 
         public override void DrawGraphics(IRenderPackage package, TessellationParameters parameters, List<Node> allNodes)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Mesh Binider has not been implemented");
         }
     }
 }
