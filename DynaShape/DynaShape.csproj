@@ -53,40 +53,36 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DSCoreNodes">
-      <HintPath>..\..\ReferencedAssemblies\DynamoCore_1.2.0\DSCoreNodes.dll</HintPath>
+      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.3\DSCoreNodes.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DynamoCore">
-      <HintPath>..\..\ReferencedAssemblies\DynamoCore_1.2.0\DynamoCore.dll</HintPath>
+      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.3\DynamoCore.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DynamoCoreWpf">
-      <HintPath>..\..\ReferencedAssemblies\DynamoCore_1.2.0\DynamoCoreWpf.dll</HintPath>
+      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.3\DynamoCoreWpf.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DynamoServices">
-      <HintPath>..\..\ReferencedAssemblies\DynamoCore_1.2.0\DynamoServices.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="DynAMT.Managed">
-      <HintPath>C:\Users\Long\AppData\Roaming\Dynamo\Dynamo Core\1.3\packages\MeshToolkit\bin\DynAMT.Managed.dll</HintPath>
+      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.3\DynamoServices.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="HelixToolkit.Wpf.SharpDX">
-      <HintPath>..\..\ReferencedAssemblies\DynamoCore_1.2.0\HelixToolkit.Wpf.SharpDX.dll</HintPath>
+      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.3\HelixToolkit.Wpf.SharpDX.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="MathNet.Numerics">
-      <HintPath>..\..\ReferencedAssemblies\MathNet.Numerics_3.11.0\MathNet.Numerics.dll</HintPath>
+      <HintPath>..\..\..\ReferencedAssemblies\MathNet.Numerics_3.11.0\MathNet.Numerics.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="ProtoCore">
-      <HintPath>..\..\ReferencedAssemblies\DynamoCore_1.2.0\ProtoCore.dll</HintPath>
+      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.3\ProtoCore.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ProtoGeometry">
-      <HintPath>..\..\ReferencedAssemblies\DynamoCore_1.2.0\ProtoGeometry.dll</HintPath>
+      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.3\ProtoGeometry.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
