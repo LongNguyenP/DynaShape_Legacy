@@ -151,15 +151,5 @@ namespace DynaShape.ZeroTouch
                 {"anchorGoals", anchorGoals}
             };
         }
-
-        [MultiReturn("goals", "geometryBinders")]
-        public static Dictionary<string, object> MeshBinders(Mesh mesh)
-        {
-            return new Dictionary<string, object>
-            {
-                {"goals", new ShapeMatchingGoal(mesh.VertexPositions.ToTriples())},
-                {"geometryBinders", new MeshBinder(mesh)},
-            };
-        }
     }
 }
