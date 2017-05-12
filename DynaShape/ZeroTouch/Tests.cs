@@ -7,7 +7,7 @@ using Autodesk.DesignScript.Runtime;
 using DynaShape;
 using DynaShape.GeometryBinders;
 using DynaShape.Goals;
-using AmtMesh = Autodesk.Dynamo.DynAMT.Mesh;
+
 
 namespace DynaShape.ZeroTouch
 {
