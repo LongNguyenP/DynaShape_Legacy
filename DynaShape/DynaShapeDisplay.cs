@@ -47,19 +47,19 @@ namespace DynaShape
                 Triple v = solver.Nodes[i].Position - camOrigin;
                 v = camOrigin + ((float)camera.NearPlaneDistance + 0.5f) * v / v.Dot(camZ);
 
-                float handleSize = 0.008f;
+                float markerSize = 0.008f;
 
-                Triple v1 = v + camX * handleSize;
-                Triple v2 = v - camY * handleSize;
-                Triple v3 = v - camX * handleSize;
-                Triple v4 = v + camY * handleSize;
+                Triple v1 = v + camX * markerSize;
+                Triple v2 = v - camY * markerSize;
+                Triple v3 = v - camX * markerSize;
+                Triple v4 = v + camY * markerSize;
                 GeometryRender.DrawPolyline(package, new List<Triple> { v1, v2, v3, v4, v1 }, markerColor);
 
-                handleSize = 0.015f;
-                v1 = v + camX * handleSize;
-                v2 = v - camY * handleSize;
-                v3 = v - camX * handleSize;
-                v4 = v + camY * handleSize;
+                markerSize = 0.015f;
+                v1 = v + camX * markerSize;
+                v2 = v - camY * markerSize;
+                v3 = v - camX * markerSize;
+                v4 = v + camY * markerSize;
 
                 GeometryRender.DrawLine(package, v1, v3, markerColor);
                 GeometryRender.DrawLine(package, v2, v4, markerColor);
