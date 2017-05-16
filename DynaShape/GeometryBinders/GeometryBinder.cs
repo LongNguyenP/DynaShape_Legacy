@@ -20,10 +20,11 @@ namespace DynaShape.GeometryBinders
         public int[] NodeIndices;
 
         public int NodeCount => StartingPositions.Length;
-        public virtual List<Geometry> GetGeometries(List<Node> allNodes) => null;
+
+        public virtual List<DesignScriptEntity> GetGeometries(List<Node> allNodes) => null;
 
         public virtual void DrawGraphics(IRenderPackage package, TessellationParameters parameters, List<Node> allNodes)
-        {
-        }
+        { }
+        
     }
 }

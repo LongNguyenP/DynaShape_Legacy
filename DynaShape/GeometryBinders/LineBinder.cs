@@ -9,34 +9,37 @@ namespace DynaShape.GeometryBinders
     [IsVisibleInDynamoLibrary(false)]
     public class LineBinder : GeometryBinder
     {
-        public LineBinder(Triple startVertex, Triple endVertex)
+        public LineBinder(Triple startPoint, Triple endPoint, Color color)
         {
-            StartingPositions = new[] { startVertex, endVertex };
-            Color = GeometryRender.DefaultLineColor;
-        }
-
-
-        public LineBinder(Triple startVertex, Triple endVertex, Color color)
-        {
-            StartingPositions = new[] { startVertex, endVertex };
+            StartingPositions = new[] { startPoint, endPoint };
             Color = color;
         }
 
 
-        public override List<Geometry> GetGeometries(List<Node> allNodes) =>
-           new List<Geometry>
-           {
-            Line.ByStartPointEndPoint(
-               allNodes[NodeIndices[0]].Position.ToPoint(),
-               allNodes[NodeIndices[1]].Position.ToPoint())
-           };
+        public LineBinder(Triple startPoint, Triple endPoint)
+            : this(startPoint, endPoint, GeometryRender.DefaultLineColor)
+        {
+        }
+
+
+        public override List<DesignScriptEntity> GetGeometries(List<Node> allNodes)
+        {
+            return new List<DesignScriptEntity>
+            {
+                Line.ByStartPointEndPoint(
+                    allNodes[NodeIndices[0]].Position.ToPoint(),
+                    allNodes[NodeIndices[1]].Position.ToPoint())
+            };
+        }
 
 
         public override void DrawGraphics(IRenderPackage package, TessellationParameters parameters, List<Node> allNodes)
-           => GeometryRender.DrawLine(
-                 package,
-                 allNodes[NodeIndices[0]].Position,
-                 allNodes[NodeIndices[1]].Position,
-                 Color);
+        {
+            GeometryRender.DrawLine(
+                package,
+                allNodes[NodeIndices[0]].Position,
+                allNodes[NodeIndices[1]].Position,
+                Color);
+        }
     }
 }

@@ -27,10 +27,10 @@ namespace DynaShape
                 solver.GeometryBinders[i].DrawGraphics(package, parameters, solver.Nodes);
 
 
-            //=======================================================================================
-            // Draw a cursor to highlight the node that is being manipulated by the mouse
-            // ... the curor is 2D, so we need to draw it in the camera coordinate system, manually
-            //=======================================================================================
+            //==================================================================================================
+            // Draw a visual marker to highlight the node that is being manipulated/hovered-over by the mouse
+            // The marker is 2D, so we need to draw it in the camera coordinate system, manually
+            //==================================================================================================
 
             CameraData camera = ((HelixWatch3DViewModel)Solver.Viewport).Camera.Dispatcher.Invoke(() => Solver.Viewport.GetCameraInformation());
             Triple camOrigin = new Triple(camera.EyePosition.X, -camera.EyePosition.Z, camera.EyePosition.Y);
@@ -42,7 +42,7 @@ namespace DynaShape
             if (solver.HandleNodeIndex != -1 || solver.NearestNodeIndex != -1)
             {
                 int i = solver.HandleNodeIndex != -1 ? solver.HandleNodeIndex : solver.NearestNodeIndex;
-                Color handleColor = solver.HandleNodeIndex != -1 ? Color.OrangeRed : Color.Black;
+                Color markerColor = solver.HandleNodeIndex != -1 ? Color.OrangeRed : Color.OrangeRed;
 
                 Triple v = solver.Nodes[i].Position - camOrigin;
                 v = camOrigin + ((float)camera.NearPlaneDistance + 0.5f) * v / v.Dot(camZ);
@@ -53,7 +53,7 @@ namespace DynaShape
                 Triple v2 = v - camY * handleSize;
                 Triple v3 = v - camX * handleSize;
                 Triple v4 = v + camY * handleSize;
-                GeometryRender.DrawPolyline(package, new List<Triple> { v1, v2, v3, v4, v1 }, handleColor);
+                GeometryRender.DrawPolyline(package, new List<Triple> { v1, v2, v3, v4, v1 }, markerColor);
 
                 handleSize = 0.015f;
                 v1 = v + camX * handleSize;
@@ -61,8 +61,8 @@ namespace DynaShape
                 v3 = v - camX * handleSize;
                 v4 = v + camY * handleSize;
 
-                GeometryRender.DrawLine(package, v1, v3, handleColor);
-                GeometryRender.DrawLine(package, v2, v4, handleColor);
+                GeometryRender.DrawLine(package, v1, v3, markerColor);
+                GeometryRender.DrawLine(package, v2, v4, markerColor);
             }
         }
     }

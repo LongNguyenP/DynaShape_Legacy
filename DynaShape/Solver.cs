@@ -35,12 +35,86 @@ namespace DynaShape
         public List<Goal> Goals = new List<Goal>();
         public List<GeometryBinder> GeometryBinders = new List<GeometryBinder>();
 
-        public List<Triple> GetNodePositions() => Nodes.Select(node => node.Position).ToList();
-        public List<Point> GetNodePositionsAsPoints() => Nodes.Select(node => node.Position.ToPoint()).ToList();
-        public List<Triple> GetNodeVelocities() => Nodes.Select(node => node.Velocity).ToList();
-        public List<Vector> GetNodeVelocitiesAsVectors() => Nodes.Select(node => node.Velocity.ToVector()).ToList();
-        public List<List<Geometry>> GetGeometries() => GeometryBinders.Select(gb => gb.GetGeometries(Nodes)).ToList();
-        public List<List<object>> GetGoalOutputs() => Goals.Select(goal => goal.GetOutput(Nodes)).ToList();
+        public List<Triple> GetNodePositions()
+        {
+            List<Triple> nodePositions = new List<Triple>(Nodes.Count);
+            for (int i = 0; i < Nodes.Count; i++)
+                nodePositions.Add(Nodes[i].Position);
+            return nodePositions;
+        }
+
+
+        public List<Point> GetNodePositionsAsPoints()
+        {
+            List<Point> nodePositions = new List<Point>(Nodes.Count);
+            for (int i = 0; i < Nodes.Count; i++)
+                nodePositions.Add(Nodes[i].Position.ToPoint());
+            return nodePositions;
+        }
+
+
+        public List<List<Triple>> GetStructuredNodePositions()
+        {
+            List<List<Triple>> nodePositions = new List<List<Triple>>(Goals.Count);
+            for (int i = 0; i < Goals.Count; i++)
+            {
+                List<Triple> goalNodePositions = new List<Triple>(Goals[i].NodeCount);
+                for (int j = 0; j < Goals[i].NodeCount; j++)
+                    goalNodePositions.Add(Nodes[Goals[i].NodeIndices[j]].Position);
+                nodePositions.Add(goalNodePositions);
+            }
+            return nodePositions;
+        }
+
+
+        public List<List<Point>> GetStructuredNodePositionsAsPoints()
+        {
+            List<List<Point>> nodePositions = new List<List<Point>>(Goals.Count);
+            for (int i = 0; i < Goals.Count; i++)
+            {
+                List<Point> goalNodePositions = new List<Point>(Goals[i].NodeCount);
+                for (int j = 0; j < Goals[i].NodeCount; j++)
+                    goalNodePositions.Add(Nodes[Goals[i].NodeIndices[j]].Position.ToPoint());
+                nodePositions.Add(goalNodePositions);
+            }
+            return nodePositions;
+        }
+
+
+        public List<Triple> GetNodeVelocities()
+        {
+            List<Triple> nodeVelocities = new List<Triple>(Nodes.Count);
+            for (int i = 0; i < Nodes.Count; i++)
+                nodeVelocities.Add(Nodes[i].Velocity);
+            return nodeVelocities;
+        }
+
+
+        public List<Vector> GetNodeVelocitiesAsVectors()
+        {
+            List<Vector> nodeVelocities = new List<Vector>(Nodes.Count);
+            for (int i = 0; i < Nodes.Count; i++)
+                nodeVelocities.Add(Nodes[i].Velocity.ToVector());
+            return nodeVelocities;
+        }
+
+
+        public List<List<DesignScriptEntity>> GetGeometries()
+        {
+            List<List<DesignScriptEntity>> geometries = new List<List<DesignScriptEntity>>(GeometryBinders.Count);
+            for (int i = 0; i < GeometryBinders.Count; i++)
+                geometries.Add(GeometryBinders[i].GetGeometries(Nodes));
+            return geometries;
+        }
+
+
+        public List<List<object>> GetGoalOutputs()
+        {
+            List<List<object>> goalOutputs = new List<List<object>>(Goals.Count);
+            for (int i = 0; i < Goals.Count; i++)
+                goalOutputs.Add(Goals[i].GetOutput(Nodes));
+            return goalOutputs;
+        }
 
 
         internal int HandleNodeIndex = -1;

@@ -19,22 +19,35 @@ namespace DynaShape.ZeroTouch
 
 
         public static LineBinder LineBinder(
-           Point startPoint,
-           Point endPoint,
-           [DefaultArgument("null")] Color color)
-           => new LineBinder(startPoint.ToTriple(), endPoint.ToTriple(), color?.ToSystemColor() ?? GeometryRender.DefaultLineColor);
+            Point startPoint,
+            Point endPoint,
+            [DefaultArgument("null")] Color color)
+        {
+            return new LineBinder(startPoint.ToTriple(), endPoint.ToTriple(),
+                color?.ToSystemColor() ?? GeometryRender.DefaultLineColor);
+        }
 
 
         public static PolylineBinder PolylineBinder(
-           List<Point> vertices,
-           [DefaultArgument("null")] Color color)
-           => new PolylineBinder(vertices.ToTriples(), color?.ToSystemColor() ?? GeometryRender.DefaultLineColor);
+            List<Point> vertices,
+            [DefaultArgument("null")] Color color)
+        {
+            return new PolylineBinder(vertices.ToTriples(), color?.ToSystemColor() ?? GeometryRender.DefaultLineColor);
+        }
 
 
         public static GeometryBinder ChangeColor(GeometryBinder geometryBinder, Color color)
         {
             geometryBinder.Color = color.ToSystemColor();
             return geometryBinder;
+        }
+
+
+        public static MeshBinder MeshBinder(
+            Mesh mesh,
+            [DefaultArgument("null")] Color color)
+        {
+            return new MeshBinder(mesh, color?.ToSystemColor() ?? GeometryRender.DefaultMeshFaceColor);
         }
     }
 }

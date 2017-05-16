@@ -12,13 +12,6 @@ namespace DynaShape.GeometryBinders
     [IsVisibleInDynamoLibrary(false)]
     public class PolylineBinder : GeometryBinder
     {
-        public PolylineBinder(List<Triple> vertices)
-        {
-            StartingPositions = vertices.ToArray();
-            Color = GeometryRender.DefaultLineColor;
-        }
-
-
         public PolylineBinder(List<Triple> vertices, Color color)
         {
             StartingPositions = vertices.ToArray();
@@ -26,11 +19,17 @@ namespace DynaShape.GeometryBinders
         }
 
 
-        public override List<Geometry> GetGeometries(List<Node> allNodes)
+        public PolylineBinder(List<Triple> vertices)
+            :this(vertices, GeometryRender.DefaultLineColor)
+        {
+        }
+
+
+        public override List<DesignScriptEntity> GetGeometries(List<Node> allNodes)
         {
             List<Point> points = new List<Point>();
             for (int i = 0; i < NodeCount; i++) points.Add(allNodes[NodeIndices[i]].Position.ToPoint());
-            return new List<Geometry> { PolyCurve.ByPoints(points) };
+            return new List<DesignScriptEntity> { PolyCurve.ByPoints(points) };
         }
 
 
