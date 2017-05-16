@@ -24,10 +24,6 @@ namespace DynaShape
         // static members
         //==============================================================
 
-        internal static IWatch3DViewModel Viewport = null;
-        internal static CameraData CameraData = null;
-
-        //==============================================================
 
         public bool AllowMouseInteraction = true;
 
@@ -124,14 +120,14 @@ namespace DynaShape
 
         public Solver()
         {
-            if (Viewport != null)
-            {
-                Viewport.ViewMouseDown += ViewportMouseDownHandler;
-                Viewport.ViewMouseUp += ViewportMouseUpHandler;
-                Viewport.ViewMouseMove += ViewportMouseMoveHandler;
-                Viewport.ViewCameraChanged += ViewportCameraChangedHandler;
-                Viewport.CanNavigateBackgroundPropertyChanged += CanNavigateBackgroundPropertyChangedHandler;
-            }
+            if (DynaShapeViewExtension.Viewport == null) throw new Exception("Could not get access to the viewport :(");
+
+            DynaShapeViewExtension.Viewport.ViewMouseDown += ViewportMouseDownHandler;
+            DynaShapeViewExtension.Viewport.ViewMouseUp += ViewportMouseUpHandler;
+            DynaShapeViewExtension.Viewport.ViewMouseMove += ViewportMouseMoveHandler;
+            DynaShapeViewExtension.Viewport.ViewCameraChanged += ViewportCameraChangedHandler;
+            DynaShapeViewExtension.Viewport.CanNavigateBackgroundPropertyChanged += CanNavigateBackgroundPropertyChangedHandler;
+            
         }
 
 
@@ -305,7 +301,7 @@ namespace DynaShape
         private void ViewportMouseMoveHandler(object sender, MouseEventArgs args)
         {
             if (!AllowMouseInteraction) return;
-            ClickRay = Viewport.GetClickRay(args);
+            ClickRay = DynaShapeViewExtension.Viewport.GetClickRay(args);
             if (args.LeftButton == MouseButtonState.Released) HandleNodeIndex = -1;
             NearestNodeIndex = FindNearestNodeIndex(ClickRay);
         }
@@ -313,7 +309,7 @@ namespace DynaShape
 
         internal int FindNearestNodeIndex(IRay clickRay, float range = 0.03f)
         {
-            CameraData cameraData = Viewport.GetCameraInformation();
+            CameraData cameraData = DynaShapeViewExtension.CameraData;
             Triple camZ = new Triple(cameraData.LookDirection.X, -cameraData.LookDirection.Z,
                 cameraData.LookDirection.Y).Normalise();
             Triple camY = new Triple(cameraData.UpDirection.X, -cameraData.UpDirection.Z, cameraData.UpDirection.Y)
@@ -359,13 +355,13 @@ namespace DynaShape
 
         public void Dispose()
         {
-            if (Viewport != null)
+            if (DynaShapeViewExtension.Viewport != null)
             {
-                Viewport.ViewMouseDown -= ViewportMouseDownHandler;
-                Viewport.ViewMouseUp -= ViewportMouseUpHandler;
-                Viewport.ViewMouseMove -= ViewportMouseMoveHandler;
-                Viewport.ViewCameraChanged -= ViewportCameraChangedHandler;
-                Viewport.CanNavigateBackgroundPropertyChanged -= CanNavigateBackgroundPropertyChangedHandler;
+                DynaShapeViewExtension.Viewport.ViewMouseDown -= ViewportMouseDownHandler;
+                DynaShapeViewExtension.Viewport.ViewMouseUp -= ViewportMouseUpHandler;
+                DynaShapeViewExtension.Viewport.ViewMouseMove -= ViewportMouseMoveHandler;
+                DynaShapeViewExtension.Viewport.ViewCameraChanged -= ViewportCameraChangedHandler;
+                DynaShapeViewExtension.Viewport.CanNavigateBackgroundPropertyChanged -= CanNavigateBackgroundPropertyChangedHandler;
             }
         }
     }

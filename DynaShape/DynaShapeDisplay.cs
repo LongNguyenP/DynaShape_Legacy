@@ -28,11 +28,12 @@ namespace DynaShape
 
 
             //==================================================================================================
-            // Draw a visual marker to highlight the node that is being manipulated/hovered-over by the mouse
+            // Draw a visual marker to indicate the node that is being manipulated/hovered-over by the mouse
             // The marker is 2D, so we need to draw it in the camera coordinate system, manually
             //==================================================================================================
+            
+            CameraData camera = DynaShapeViewExtension.CameraData;
 
-            CameraData camera = ((HelixWatch3DViewModel)Solver.Viewport).Camera.Dispatcher.Invoke(() => Solver.Viewport.GetCameraInformation());
             Triple camOrigin = new Triple(camera.EyePosition.X, -camera.EyePosition.Z, camera.EyePosition.Y);
             Triple camZ = new Triple(camera.LookDirection.X, -camera.LookDirection.Z, camera.LookDirection.Y).Normalise();
             Triple camY = new Triple(camera.UpDirection.X, -camera.UpDirection.Z, camera.UpDirection.Y).Normalise();
