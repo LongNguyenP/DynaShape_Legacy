@@ -2,9 +2,9 @@
 
 ### Build, package and install
 
-The source code is written entirely in Visual C#. All the dependent dll files can be found in the the Dynamo Core main folder (e.g. C:\Program Files\Dynamo\Dynamo Core\1.x), except MathNet.Numerics.dll (which can be downloaded from NuGet, recommended version 3.11 or above)
+The source code is written entirely in Visual C#. All the dependent dll files can be found in the the Dynamo Core main folder (e.g. *C:\Program Files\Dynamo\Dynamo Core\1.x*), except *MathNet.Numerics.dll* (which can be downloaded from NuGet, recommended version 3.11 or above)
 
-After DynaShape.dll has been built successfully from the source, you can then assemble the Dynamo package folder according to the following structure:
+After *DynaShape.dll* has been built successfully from the source, you can then assemble the Dynamo package folder according to the following structure:
 
 >* DynaShape
 >* ..... pkg.json (provided with the Visual Studio solution)
@@ -13,9 +13,9 @@ After DynaShape.dll has been built successfully from the source, you can then as
 >* .......... DynaShape_DynamoCustomization.xml (provided with the Visual Studio  solution)
 >* .......... MathNet.Numerics.dll
 
-Once the package folder has been assembled, you can "install" the package to Dynamo by to "Dynamo Main Menu > Settings > Manage Node and Package Paths...", and add a path to the package folder.
+Once the package folder has been assembled, you can "install" the package to Dynamo by to *Dynamo-Main-Menu > Settings > Manage Node and Package Paths...*, and add a path to the package folder.
 
-For the mouse interaction to work, for now you will need to manually edit the AssemblyPath inside the DynaShape_ViewExtensionDefinition.xml (provided with the Visual Studio  solution) so that it points correctly to the DynaShape.dll within the package folder, and then place this xml into [DynamoCoreMainFolder]\viewExtensions, and restart Dynamo Studio and/or Revit
+For the mouse interaction to work, for now you will need to manually edit the *AssemblyPath* inside the *DynaShape_ViewExtensionDefinition.xml* file (provided with the Visual Studio solution) so that it points correctly to the *DynaShape.dll* file inside the package folder, and then place this xml into *[DynamoCoreMainFolder]\viewExtensions*, and restart Dynamo Studio and/or Revit
 
 Once the package has been installed. You can start checking out these [Dynamo sample scripts](https://drive.google.com/drive/folders/0B8GXDbjowDN_ZHZ0ZWZaSWIwMzA?usp=sharing) to see how DynaShape works.
 
