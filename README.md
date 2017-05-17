@@ -15,7 +15,6 @@ DynaShape
     └── MathNet.Numerics.dll
 </pre>
 
-
 Once the package folder has been assembled, you can "install" the package to Dynamo by to *Dynamo-Main-Menu > Settings > Manage Node and Package Paths...*, and add a path to the package folder.
 
 For the mouse interaction to work, for now you will need to manually edit the *AssemblyPath* inside the *DynaShape_ViewExtensionDefinition.xml* file (provided with the Visual Studio solution) so that it points correctly to the *DynaShape.dll* file inside the package folder, and then place this xml into *[DynamoCoreMainFolder]\viewExtensions*, and restart Dynamo Studio and/or Revit
@@ -28,7 +27,7 @@ Once the package has been installed, you can start to play with these [Dynamo sa
 * Email: longnguyen.gigabidea@gmail.com
 * Twitter: [@LongNguyenP](https://twitter.com/LongNguyenP?lang=en)
 
-<p>
+
 
 ## Acknowledgement
 I would like to acknowledge the following people:
