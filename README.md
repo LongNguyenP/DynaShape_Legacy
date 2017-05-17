@@ -22,15 +22,11 @@ For the mouse interaction to work, for now you will need to manually edit the *A
 
 Once the package has been installed, you can start to play with these [Dynamo sample scripts](https://drive.google.com/drive/folders/0B8GXDbjowDN_ZHZ0ZWZaSWIwMzA?usp=sharing) to see how DynaShape works.
 <br>
-
 ## Contact Info
-
 * Email: longnguyen.gigabidea@gmail.com
 * Twitter: [@LongNguyenP](https://twitter.com/LongNguyenP?lang=en)
 <br>
-
 ## Acknowledgement
-
 I would like to acknowledge the following people:
 * [Ian Kenough](https://twitter.com/ikeough?lang=en) and the [Dynamo](http://dynamobim.org/) development team, for the great visual programming tool.
 * The [EPFL Computer Graphics Lab and Geometry Lab](http://lgg.epfl.ch/index.php), for developing the important [theoratical framework](http://lgg.epfl.ch/publications/2012/shapeup/paper.pdf), which DynaShape is based on. 
