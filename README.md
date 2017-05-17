@@ -1,17 +1,20 @@
-<img src="https://cdn-business.discourse.org/uploads/dynamobim/original/3X/8/c/8cb1f156ee18209847ec7807f4dfc5e2145ba45d.png" width = "900">
+﻿<img src="https://cdn-business.discourse.org/uploads/dynamobim/original/3X/8/c/8cb1f156ee18209847ec7807f4dfc5e2145ba45d.png" width = "900">
 
-### Build, package and install
+## Build, package and install
 
 The source code is written entirely in Visual C#. All the dependent dll files can be found in the the Dynamo Core main folder (e.g. *C:\Program Files\Dynamo\Dynamo Core\1.x*), except *MathNet.Numerics.dll* (which can be downloaded from NuGet, recommended version 3.11 or above)
 
 After *DynaShape.dll* has been built successfully from the source, you can then assemble the Dynamo package folder according to the following structure:
 
->* DynaShape
->* ..... pkg.json (provided with the Visual Studio solution)
->* ..... bin
->* .......... DynaShape.dll
->* .......... DynaShape_DynamoCustomization.xml (provided with the Visual Studio  solution)
->* .......... MathNet.Numerics.dll
+<pre>
+DynaShape
+├── pkg.json (provided with the Visual Studio solution)
+└── bin
+    ├── DynaShape.dll
+    ├── DynaShape_DynamoCustomization.xml (provided with the Visual Studio solution)
+    └── MathNet.Numerics.dll
+</pre>
+
 
 Once the package folder has been assembled, you can "install" the package to Dynamo by to *Dynamo-Main-Menu > Settings > Manage Node and Package Paths...*, and add a path to the package folder.
 
@@ -19,11 +22,12 @@ For the mouse interaction to work, for now you will need to manually edit the *A
 
 Once the package has been installed, you can start to play with these [Dynamo sample scripts](https://drive.google.com/drive/folders/0B8GXDbjowDN_ZHZ0ZWZaSWIwMzA?usp=sharing) to see how DynaShape works.
 
-### Contact Info
+## Contact Info
+
 * Email: longnguyen.gigabidea@gmail.com
 * Twitter: [@LongNguyenP](https://twitter.com/LongNguyenP?lang=en)
 
-### Acknowledgement
+## Acknowledgement
 
 I would like to acknowledge the following people:
 * [Ian Kenough](https://twitter.com/ikeough?lang=en) and the [Dynamo](http://dynamobim.org/) development team, for the great visual programming tool.

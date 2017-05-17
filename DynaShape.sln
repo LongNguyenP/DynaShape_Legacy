@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.3
+VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynaShape", "DynaShape\DynaShape.csproj", "{157AD178-EE17-46E9-B6DC-C50EB9DCCA60}"
 EndProject
@@ -16,11 +16,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Misc", "Misc", "{2765222E-C
 	ProjectSection(SolutionItems) = preProject
 		LICENSE.txt = LICENSE.txt
 		README.md = README.md
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynaShapeNodeModels", "DynaShapeNodeModels\DynaShapeNodeModels.csproj", "{5D6081B6-5EAB-43EC-A191-074011638811}"
-	ProjectSection(ProjectDependencies) = postProject
-		{157AD178-EE17-46E9-B6DC-C50EB9DCCA60} = {157AD178-EE17-46E9-B6DC-C50EB9DCCA60}
 	EndProjectSection
 EndProject
 Global
@@ -39,14 +34,6 @@ Global
 		{157AD178-EE17-46E9-B6DC-C50EB9DCCA60}.Release|Any CPU.Build.0 = Release|Any CPU
 		{157AD178-EE17-46E9-B6DC-C50EB9DCCA60}.Release|x64.ActiveCfg = Release|x64
 		{157AD178-EE17-46E9-B6DC-C50EB9DCCA60}.Release|x64.Build.0 = Release|x64
-		{5D6081B6-5EAB-43EC-A191-074011638811}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5D6081B6-5EAB-43EC-A191-074011638811}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5D6081B6-5EAB-43EC-A191-074011638811}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{5D6081B6-5EAB-43EC-A191-074011638811}.Debug|x64.Build.0 = Debug|Any CPU
-		{5D6081B6-5EAB-43EC-A191-074011638811}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5D6081B6-5EAB-43EC-A191-074011638811}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5D6081B6-5EAB-43EC-A191-074011638811}.Release|x64.ActiveCfg = Release|Any CPU
-		{5D6081B6-5EAB-43EC-A191-074011638811}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
