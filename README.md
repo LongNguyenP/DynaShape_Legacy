@@ -1,5 +1,4 @@
 <img src="https://cdn-business.discourse.org/uploads/dynamobim/original/3X/8/c/8cb1f156ee18209847ec7807f4dfc5e2145ba45d.png" width = "900">
-<br>
 
 ### Build, package and install
 
