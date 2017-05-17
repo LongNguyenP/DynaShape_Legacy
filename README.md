@@ -38,7 +38,7 @@ Acknowledgements:
 
 I would like to acknowledge the following people:
 - Ian Kenough and the Dynamo development team, for the great visual programming tool.
-- The EPFL Computer Graphics Lab and Geometry Lab, for developing the essential mathematical and algorithm framework, which DynaShape is based on. http://lgg.epfl.ch/publications/2012/shapeup/index.php
+- The EPFL Computer Graphics Lab and Geometry Lab, for developing the important theoratical framework, which DynaShape is based on. http://lgg.epfl.ch/publications/2012/shapeup/index.php
 - Daniel Piker, for playing a major role in popularizing physics and constraint-based digital form finding in the design community, mostly via his well-known plugin KangarooPhysics for Grasshopper. The highly positive response that KangarooPhysics receives from the community has inspired me to start DynaShape in hope to make similar computational design tools available to the Dynamo and BIM community.
 http://www.grasshopper3d.com/group/kangaroo.
 - Autodesk (particularly Phil Mueller and Matt Jezyk) for co-organizing and co-sponsoring AEC Hackathon Munich 2017, where DynaShape was born.

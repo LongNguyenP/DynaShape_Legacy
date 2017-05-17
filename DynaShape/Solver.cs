@@ -20,11 +20,6 @@ namespace DynaShape
     [IsVisibleInDynamoLibrary(false)]
     public class Solver : IDisposable
     {
-        //==============================================================
-        // static members
-        //==============================================================
-
-
         public bool AllowMouseInteraction = true;
 
         public List<Node> Nodes = new List<Node>();
@@ -115,7 +110,7 @@ namespace DynaShape
 
         internal int HandleNodeIndex = -1;
         internal int NearestNodeIndex = -1;
-        internal IRay ClickRay = null;
+
 
 
         public Solver()
@@ -126,8 +121,9 @@ namespace DynaShape
             DynaShapeViewExtension.Viewport.ViewMouseUp += ViewportMouseUpHandler;
             DynaShapeViewExtension.Viewport.ViewMouseMove += ViewportMouseMoveHandler;
             DynaShapeViewExtension.Viewport.ViewCameraChanged += ViewportCameraChangedHandler;
-            DynaShapeViewExtension.Viewport.CanNavigateBackgroundPropertyChanged += CanNavigateBackgroundPropertyChangedHandler;
-            
+            DynaShapeViewExtension.Viewport.CanNavigateBackgroundPropertyChanged +=
+                ViewportCanNavigateBackgroundPropertyChangedHandler;
+
         }
 
 
@@ -222,9 +218,24 @@ namespace DynaShape
 
         public void Step(bool momentum = true)
         {
-            if (momentum) foreach (Node node in Nodes) node.Position += node.Velocity;
+            //=================================================================================
+            // Apply momentum
+            //=================================================================================
+
+            if (momentum)
+                foreach (Node node in Nodes) node.Position += node.Velocity;
+
+
+            //=================================================================================
+            // Process each goal indepently, in parallel
+            //=================================================================================
 
             Parallel.ForEach(Goals, goal => goal.Compute(Nodes));
+
+
+            //=================================================================================
+            // Compute the total move vector that acts on each node
+            //=================================================================================
 
             Triple[] nodeMoveSums = new Triple[Nodes.Count];
             float[] nodeWeightSums = new float[Nodes.Count];
@@ -238,21 +249,23 @@ namespace DynaShape
 
 
             //=================================================================================
+            // Move the manipulated node toward the mouse ray
+            //=================================================================================
 
             if (HandleNodeIndex != -1)
             {
                 float mouseInteractionWeight = 30f;
                 nodeWeightSums[HandleNodeIndex] += mouseInteractionWeight;
 
-                Triple clickRayOrigin = new Triple(ClickRay.Origin.X, ClickRay.Origin.Y, ClickRay.Origin.Z);
-                Triple clickRayDirection = new Triple(ClickRay.Direction.X, ClickRay.Direction.Y, ClickRay.Direction.Z);
-                clickRayDirection = clickRayDirection.Normalise();
-                Triple v = Nodes[HandleNodeIndex].Position - clickRayOrigin;
-                Triple grabMove = v.Dot(clickRayDirection) * clickRayDirection - v;
-                nodeMoveSums[HandleNodeIndex] += mouseInteractionWeight * grabMove;
+                Triple v = Nodes[HandleNodeIndex].Position - DynaShapeViewExtension.MouseRayOrigin;
+                Triple mouseRayPull = v.Dot(DynaShapeViewExtension.MouseRayDirection) * DynaShapeViewExtension.MouseRayDirection - v;
+                nodeMoveSums[HandleNodeIndex] += mouseInteractionWeight * mouseRayPull;
             }
 
-            //=================================================================================
+
+            //=============================================================================================
+            // Move the nodes to their new positions
+            //=============================================================================================
 
             for (int i = 0; i < Nodes.Count; i++)
             {
@@ -287,7 +300,7 @@ namespace DynaShape
         private void ViewportMouseDownHandler(object sender, MouseButtonEventArgs args)
         {
             if (args.LeftButton == MouseButtonState.Pressed && AllowMouseInteraction)
-                HandleNodeIndex = FindNearestNodeIndex(ClickRay);
+                HandleNodeIndex = FindNearestNodeIndex();
         }
 
 
@@ -301,26 +314,33 @@ namespace DynaShape
         private void ViewportMouseMoveHandler(object sender, MouseEventArgs args)
         {
             if (!AllowMouseInteraction) return;
-            ClickRay = DynaShapeViewExtension.Viewport.GetClickRay(args);
             if (args.LeftButton == MouseButtonState.Released) HandleNodeIndex = -1;
-            NearestNodeIndex = FindNearestNodeIndex(ClickRay);
+            NearestNodeIndex = FindNearestNodeIndex();
         }
 
 
-        internal int FindNearestNodeIndex(IRay clickRay, float range = 0.03f)
+        internal int FindNearestNodeIndex(float range = 0.03f)
         {
             CameraData cameraData = DynaShapeViewExtension.CameraData;
-            Triple camZ = new Triple(cameraData.LookDirection.X, -cameraData.LookDirection.Z,
+
+            Triple camZ = new Triple(
+                cameraData.LookDirection.X,
+                -cameraData.LookDirection.Z,
                 cameraData.LookDirection.Y).Normalise();
-            Triple camY = new Triple(cameraData.UpDirection.X, -cameraData.UpDirection.Z, cameraData.UpDirection.Y)
-                .Normalise();
+
+            Triple camY = new Triple(
+                cameraData.UpDirection.X,
+                -cameraData.UpDirection.Z,
+                cameraData.UpDirection.Y).Normalise();
+
             Triple camX = camY.Cross(camZ).Normalise();
 
-            Triple clickRayOrigin = new Triple(clickRay.Origin.X, clickRay.Origin.Y, clickRay.Origin.Z);
-            Triple clickRayDirection = new Triple(clickRay.Direction.X, clickRay.Direction.Y, clickRay.Direction.Z);
 
-            Triple mousePosition2D = new Triple(clickRayDirection.Dot(camX), clickRayDirection.Dot(camY),
-                clickRayDirection.Dot(camZ));
+            Triple mousePosition2D = new Triple(
+                DynaShapeViewExtension.MouseRayDirection.Dot(camX),
+                DynaShapeViewExtension.MouseRayDirection.Dot(camY),
+                DynaShapeViewExtension.MouseRayDirection.Dot(camZ));
+
             mousePosition2D /= mousePosition2D.Z;
 
             int nearestNodeIndex = -1;
@@ -329,7 +349,7 @@ namespace DynaShape
 
             for (int i = 0; i < Nodes.Count; i++)
             {
-                Triple v = Nodes[i].Position - clickRayOrigin;
+                Triple v = Nodes[i].Position - DynaShapeViewExtension.MouseRayOrigin;
                 v = new Triple(v.Dot(camX), v.Dot(camY), v.Dot(camZ));
                 Triple nodePosition2D = v / v.Z;
 
@@ -346,7 +366,7 @@ namespace DynaShape
         }
 
 
-        private void CanNavigateBackgroundPropertyChangedHandler(bool canNavigate)
+        private void ViewportCanNavigateBackgroundPropertyChangedHandler(bool canNavigate)
         {
             HandleNodeIndex = -1;
             NearestNodeIndex = -1;
@@ -355,14 +375,13 @@ namespace DynaShape
 
         public void Dispose()
         {
-            if (DynaShapeViewExtension.Viewport != null)
-            {
-                DynaShapeViewExtension.Viewport.ViewMouseDown -= ViewportMouseDownHandler;
-                DynaShapeViewExtension.Viewport.ViewMouseUp -= ViewportMouseUpHandler;
-                DynaShapeViewExtension.Viewport.ViewMouseMove -= ViewportMouseMoveHandler;
-                DynaShapeViewExtension.Viewport.ViewCameraChanged -= ViewportCameraChangedHandler;
-                DynaShapeViewExtension.Viewport.CanNavigateBackgroundPropertyChanged -= CanNavigateBackgroundPropertyChangedHandler;
-            }
+            if (DynaShapeViewExtension.Viewport == null) throw new Exception("Could not access theh viewport");
+
+            DynaShapeViewExtension.Viewport.ViewMouseDown -= ViewportMouseDownHandler;
+            DynaShapeViewExtension.Viewport.ViewMouseUp -= ViewportMouseUpHandler;
+            DynaShapeViewExtension.Viewport.ViewMouseMove -= ViewportMouseMoveHandler;
+            DynaShapeViewExtension.Viewport.ViewCameraChanged -= ViewportCameraChangedHandler;
+            DynaShapeViewExtension.Viewport.CanNavigateBackgroundPropertyChanged -= ViewportCanNavigateBackgroundPropertyChangedHandler;
         }
     }
 }

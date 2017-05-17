@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 using Autodesk.DesignScript.Runtime;
 using Dynamo.Wpf.Extensions;
 using Dynamo.Wpf.ViewModels.Watch3D;
@@ -12,7 +13,8 @@ namespace DynaShape
     {
         public static CameraData CameraData = null;
         public static IWatch3DViewModel Viewport = null;
-
+        public static Triple MouseRayOrigin;
+        public static Triple MouseRayDirection;
 
         public void Dispose()
         {
@@ -27,19 +29,29 @@ namespace DynaShape
         public void Loaded(ViewLoadedParams p)
         {
             Viewport = p.BackgroundPreviewViewModel;
-            Viewport.ViewCameraChanged += ViewCameraChangedHandler;
+            Viewport.ViewCameraChanged += ViewportViewCameraChangedHandler;
+            Viewport.ViewMouseMove += ViewportViewMouseMoveHandler;
         }
 
 
         public void Shutdown()
         {
-            Viewport.ViewCameraChanged -= ViewCameraChangedHandler;
+            Viewport.ViewCameraChanged -= ViewportViewCameraChangedHandler;
+            Viewport.ViewMouseMove -= ViewportViewMouseMoveHandler;
         }
     
 
-        private void ViewCameraChangedHandler(object sender, RoutedEventArgs e)
+        private void ViewportViewCameraChangedHandler(object sender, RoutedEventArgs e)
         {
             CameraData = Viewport.GetCameraInformation();
+        }
+
+
+        private void ViewportViewMouseMoveHandler(object sender, MouseEventArgs e)
+        {
+            IRay clickRay = Viewport.GetClickRay(e);
+            MouseRayOrigin = new Triple(clickRay.Origin.X, clickRay.Origin.Y, clickRay.Origin.Z);
+            MouseRayDirection = new Triple(clickRay.Direction.X, clickRay.Direction.Y, clickRay.Direction.Z);
         }
 
 
