@@ -22,7 +22,7 @@ For the mouse interaction to work, for now you will need to manually edit the *A
 
 Once the package has been installed, you can start to play with these [Dynamo sample scripts](https://drive.google.com/drive/folders/0B8GXDbjowDN_ZHZ0ZWZaSWIwMzA?usp=sharing) to see how DynaShape works.
 
-<p>
+
 
 ## Contact Info
 * Email: longnguyen.gigabidea@gmail.com
