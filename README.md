@@ -21,11 +21,13 @@ Once the package folder has been assembled, you can "install" the package to Dyn
 For the mouse interaction to work, for now you will need to manually edit the *AssemblyPath* inside the *DynaShape_ViewExtensionDefinition.xml* file (provided with the Visual Studio solution) so that it points correctly to the *DynaShape.dll* file inside the package folder, and then place this xml into *[DynamoCoreMainFolder]\viewExtensions*, and restart Dynamo Studio and/or Revit
 
 Once the package has been installed, you can start to play with these [Dynamo sample scripts](https://drive.google.com/drive/folders/0B8GXDbjowDN_ZHZ0ZWZaSWIwMzA?usp=sharing) to see how DynaShape works.
+<br>
 
 ## Contact Info
 
 * Email: longnguyen.gigabidea@gmail.com
 * Twitter: [@LongNguyenP](https://twitter.com/LongNguyenP?lang=en)
+<br>
 
 ## Acknowledgement
 
