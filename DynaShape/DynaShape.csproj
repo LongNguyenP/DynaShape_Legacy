@@ -72,11 +72,11 @@
       <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.2\HelixToolkit.Wpf.SharpDX.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="MathNet.Numerics">
-      <HintPath>..\..\..\ReferencedAssemblies\MathNet.Numerics_3.11.0\MathNet.Numerics.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="MathNet.Numerics, Version=3.19.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MathNet.Numerics.3.19.0\lib\net40\MathNet.Numerics.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="ProtoCore">
       <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.2\ProtoCore.dll</HintPath>
       <Private>False</Private>
@@ -85,9 +85,14 @@
       <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.2\ProtoGeometry.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="SharpDX">
+      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.2\SharpDX.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -97,6 +102,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DsDisplay.cs" />
     <Compile Include="Goals\OnLineGoal.cs" />
     <Compile Include="Goals\MergeGoal.cs" />
     <Compile Include="Goals\OnCurveGoal.cs" />
@@ -130,6 +136,9 @@
     <Compile Include="Triple.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="DynaShapeViewExtension.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

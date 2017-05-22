@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Configuration;
+using System.Windows.Controls;
 using Autodesk.DesignScript.Runtime;
+using Dynamo.Controls;
 using Dynamo.Wpf.ViewModels.Watch3D;
 using DynaShape;
 using DynaShape.Goals;
@@ -42,11 +44,17 @@ namespace DynaShape.ZeroTouch
                 solver.AddGoals(goals);
                 if (geometryBinders != null)
                     solver.AddGeometryBinders(geometryBinders);
+                solver.Display.Display();
             }
             else
             {
                 solver.AllowMouseInteraction = mouseInteract;
-                solver.Step(iterations, momentum);
+
+                for (int i = 0; i < 30; i++)
+                {
+                    solver.Step(iterations, momentum);
+                    solver.Display.Display();
+                }
             }
 
             double time = stopwatch.Elapsed.TotalMilliseconds;
@@ -54,7 +62,8 @@ namespace DynaShape.ZeroTouch
             return fastDisplay
                ? new Dictionary<string, object> {
                    { "time", time},
-                   { "display", new DynaShapeDisplay(solver) } }
+                   //{ "display", new DynaShapeDisplay(solver) } }
+                   { "display", null} }
                : new Dictionary<string, object> {
                    { "nodePositions", solver.GetNodePositionsAsPoints()},
                    { "geometries", solver.GetGeometries()},

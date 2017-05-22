@@ -1,12 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Windows.Controls;
+using System.Windows.Threading;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Interfaces;
 using Autodesk.DesignScript.Runtime;
+using Dynamo.Controls;
+using Dynamo.Wpf.Rendering;
+using Dynamo.Wpf.ViewModels.Watch3D;
 using DynaShape;
 using DynaShape.GeometryBinders;
 using DynaShape.Goals;
+using HelixToolkit.Wpf.SharpDX;
+using HelixToolkit.Wpf.SharpDX.Core;
+using SharpDX;
 
 
 namespace DynaShape.ZeroTouch
@@ -152,15 +161,36 @@ namespace DynaShape.ZeroTouch
             };
         }
 
+        
 
-        [MultiReturn("goals", "geometryBinders")]
-        public static Dictionary<string, object> MeshBinder(Mesh mesh)
+        private static int counter = 0;
+
+        [CanUpdatePeriodically(true)]
+        public static int MovingPoint(bool reset)
         {
-            return new Dictionary<string, object>
+            if (reset) counter = 0;
+
+            return counter++;
+        }
+
+
+        private static void Foo(int i)
+        {
+            Viewport3DX Viewport = (((DynaShapeViewExtension.DynamoWindow.Content as Grid).Children[2] as Grid).Children[1] as Watch3DView).View;
+            List<Model3D> SceneItems = Viewport.ItemsSource as List<Model3D>;
+
+            LineGeometry3D lines = new LineGeometry3D();
+            lines.Positions = new Vector3Collection() { new Vector3(0, 0, 0), new Vector3(5, 5, 5) };
+            lines.Indices = new IntCollection() { 0, 1 };
+
+            var lineModel = new LineGeometryModel3D()
             {
-                {"goals", new ShapeMatchingGoal(mesh.VertexPositions.ToTriples())},
-                {"geometryBinders", new MeshBinder(mesh)},
+                Geometry = lines
             };
+
+            lines.Positions[0] = new Vector3(i, 0, 1);
+            lineModel.Attach(Viewport.RenderHost);
+            SceneItems.Add(lineModel); 
         }
     }
 }

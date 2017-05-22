@@ -1,9 +1,13 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Autodesk.DesignScript.Runtime;
 using Dynamo.Wpf.Extensions;
 using Dynamo.Wpf.ViewModels.Watch3D;
-using HelixToolkit.Wpf.SharpDX;
+using Dynamo.Graph.Workspaces;
+using System;
+using Dynamo.Graph.Nodes;
 
 
 namespace DynaShape
@@ -11,47 +15,90 @@ namespace DynaShape
     [IsVisibleInDynamoLibrary(false)]
     public class DynaShapeViewExtension : IViewExtension
     {
-        public static CameraData CameraData = null;
-        public static IWatch3DViewModel Viewport = null;
+        public static Window DynamoWindow;
+        public static HelixWatch3DViewModel ViewModel;
+        public static IWorkspaceModel WorkspaceModel;
+        public static CameraData CameraData;
         public static Triple MouseRayOrigin;
         public static Triple MouseRayDirection;
+        
 
-        public void Dispose()
-        {
-        }
-
-
-        public void Startup(ViewStartupParams p)
-        {
-        }
+        public void Dispose() {}
+        public void Startup(ViewStartupParams p) {}
 
 
         public void Loaded(ViewLoadedParams p)
         {
-            Viewport = p.BackgroundPreviewViewModel;
-            Viewport.ViewCameraChanged += ViewportViewCameraChangedHandler;
-            Viewport.ViewMouseMove += ViewportViewMouseMoveHandler;
+            DynamoWindow = p.DynamoWindow;         
+            ViewModel = p.BackgroundPreviewViewModel as HelixWatch3DViewModel;
+            if (ViewModel == null) throw new Exception("Could not obtain HelixWatch3DViewModel");
+
+            ViewModel.ViewCameraChanged += ViewModelViewCameraChangedHandler;
+            ViewModel.ViewMouseDown += ViewModelViewMouseDownHandler;
+            ViewModel.ViewMouseMove += ViewModelViewMouseMoveHandler;
+            ViewModel.RequestViewRefresh += ViewModelRequestViewRefreshHandler;
+            p.CurrentWorkspaceChanged += CurrentWorkspaceChangedHandler;
+            WorkspaceModel = p.CurrentWorkspaceModel;
+            WorkspaceModel.NodeRemoved += WorkspaceModelNodeRemovedHandler;
+        }
+
+
+        private void ViewModelRequestViewRefreshHandler()
+        {
+        }
+
+
+        private void CurrentWorkspaceChangedHandler(IWorkspaceModel workspaceModel)
+        {
+            WorkspaceModel = workspaceModel;
+            workspaceModel.NodeRemoved += WorkspaceModelNodeRemovedHandler;
+        }
+
+
+        private void WorkspaceModelNodeRemovedHandler(NodeModel nodeModel)
+        {
+        }
+
+
+        private void ViewModelViewMouseDownHandler(object sender, MouseButtonEventArgs e)
+        {   
+        }
+
+
+        private void ListContent(Grid grid, int level, List<string> info)
+        {
+            foreach (var element in grid.Children)
+            {
+                string indent = "";
+                for (int i = 0; i < level; i++) indent += "   ";
+                info.Add(indent + element.GetType() + " == " + element);
+                if (element is Grid)
+                    ListContent(element as Grid, level + 1, info);
+            }
         }
 
 
         public void Shutdown()
         {
-            Viewport.ViewCameraChanged -= ViewportViewCameraChangedHandler;
-            Viewport.ViewMouseMove -= ViewportViewMouseMoveHandler;
+            ViewModel.ViewCameraChanged -= ViewModelViewCameraChangedHandler;
+            ViewModel.ViewMouseDown -= ViewModelViewMouseDownHandler;
+            ViewModel.ViewMouseMove -= ViewModelViewMouseMoveHandler;          
+            ViewModel.RequestViewRefresh -= ViewModelRequestViewRefreshHandler;
+            WorkspaceModel.NodeRemoved -= WorkspaceModelNodeRemovedHandler;
         }
     
 
-        private void ViewportViewCameraChangedHandler(object sender, RoutedEventArgs e)
+        private void ViewModelViewCameraChangedHandler(object sender, RoutedEventArgs e)
         {
-            CameraData = Viewport.GetCameraInformation();
+            CameraData = ViewModel.GetCameraInformation();
         }
 
 
-        private void ViewportViewMouseMoveHandler(object sender, MouseEventArgs e)
+        private void ViewModelViewMouseMoveHandler(object sender, MouseEventArgs e)
         {
-            IRay clickRay = Viewport.GetClickRay(e);
+            IRay clickRay = ViewModel.GetClickRay(e);
             MouseRayOrigin = new Triple(clickRay.Origin.X, clickRay.Origin.Y, clickRay.Origin.Z);
-            MouseRayDirection = new Triple(clickRay.Direction.X, clickRay.Direction.Y, clickRay.Direction.Z);
+            MouseRayDirection = new Triple(clickRay.Direction.X, clickRay.Direction.Y, clickRay.Direction.Z); 
         }
 
 

@@ -26,6 +26,100 @@ namespace DynaShape
         public List<Goal> Goals = new List<Goal>();
         public List<GeometryBinder> GeometryBinders = new List<GeometryBinder>();
 
+        internal int HandleNodeIndex = -1;
+        internal int NearestNodeIndex = -1;
+
+        internal DsDisplay Display;
+
+
+        public Solver()
+        {
+            if (DynaShapeViewExtension.ViewModel == null) throw new Exception("Could not get access to the viewport :(");
+
+            DynaShapeViewExtension.ViewModel.ViewMouseDown += ViewportMouseDownHandler;
+            DynaShapeViewExtension.ViewModel.ViewMouseUp += ViewportMouseUpHandler;
+            DynaShapeViewExtension.ViewModel.ViewMouseMove += ViewportMouseMoveHandler;
+            DynaShapeViewExtension.ViewModel.ViewCameraChanged += ViewportCameraChangedHandler;
+            DynaShapeViewExtension.ViewModel.CanNavigateBackgroundPropertyChanged += ViewportCanNavigateBackgroundPropertyChangedHandler;
+
+            Display = new DsDisplay(this);
+        }
+
+
+        public void AddGoals(IEnumerable<Goal> goals, double nodeMergeThreshold = 0.001)
+        {
+            foreach (Goal goal in goals)
+                AddGoal(goal, nodeMergeThreshold);
+        }
+
+
+        public void AddGeometryBinders(IEnumerable<GeometryBinder> geometryBinders, double nodeMergeThreshold = 0.001)
+        {
+            foreach (GeometryBinder geometryBinder in geometryBinders)
+                AddGeometryBinder(geometryBinder, nodeMergeThreshold);
+        }
+
+
+        public void AddGoal(Goal goal, double nodeMergeThreshold = 0.001)
+        {
+            Goals.Add(goal);
+
+            if (goal.StartingPositions == null && goal.NodeIndices != null) return;
+
+            goal.NodeIndices = new int[goal.NodeCount];
+
+            for (int i = 0; i < goal.NodeCount; i++)
+            {
+                bool nodeAlreadyExist = false;
+
+                for (int j = 0; j < Nodes.Count; j++)
+                    if ((goal.StartingPositions[i] - Nodes[j].Position).LengthSquared <
+                        nodeMergeThreshold * nodeMergeThreshold)
+                    {
+                        goal.NodeIndices[i] = j;
+                        nodeAlreadyExist = true;
+                        break;
+                    }
+
+                if (!nodeAlreadyExist)
+                {
+                    Nodes.Add(new Node(goal.StartingPositions[i]));
+                    goal.NodeIndices[i] = Nodes.Count - 1;
+                }
+            }
+        }
+
+
+        public void AddGeometryBinder(GeometryBinder geometryBinder, double nodeMergeThreshold = 0.001)
+        {
+            GeometryBinders.Add(geometryBinder);
+
+            if (geometryBinder.StartingPositions == null && geometryBinder.NodeIndices != null) return;
+
+            geometryBinder.NodeIndices = new int[geometryBinder.NodeCount];
+
+            for (int i = 0; i < geometryBinder.NodeCount; i++)
+            {
+                bool nodeAlreadyExist = false;
+
+                for (int j = 0; j < Nodes.Count; j++)
+                    if ((geometryBinder.StartingPositions[i] - Nodes[j].Position).LengthSquared <
+                        nodeMergeThreshold * nodeMergeThreshold)
+                    {
+                        geometryBinder.NodeIndices[i] = j;
+                        nodeAlreadyExist = true;
+                        break;
+                    }
+
+                if (!nodeAlreadyExist)
+                {
+                    Nodes.Add(new Node(geometryBinder.StartingPositions[i]));
+                    geometryBinder.NodeIndices[i] = Nodes.Count - 1;
+                }
+            }
+        }
+
+
         public List<Triple> GetNodePositions()
         {
             List<Triple> nodePositions = new List<Triple>(Nodes.Count);
@@ -108,105 +202,11 @@ namespace DynaShape
         }
 
 
-        internal int HandleNodeIndex = -1;
-        internal int NearestNodeIndex = -1;
-
-
-
-        public Solver()
-        {
-            if (DynaShapeViewExtension.Viewport == null) throw new Exception("Could not get access to the viewport :(");
-
-            DynaShapeViewExtension.Viewport.ViewMouseDown += ViewportMouseDownHandler;
-            DynaShapeViewExtension.Viewport.ViewMouseUp += ViewportMouseUpHandler;
-            DynaShapeViewExtension.Viewport.ViewMouseMove += ViewportMouseMoveHandler;
-            DynaShapeViewExtension.Viewport.ViewCameraChanged += ViewportCameraChangedHandler;
-            DynaShapeViewExtension.Viewport.CanNavigateBackgroundPropertyChanged +=
-                ViewportCanNavigateBackgroundPropertyChangedHandler;
-
-        }
-
-
         public void Clear()
         {
             Nodes.Clear();
             Goals.Clear();
             GeometryBinders.Clear();
-
-        }
-
-
-        public void AddGoals(IEnumerable<Goal> goals, double nodeMergeThreshold = 0.001)
-        {
-            foreach (Goal goal in goals)
-                AddGoal(goal, nodeMergeThreshold);
-        }
-
-
-        public void AddGeometryBinders(IEnumerable<GeometryBinder> geometryBinders, double nodeMergeThreshold = 0.001)
-        {
-            foreach (GeometryBinder geometryBinder in geometryBinders)
-                AddGeometryBinder(geometryBinder, nodeMergeThreshold);
-        }
-
-
-        public void AddGoal(Goal goal, double nodeMergeThreshold = 0.001)
-        {
-            Goals.Add(goal);
-
-            if (goal.StartingPositions == null && goal.NodeIndices != null) return;
-
-            goal.NodeIndices = new int[goal.NodeCount];
-
-            for (int i = 0; i < goal.NodeCount; i++)
-            {
-                bool nodeAlreadyExist = false;
-
-                for (int j = 0; j < Nodes.Count; j++)
-                    if ((goal.StartingPositions[i] - Nodes[j].Position).LengthSquared <
-                        nodeMergeThreshold * nodeMergeThreshold)
-                    {
-                        goal.NodeIndices[i] = j;
-                        nodeAlreadyExist = true;
-                        break;
-                    }
-
-                if (!nodeAlreadyExist)
-                {
-                    Nodes.Add(new Node(goal.StartingPositions[i]));
-                    goal.NodeIndices[i] = Nodes.Count - 1;
-                }
-            }
-        }
-
-
-        public void AddGeometryBinder(GeometryBinder geometryBinder, double nodeMergeThreshold = 0.001)
-        {
-            GeometryBinders.Add(geometryBinder);
-
-            if (geometryBinder.StartingPositions == null && geometryBinder.NodeIndices != null) return;
-
-            geometryBinder.NodeIndices = new int[geometryBinder.NodeCount];
-
-            for (int i = 0; i < geometryBinder.NodeCount; i++)
-            {
-                bool nodeAlreadyExist = false;
-
-                for (int j = 0; j < Nodes.Count; j++)
-                    if ((geometryBinder.StartingPositions[i] - Nodes[j].Position).LengthSquared <
-                        nodeMergeThreshold * nodeMergeThreshold)
-                    {
-                        geometryBinder.NodeIndices[i] = j;
-                        nodeAlreadyExist = true;
-                        break;
-                    }
-
-                if (!nodeAlreadyExist)
-                {
-                    Nodes.Add(new Node(geometryBinder.StartingPositions[i]));
-                    geometryBinder.NodeIndices[i] = Nodes.Count - 1;
-                }
-            }
         }
 
 
@@ -335,7 +335,6 @@ namespace DynaShape
 
             Triple camX = camY.Cross(camZ).Normalise();
 
-
             Triple mousePosition2D = new Triple(
                 DynaShapeViewExtension.MouseRayDirection.Dot(camX),
                 DynaShapeViewExtension.MouseRayDirection.Dot(camY),
@@ -375,13 +374,15 @@ namespace DynaShape
 
         public void Dispose()
         {
-            if (DynaShapeViewExtension.Viewport == null) throw new Exception("Could not access theh viewport");
+            if (DynaShapeViewExtension.ViewModel == null) throw new Exception("Could not access the viewport");
 
-            DynaShapeViewExtension.Viewport.ViewMouseDown -= ViewportMouseDownHandler;
-            DynaShapeViewExtension.Viewport.ViewMouseUp -= ViewportMouseUpHandler;
-            DynaShapeViewExtension.Viewport.ViewMouseMove -= ViewportMouseMoveHandler;
-            DynaShapeViewExtension.Viewport.ViewCameraChanged -= ViewportCameraChangedHandler;
-            DynaShapeViewExtension.Viewport.CanNavigateBackgroundPropertyChanged -= ViewportCanNavigateBackgroundPropertyChangedHandler;
+            DynaShapeViewExtension.ViewModel.ViewMouseDown -= ViewportMouseDownHandler;
+            DynaShapeViewExtension.ViewModel.ViewMouseUp -= ViewportMouseUpHandler;
+            DynaShapeViewExtension.ViewModel.ViewMouseMove -= ViewportMouseMoveHandler;
+            DynaShapeViewExtension.ViewModel.ViewCameraChanged -= ViewportCameraChangedHandler;
+            DynaShapeViewExtension.ViewModel.CanNavigateBackgroundPropertyChanged -= ViewportCanNavigateBackgroundPropertyChangedHandler;
+
+            Display.Dispose();
         }
     }
 }
