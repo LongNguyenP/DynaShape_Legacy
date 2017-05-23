@@ -38,12 +38,13 @@ namespace DynaShape.ZeroTouch
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
+            
+
             if (reset)
             {
                 solver.Clear();
                 solver.AddGoals(goals);
-                if (geometryBinders != null)
-                    solver.AddGeometryBinders(geometryBinders);
+                if (geometryBinders != null) solver.AddGeometryBinders(geometryBinders);
                 solver.Display.Render();
             }
             else
@@ -61,9 +62,7 @@ namespace DynaShape.ZeroTouch
 
             return fastDisplay
                ? new Dictionary<string, object> {
-                   { "time", time},
-                   //{ "display", new DynaShapeDisplay(solver) } }
-                   { "display", null} }
+                   { "time", time}}             
                : new Dictionary<string, object> {
                    { "nodePositions", solver.GetNodePositionsAsPoints()},
                    { "geometries", solver.GetGeometries()},

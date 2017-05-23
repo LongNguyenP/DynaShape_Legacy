@@ -122,7 +122,6 @@
     <Compile Include="GeometryBinders\LineBinder.cs" />
     <Compile Include="GeometryBinders\MeshBinder.cs" />
     <Compile Include="GeometryBinders\PolylineBinder.cs" />
-    <Compile Include="GeometryRender.cs" />
     <Compile Include="Goals\AnchorGoal.cs" />
     <Compile Include="Goals\ConstantGoal.cs" />
     <Compile Include="Goals\CoLinearGoal.cs" />
