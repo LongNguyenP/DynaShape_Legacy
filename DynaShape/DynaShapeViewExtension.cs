@@ -39,7 +39,6 @@ namespace DynaShape
             ViewModel.RequestViewRefresh += ViewModelRequestViewRefreshHandler;
             p.CurrentWorkspaceChanged += CurrentWorkspaceChangedHandler;
             WorkspaceModel = p.CurrentWorkspaceModel;
-            WorkspaceModel.NodeRemoved += WorkspaceModelNodeRemovedHandler;
         }
 
 
@@ -51,12 +50,6 @@ namespace DynaShape
         private void CurrentWorkspaceChangedHandler(IWorkspaceModel workspaceModel)
         {
             WorkspaceModel = workspaceModel;
-            workspaceModel.NodeRemoved += WorkspaceModelNodeRemovedHandler;
-        }
-
-
-        private void WorkspaceModelNodeRemovedHandler(NodeModel nodeModel)
-        {
         }
 
 
@@ -84,7 +77,6 @@ namespace DynaShape
             ViewModel.ViewMouseDown -= ViewModelViewMouseDownHandler;
             ViewModel.ViewMouseMove -= ViewModelViewMouseMoveHandler;          
             ViewModel.RequestViewRefresh -= ViewModelRequestViewRefreshHandler;
-            WorkspaceModel.NodeRemoved -= WorkspaceModelNodeRemovedHandler;
         }
     
 

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Interfaces;
 using Autodesk.DesignScript.Runtime;
+using SharpDX;
 
 namespace DynaShape.GeometryBinders
 {
@@ -14,7 +14,7 @@ namespace DynaShape.GeometryBinders
     [IsVisibleInDynamoLibrary(false)]
     public abstract class GeometryBinder
     {
-        public Color Color;
+        public Color4 Color;
 
         public Triple[] StartingPositions;
         public int[] NodeIndices;
@@ -23,7 +23,7 @@ namespace DynaShape.GeometryBinders
 
         public virtual List<DesignScriptEntity> GetGeometries(List<Node> allNodes) => null;
 
-        public virtual void DrawGraphics(IRenderPackage package, TessellationParameters parameters, List<Node> allNodes)
+        public virtual void DrawGraphics(DynaShapeDisplay display, List<Node> allNodes)
         { }
         
     }

@@ -18,7 +18,7 @@ namespace DynaShape.ZeroTouch
         public static DynaShape.Solver Create()
            => new DynaShape.Solver();
 
-        [CanUpdatePeriodically(true)]
+
         [MultiReturn(
            "nodePositions",
            "goalOutputs",
@@ -44,7 +44,7 @@ namespace DynaShape.ZeroTouch
                 solver.AddGoals(goals);
                 if (geometryBinders != null)
                     solver.AddGeometryBinders(geometryBinders);
-                solver.Display.Display();
+                solver.Display.Render();
             }
             else
             {
@@ -53,7 +53,7 @@ namespace DynaShape.ZeroTouch
                 for (int i = 0; i < 30; i++)
                 {
                     solver.Step(iterations, momentum);
-                    solver.Display.Display();
+                    solver.Display.Render();
                 }
             }
 

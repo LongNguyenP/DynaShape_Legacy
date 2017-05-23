@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Interfaces;
 using Autodesk.DesignScript.Runtime;
+using SharpDX;
 
 namespace DynaShape.GeometryBinders
 {
     [IsVisibleInDynamoLibrary(false)]
     public class LineBinder : GeometryBinder
     {
-        public LineBinder(Triple startPoint, Triple endPoint, Color color)
+        public LineBinder(Triple startPoint, Triple endPoint, Color4 color)
         {
             StartingPositions = new[] { startPoint, endPoint };
             Color = color;
@@ -17,7 +17,7 @@ namespace DynaShape.GeometryBinders
 
 
         public LineBinder(Triple startPoint, Triple endPoint)
-            : this(startPoint, endPoint, GeometryRender.DefaultLineColor)
+            : this(startPoint, endPoint, DynaShapeDisplay.DefaultLineColor)
         {
         }
 
@@ -32,11 +32,9 @@ namespace DynaShape.GeometryBinders
             };
         }
 
-
-        public override void DrawGraphics(IRenderPackage package, TessellationParameters parameters, List<Node> allNodes)
+        public override void DrawGraphics(DynaShapeDisplay display, List<Node> allNodes)
         {
-            GeometryRender.DrawLine(
-                package,
+            display.DrawLine(
                 allNodes[NodeIndices[0]].Position,
                 allNodes[NodeIndices[1]].Position,
                 Color);

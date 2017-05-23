@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Runtime;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Factorization;
+using SharpDX;
+using Point = Autodesk.DesignScript.Geometry.Point;
 using Vector = Autodesk.DesignScript.Geometry.Vector;
 
 
@@ -24,6 +25,11 @@ namespace DynaShape
 
         public static bool IsNotAlmostZero(this float number, float tolerance = 1e-6f) => -number < tolerance || tolerance < number;
         public static bool IsNotAlmostZero(this double number, double tolerance = 1.0e-6) => -number < tolerance || tolerance < number;
+
+        public static Color4 ToColor4(this DSCore.Color color) 
+            => new Color4(color.Red * by255, color.Green * by255, color.Blue * by255, color.Alpha * by255);
+
+        private static float by255 = 1f / 255f;
 
         public static List<Triple> ToTriples(this IEnumerable<Point> points)
         {
@@ -56,13 +62,6 @@ namespace DynaShape
             for (int i = 0; i < array.Length; i++) array[i] = value;
         }
 
-
-        public static System.Drawing.Color ToSystemColor(this DSCore.Color color)
-            => System.Drawing.Color.FromArgb(color.Alpha, color.Red, color.Green, color.Blue);
-
-
-        public static DSCore.Color ToDynamoColor(this System.Drawing.Color color)
-            => DSCore.Color.ByARGB(color.A, color.R, color.G, color.B);
 
 
         /// <summary>

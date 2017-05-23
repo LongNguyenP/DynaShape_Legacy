@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -29,7 +28,7 @@ namespace DynaShape
         internal int HandleNodeIndex = -1;
         internal int NearestNodeIndex = -1;
 
-        internal DsDisplay Display;
+        internal DynaShapeDisplay Display;
 
 
         public Solver()
@@ -42,7 +41,7 @@ namespace DynaShape
             DynaShapeViewExtension.ViewModel.ViewCameraChanged += ViewportCameraChangedHandler;
             DynaShapeViewExtension.ViewModel.CanNavigateBackgroundPropertyChanged += ViewportCanNavigateBackgroundPropertyChangedHandler;
 
-            Display = new DsDisplay(this);
+            Display = new DynaShapeDisplay(this);
         }
 
 
