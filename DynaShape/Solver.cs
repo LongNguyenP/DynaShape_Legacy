@@ -414,7 +414,7 @@ namespace DynaShape
 
         public void Dispose()
         {
-            if (DynaShapeViewExtension.ViewModel == null) throw new Exception("Oh no, DynaShape could not get access to the viewport.Sad!");
+            if (DynaShapeViewExtension.ViewModel == null) throw new Exception("Oh no, DynaShape could not get access to the viewport. Sad!");
 
             DynaShapeViewExtension.ViewModel.ViewMouseDown -= ViewportMouseDownHandler;
             DynaShapeViewExtension.ViewModel.ViewMouseUp -= ViewportMouseUpHandler;
