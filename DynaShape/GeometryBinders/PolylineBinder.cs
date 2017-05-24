@@ -24,7 +24,7 @@ namespace DynaShape.GeometryBinders
         }
 
 
-        public override List<DesignScriptEntity> GetGeometries(List<Node> allNodes)
+        public override List<DesignScriptEntity> CreateGeometryObjects(List<Node> allNodes)
         {
             List<Point> points = new List<Point>();
             for (int i = 0; i < NodeCount; i++) points.Add(allNodes[NodeIndices[i]].Position.ToPoint());
@@ -32,7 +32,7 @@ namespace DynaShape.GeometryBinders
         }
 
 
-        public override void DrawGraphics(DynaShapeDisplay display, List<Node> allNodes)
+        public override void CreateDisplayedGeometries(DynaShapeDisplay display, List<Node> allNodes)
         {
             List<Triple> vertices = new List<Triple>();
             for (int i = 0; i < NodeCount; i++) vertices.Add(allNodes[NodeIndices[i]].Position);

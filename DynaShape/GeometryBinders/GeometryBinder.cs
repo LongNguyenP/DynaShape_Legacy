@@ -21,9 +21,9 @@ namespace DynaShape.GeometryBinders
 
         public int NodeCount => StartingPositions.Length;
 
-        public virtual List<DesignScriptEntity> GetGeometries(List<Node> allNodes) => null;
+        public virtual List<DesignScriptEntity> CreateGeometryObjects(List<Node> allNodes) => null;
 
-        public virtual void DrawGraphics(DynaShapeDisplay display, List<Node> allNodes)
+        public virtual void CreateDisplayedGeometries(DynaShapeDisplay display, List<Node> allNodes)
         { }
         
     }

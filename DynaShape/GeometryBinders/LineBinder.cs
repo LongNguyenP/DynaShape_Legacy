@@ -22,7 +22,7 @@ namespace DynaShape.GeometryBinders
         }
 
 
-        public override List<DesignScriptEntity> GetGeometries(List<Node> allNodes)
+        public override List<DesignScriptEntity> CreateGeometryObjects(List<Node> allNodes)
         {
             return new List<DesignScriptEntity>
             {
@@ -32,7 +32,7 @@ namespace DynaShape.GeometryBinders
             };
         }
 
-        public override void DrawGraphics(DynaShapeDisplay display, List<Node> allNodes)
+        public override void CreateDisplayedGeometries(DynaShapeDisplay display, List<Node> allNodes)
         {
             display.DrawLine(
                 allNodes[NodeIndices[0]].Position,

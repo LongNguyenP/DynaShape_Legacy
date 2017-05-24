@@ -26,7 +26,7 @@ namespace DynaShape.GeometryBinders
         {}
  
 
-        public override List<DesignScriptEntity> GetGeometries(List<Node> allNodes)
+        public override List<DesignScriptEntity> CreateGeometryObjects(List<Node> allNodes)
         {
             List<Point> vertices = new List<Point>(NodeCount);
             for (int i = 0; i < NodeCount; i++)
@@ -36,7 +36,7 @@ namespace DynaShape.GeometryBinders
         }
 
 
-        public override void DrawGraphics(DynaShapeDisplay display, List<Node> allNodes)
+        public override void CreateDisplayedGeometries(DynaShapeDisplay display, List<Node> allNodes)
         {
             //======================================================================
             // Compute vertex normals by averaging normals of surrounding faces
