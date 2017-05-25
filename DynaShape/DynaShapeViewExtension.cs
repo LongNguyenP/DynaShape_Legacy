@@ -7,7 +7,9 @@ using Dynamo.Wpf.Extensions;
 using Dynamo.Wpf.ViewModels.Watch3D;
 using Dynamo.Graph.Workspaces;
 using System;
+using Dynamo.Controls;
 using Dynamo.Graph.Nodes;
+using HelixToolkit.Wpf.SharpDX;
 
 
 namespace DynaShape
@@ -15,9 +17,9 @@ namespace DynaShape
     [IsVisibleInDynamoLibrary(false)]
     public class DynaShapeViewExtension : IViewExtension
     {
+        public static ViewLoadedParams Parameters;
         public static Window DynamoWindow;
         public static HelixWatch3DViewModel ViewModel;
-        public static IWorkspaceModel WorkspaceModel;
         public static CameraData CameraData;
         public static Triple MouseRayOrigin;
         public static Triple MouseRayDirection;
@@ -27,18 +29,17 @@ namespace DynaShape
         public void Startup(ViewStartupParams p) {}
 
 
-        public void Loaded(ViewLoadedParams p)
+        public void Loaded(ViewLoadedParams parameters)
         {
-            DynamoWindow = p.DynamoWindow;         
-            ViewModel = p.BackgroundPreviewViewModel as HelixWatch3DViewModel;
-            if (ViewModel == null) throw new Exception("Could not obtain HelixWatch3DViewModel");
+            Parameters = parameters;
+            DynamoWindow = parameters.DynamoWindow;         
+            ViewModel = parameters.BackgroundPreviewViewModel as HelixWatch3DViewModel;
+            if (ViewModel == null) throw new Exception("Could not obtain HelixWatch3DViewModel. Sad!");
 
             ViewModel.ViewCameraChanged += ViewModelViewCameraChangedHandler;
             ViewModel.ViewMouseDown += ViewModelViewMouseDownHandler;
             ViewModel.ViewMouseMove += ViewModelViewMouseMoveHandler;
             ViewModel.RequestViewRefresh += ViewModelRequestViewRefreshHandler;
-            p.CurrentWorkspaceChanged += CurrentWorkspaceChangedHandler;
-            WorkspaceModel = p.CurrentWorkspaceModel;
         }
 
 
@@ -47,14 +48,21 @@ namespace DynaShape
         }
 
 
-        private void CurrentWorkspaceChangedHandler(IWorkspaceModel workspaceModel)
-        {
-            WorkspaceModel = workspaceModel;
+        private void ViewModelViewMouseDownHandler(object sender, MouseButtonEventArgs e)
+        {   
         }
 
 
-        private void ViewModelViewMouseDownHandler(object sender, MouseButtonEventArgs e)
-        {   
+        internal static Viewport3DX GetViewport()
+        {
+            return
+                ((Watch3DView)
+                    ((Grid)
+                        ((Grid)
+                            DynamoWindow.Content)
+                        .Children[2])
+                    .Children[1])
+                .View;
         }
 
 

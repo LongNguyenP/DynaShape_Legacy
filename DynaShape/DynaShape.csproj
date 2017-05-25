@@ -50,6 +50,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>..\bin\DynaShape.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DSCoreNodes">
@@ -115,7 +116,6 @@
     <Compile Include="Goals\MergeGoal.cs" />
     <Compile Include="Goals\OnCurveGoal.cs" />
     <Compile Include="Goals\OnPlaneGoal.cs" />
-    <Compile Include="Solver - Copy.cs" />
     <Compile Include="ZeroTouch\GeometryBinders.cs" />
     <Compile Include="ZeroTouch\Goals.cs" />
     <Compile Include="ZeroTouch\Solver.cs" />

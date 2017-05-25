@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Timers;
 using System.Threading.Tasks;
@@ -15,6 +16,8 @@ using Microsoft.Win32;
 using ProtoCore.AST.ImperativeAST;
 using Point = Autodesk.DesignScript.Geometry.Point;
 using Vector = Autodesk.DesignScript.Geometry.Vector;
+using Dynamo.Graph.Workspaces;
+using MathNet.Numerics.LinearAlgebra.Solvers;
 
 namespace DynaShape
 {
@@ -36,31 +39,45 @@ namespace DynaShape
 
         private Thread backgroundExecutionThread;
 
+        internal List<string> Log = new List<string>();
+
         public Solver()
         {
             if (DynaShapeViewExtension.ViewModel == null) throw new Exception("Oh no, DynaShape could not get access to the Helix ViewModel. Sad!");
+
+            Display = new DynaShapeDisplay(this);
 
             DynaShapeViewExtension.ViewModel.ViewMouseDown += ViewportMouseDownHandler;
             DynaShapeViewExtension.ViewModel.ViewMouseUp += ViewportMouseUpHandler;
             DynaShapeViewExtension.ViewModel.ViewMouseMove += ViewportMouseMoveHandler;
             DynaShapeViewExtension.ViewModel.ViewCameraChanged += ViewportCameraChangedHandler;
             DynaShapeViewExtension.ViewModel.CanNavigateBackgroundPropertyChanged += ViewportCanNavigateBackgroundPropertyChangedHandler;
-
-            Display = new DynaShapeDisplay(this);
         }
 
 
         private void BackgroundExecutionAction()
         {
+            Stopwatch stopwatch = new Stopwatch();
             while (true)
-            {
-                Step(30.0);
-                if (EnableFastDisplay) Display.RenderGeometries();
+            {               
+                if (DynaShapeViewExtension.Parameters.CurrentWorkspaceModel.Nodes.Any())
+                {
+                    stopwatch.Restart();
+                    Step(25.0);
+                    Log.Add(stopwatch.Elapsed.TotalMilliseconds.ToString());
+                    if (EnableFastDisplay) Display.RenderAsync();                  
+                }
+                else
+                {
+                    Dispose();
+                    break;
+                }
             }
         }
 
         public void StartBackgroundExecution()
         {
+            Log.Clear();
             if (backgroundExecutionThread != null && backgroundExecutionThread.IsAlive) return;
             backgroundExecutionThread = new Thread(BackgroundExecutionAction) { IsBackground = true };
             backgroundExecutionThread.Start();
@@ -421,7 +438,6 @@ namespace DynaShape
             DynaShapeViewExtension.ViewModel.ViewMouseMove -= ViewportMouseMoveHandler;
             DynaShapeViewExtension.ViewModel.ViewCameraChanged -= ViewportCameraChangedHandler;
             DynaShapeViewExtension.ViewModel.CanNavigateBackgroundPropertyChanged -= ViewportCanNavigateBackgroundPropertyChangedHandler;
-
 
             Display.Dispose();
         }
