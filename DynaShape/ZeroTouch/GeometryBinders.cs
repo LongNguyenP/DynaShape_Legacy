@@ -17,7 +17,7 @@ namespace DynaShape.ZeroTouch
             return new LineBinder(
                 line.StartPoint.ToTriple(), 
                 line.EndPoint.ToTriple(), 
-                color?.ToColor4() ?? DynaShapeDisplay.DefaultLineColor);
+                color?.ToSharpDXColor() ?? DynaShapeDisplay.DefaultLineColor);
         }
 
 
@@ -29,7 +29,7 @@ namespace DynaShape.ZeroTouch
             return new LineBinder(
                 startPoint.ToTriple(), 
                 endPoint.ToTriple(),
-                color?.ToColor4() ?? DynaShapeDisplay.DefaultLineColor);
+                color?.ToSharpDXColor() ?? DynaShapeDisplay.DefaultLineColor);
         }
 
 
@@ -39,7 +39,7 @@ namespace DynaShape.ZeroTouch
         {
             return new PolylineBinder(
                 vertices.ToTriples(),
-                color?.ToColor4() ?? DynaShapeDisplay.DefaultLineColor);
+                color?.ToSharpDXColor() ?? DynaShapeDisplay.DefaultLineColor);
         }
 
 
@@ -49,13 +49,13 @@ namespace DynaShape.ZeroTouch
         {
             return new MeshBinder(
                 mesh,
-                color?.ToColor4() ?? DynaShapeDisplay.DefaultLineColor);
+                color?.ToSharpDXColor() ?? DynaShapeDisplay.DefaultLineColor);
         }
 
 
         public static GeometryBinder ChangeColor(GeometryBinder geometryBinder, Color color)
         {
-            geometryBinder.Color = color.ToColor4();
+            geometryBinder.Color = color.ToSharpDXColor();
             return geometryBinder;
         }
     }

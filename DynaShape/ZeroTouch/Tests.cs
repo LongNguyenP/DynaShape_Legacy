@@ -15,7 +15,7 @@ using DynaShape.GeometryBinders;
 using DynaShape.Goals;
 using HelixToolkit.Wpf.SharpDX;
 using HelixToolkit.Wpf.SharpDX.Core;
-using SharpDX;
+using Point = Autodesk.DesignScript.Geometry.Point;
 
 
 namespace DynaShape.ZeroTouch
@@ -34,11 +34,11 @@ namespace DynaShape.ZeroTouch
         {
             Triple[,,] points = new Triple[X, Y, Z];
             for (int i = 0; i < X; i++)
-            for (int j = 0; j < Y; j++)
-            for (int k = 0; k < Z; k++)
-            {
-                points[i, j, k] = new Triple((float) i, (float) j, (float) k);
-            }
+                for (int j = 0; j < Y; j++)
+                    for (int k = 0; k < Z; k++)
+                    {
+                        points[i, j, k] = new Triple((float) i, (float) j, (float) k);
+                    }
 
 
             List<Goal> anchorGoals = new List<Goal>();
@@ -174,23 +174,37 @@ namespace DynaShape.ZeroTouch
         }
 
 
-        private static void Foo(int i)
+        private static int t = 0;
+        private static List<IndexGroup> faces = new List<IndexGroup>();
+        private static int n = 100;
+
+        static Tests()
         {
-            Viewport3DX Viewport = (((DynaShapeViewExtension.DynamoWindow.Content as Grid).Children[2] as Grid).Children[1] as Watch3DView).View;
-            List<Model3D> SceneItems = Viewport.ItemsSource as List<Model3D>;
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < n; j++)
+                {
+                    faces.Add(IndexGroup.ByIndices((uint) (j + i * n), (uint) (j + i * n + 1), (uint) (j + i * n + 2),
+                        (uint) (j + i * n + 3)));
+                }
+        }
 
-            LineGeometry3D lines = new LineGeometry3D();
-            lines.Positions = new Vector3Collection() { new Vector3(0, 0, 0), new Vector3(5, 5, 5) };
-            lines.Indices = new IntCollection() { 0, 1 };
+        [CanUpdatePeriodically(true)]
+        public static Mesh BigMesh()
+        {
+            List<Point> points = new List<Point>();
 
-            var lineModel = new LineGeometryModel3D()
-            {
-                Geometry = lines
-            };
+            double z = 5.0 + 5.0 * Math.Cos(t++ * Math.PI * 2.0 / 30.0);
+            
+            for(int i = 0; i < n; i++)
+                for (int j = 0; j < n; j++)
+                {
+                    points.Add(Point.ByCoordinates(i, j, z));
+                    points.Add(Point.ByCoordinates(i + 1, j, z));
+                    points.Add(Point.ByCoordinates(i + 1, j + 1, z));
+                    points.Add(Point.ByCoordinates(i, j + 1, z));  
+                }
 
-            lines.Positions[0] = new Vector3(i, 0, 1);
-            lineModel.Attach(Viewport.RenderHost);
-            SceneItems.Add(lineModel); 
+            return Mesh.ByPointsFaceIndices(points, faces);
         }
     }
 }

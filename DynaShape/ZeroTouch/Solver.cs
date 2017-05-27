@@ -58,7 +58,7 @@ namespace DynaShape.ZeroTouch
                 solver.Clear();
                 solver.AddGoals(goals);
                 if (geometryBinders != null) solver.AddGeometryBinders(geometryBinders);
-                solver.Display.RenderAsync();              
+                solver.Display.Render();
             }
             else
             {
@@ -73,8 +73,7 @@ namespace DynaShape.ZeroTouch
             }
 
             return enableFastDisplay
-               ? new Dictionary<string, object> {
-                   { "nodePositions", solver.Log} }
+               ? null
                : new Dictionary<string, object> {
                    { "nodePositions", solver.GetNodePositionsAsPoints()},
                    { "goalOutputs", solver.GetGoalOutputs() },

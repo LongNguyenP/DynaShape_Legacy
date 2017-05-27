@@ -14,7 +14,7 @@ namespace DynaShape.GeometryBinders
     [IsVisibleInDynamoLibrary(false)]
     public abstract class GeometryBinder
     {
-        public Color4 Color;
+        public Color Color;
 
         public Triple[] StartingPositions;
         public int[] NodeIndices;

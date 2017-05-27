@@ -7,6 +7,7 @@ using System.Timers;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Runtime;
 using Dynamo.Wpf.ViewModels.Watch3D;
@@ -37,9 +38,10 @@ namespace DynaShape
 
         internal DynaShapeDisplay Display;
 
-        private Thread backgroundExecutionThread;
+        private Task backgroundExecutionTask;
+        //private Thread backgroundExecutionThread;     
+        private bool isBackgroundExecutionRunning = false;
 
-        internal List<string> Log = new List<string>();
 
         public Solver()
         {
@@ -52,44 +54,64 @@ namespace DynaShape
             DynaShapeViewExtension.ViewModel.ViewMouseMove += ViewportMouseMoveHandler;
             DynaShapeViewExtension.ViewModel.ViewCameraChanged += ViewportCameraChangedHandler;
             DynaShapeViewExtension.ViewModel.CanNavigateBackgroundPropertyChanged += ViewportCanNavigateBackgroundPropertyChangedHandler;
-        }
 
+            DynaShapeViewExtension.DynamoWindow.Closing += (sender, e) =>
+            {
+                StopBackgroundExecution();
+            };
+        }
 
         private void BackgroundExecutionAction()
         {
-            Stopwatch stopwatch = new Stopwatch();
-            while (true)
-            {               
-                if (DynaShapeViewExtension.Parameters.CurrentWorkspaceModel.Nodes.Any())
+            while (isBackgroundExecutionRunning)
+            {
+                // Even when the workspace is closed, the background task still runs
+                // Therefore we need to check for this case and terminate the while loop, so that the task can completed
+                if (!DynaShapeViewExtension.Parameters.CurrentWorkspaceModel.Nodes.Any())
                 {
-                    stopwatch.Restart();
-                    Step(25.0);
-                    Log.Add(stopwatch.Elapsed.TotalMilliseconds.ToString());
-                    if (EnableFastDisplay) Display.RenderAsync();                  
-                }
-                else
-                {
+                    isBackgroundExecutionRunning = false;
                     Dispose();
                     break;
                 }
+
+                Iterate(25.0);
+                if (EnableFastDisplay) Display.Render();
             }
         }
 
         public void StartBackgroundExecution()
         {
-            Log.Clear();
-            if (backgroundExecutionThread != null && backgroundExecutionThread.IsAlive) return;
-            backgroundExecutionThread = new Thread(BackgroundExecutionAction) { IsBackground = true };
-            backgroundExecutionThread.Start();
+            if (isBackgroundExecutionRunning) return;
+            isBackgroundExecutionRunning = true;
+            backgroundExecutionTask = Task.Factory.StartNew(BackgroundExecutionAction, TaskCreationOptions.LongRunning);
         }
 
 
         public void StopBackgroundExecution()
         {
-            if (backgroundExecutionThread == null) return;
-            backgroundExecutionThread.Abort();
-            while (backgroundExecutionThread.IsAlive) { }
+            if (!isBackgroundExecutionRunning) return;
+            isBackgroundExecutionRunning = false;
+            backgroundExecutionTask.Wait();
+            Display.DispatcherOperation.Task.Wait();
         }
+
+
+        //public void StartBackgroundExecution()
+        //{
+        //    if (isBackgroundExecutionRunning) return;
+        //    isBackgroundExecutionRunning = true;
+        //    backgroundExecutionThread = new Thread(BackgroundExecutionAction) { IsBackground = true };
+        //    backgroundExecutionThread.Start();
+        //}
+
+
+        //public void StopBackgroundExecution()
+        //{
+        //    if (!isBackgroundExecutionRunning) return;
+        //    isBackgroundExecutionRunning = false;
+        //    while (backgroundExecutionThread.IsAlive) { }
+        //    Display.DispatcherOperation.Task.Wait();
+        //}
 
 
         public void AddGoals(IEnumerable<Goal> goals, double nodeMergeThreshold = 0.001)
@@ -262,7 +284,7 @@ namespace DynaShape
         }
 
 
-        public void Step()
+        public void Iterate()
         {
             //=================================================================================
             // Apply momentum
@@ -334,17 +356,17 @@ namespace DynaShape
         }
 
 
-        public void Step(int iterationCount)
+        public void Iterate(int iterationCount)
         {
-            for (int i = 0; i < iterationCount; i++) Step();
+            for (int i = 0; i < iterationCount; i++) Iterate();
         }
 
 
-        public void Step(double miliseconds)
+        public void Iterate(double miliseconds)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
             while (stopwatch.Elapsed.TotalMilliseconds < miliseconds)
-                Step();
+                Iterate();
         }
 
 
@@ -431,14 +453,13 @@ namespace DynaShape
 
         public void Dispose()
         {
-            if (DynaShapeViewExtension.ViewModel == null) throw new Exception("Oh no, DynaShape could not get access to the viewport. Sad!");
-
+            StopBackgroundExecution();
+            Clear();
             DynaShapeViewExtension.ViewModel.ViewMouseDown -= ViewportMouseDownHandler;
             DynaShapeViewExtension.ViewModel.ViewMouseUp -= ViewportMouseUpHandler;
             DynaShapeViewExtension.ViewModel.ViewMouseMove -= ViewportMouseMoveHandler;
             DynaShapeViewExtension.ViewModel.ViewCameraChanged -= ViewportCameraChangedHandler;
             DynaShapeViewExtension.ViewModel.CanNavigateBackgroundPropertyChanged -= ViewportCanNavigateBackgroundPropertyChangedHandler;
-
             Display.Dispose();
         }
     }

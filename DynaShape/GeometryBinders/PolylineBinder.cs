@@ -11,7 +11,7 @@ namespace DynaShape.GeometryBinders
     [IsVisibleInDynamoLibrary(false)]
     public class PolylineBinder : GeometryBinder
     {
-        public PolylineBinder(List<Triple> vertices, Color4 color)
+        public PolylineBinder(List<Triple> vertices, Color color)
         {
             StartingPositions = vertices.ToArray();
             Color = color;

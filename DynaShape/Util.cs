@@ -26,8 +26,11 @@ namespace DynaShape
         public static bool IsNotAlmostZero(this float number, float tolerance = 1e-6f) => -number < tolerance || tolerance < number;
         public static bool IsNotAlmostZero(this double number, double tolerance = 1.0e-6) => -number < tolerance || tolerance < number;
 
-        public static Color4 ToColor4(this DSCore.Color color) 
-            => new Color4(color.Red * by255, color.Green * by255, color.Blue * by255, color.Alpha * by255);
+        public static SharpDX.Color ToSharpDXColor(this DSCore.Color color) 
+            => new SharpDX.Color(color.Red * by255, color.Green * by255, color.Blue * by255, color.Alpha * by255);
+
+        public static Vector3 ToVector3(this Triple triple)
+            => new Vector3(triple.X, triple.Z, -triple.Y);
 
         private static float by255 = 1f / 255f;
 

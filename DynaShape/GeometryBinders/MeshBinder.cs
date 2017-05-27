@@ -13,7 +13,7 @@ namespace DynaShape.GeometryBinders
         private IndexGroup[] faces = null;
 
 
-        public MeshBinder(Mesh mesh, Color4 color)
+        public MeshBinder(Mesh mesh, Color color)
         {
             StartingPositions = mesh.VertexPositions.ToTriples().ToArray();
             Color = color;

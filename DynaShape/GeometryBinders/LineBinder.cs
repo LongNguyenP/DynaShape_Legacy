@@ -9,7 +9,7 @@ namespace DynaShape.GeometryBinders
     [IsVisibleInDynamoLibrary(false)]
     public class LineBinder : GeometryBinder
     {
-        public LineBinder(Triple startPoint, Triple endPoint, Color4 color)
+        public LineBinder(Triple startPoint, Triple endPoint, Color color)
         {
             StartingPositions = new[] { startPoint, endPoint };
             Color = color;
