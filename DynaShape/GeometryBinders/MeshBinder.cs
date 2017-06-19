@@ -2,6 +2,8 @@
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Interfaces;
 using Autodesk.DesignScript.Runtime;
+using HelixToolkit.Wpf.SharpDX;
+using HelixToolkit.Wpf.SharpDX.Core;
 using SharpDX;
 using Point = Autodesk.DesignScript.Geometry.Point;
 
@@ -23,7 +25,8 @@ namespace DynaShape.GeometryBinders
 
         public MeshBinder(Mesh mesh) 
             : this(mesh, DynaShapeDisplay.DefaultMeshFaceColor)
-        {}
+        {
+        }
  
 
         public override List<DesignScriptEntity> CreateGeometryObjects(List<Node> allNodes)
@@ -74,54 +77,32 @@ namespace DynaShape.GeometryBinders
             // Render mesh triangles, using vertex normals computed above
             //===============================================================
 
+            MeshGeometry3D meshGeometry = display.meshGeometry;
+
+            for (int i = 0; i < NodeCount; i++)
+            {
+                meshGeometry.Positions.Add(allNodes[NodeIndices[i]].Position.ToVector3());
+                meshGeometry.Normals.Add(vertexNormals[i].ToVector3());
+            }
+
             foreach (IndexGroup face in faces)
             {
-                Triple A = allNodes[NodeIndices[face.A]].Position;
-                Triple B = allNodes[NodeIndices[face.B]].Position;
-                Triple C = allNodes[NodeIndices[face.C]].Position;
-
-                Triple nA = vertexNormals[face.A];
-                Triple nB = vertexNormals[face.B];
-                Triple nC = vertexNormals[face.C];
-
-                //package.AddTriangleVertex(A.X, A.Y, A.Z);
-                //package.AddTriangleVertex(B.X, B.Y, B.Z);
-                //package.AddTriangleVertex(C.X, C.Y, C.Z);
-
-                //package.AddTriangleVertexNormal(nA.X, nA.Y, nA.Z);
-                //package.AddTriangleVertexNormal(nB.X, nB.Y, nB.Z);
-                //package.AddTriangleVertexNormal(nC.X, nC.Y, nC.Z);              
-
-                //package.AddTriangleVertexColor(Color.R, Color.G, Color.B, Color.A);
-                //package.AddTriangleVertexColor(Color.R, Color.G, Color.B, Color.A);
-                //package.AddTriangleVertexColor(Color.R, Color.G, Color.B, Color.A);
-
-                //package.AddTriangleVertexUV(0.0, 0.0);
-                //package.AddTriangleVertexUV(0.0, 0.0);
-                //package.AddTriangleVertexUV(0.0, 0.0);
+                meshGeometry.Indices.Add((int)face.A);
+                meshGeometry.Indices.Add((int)face.B);
+                meshGeometry.Indices.Add((int)face.C);
 
                 if (face.D == uint.MaxValue) continue;
 
-                Triple D = allNodes[NodeIndices[face.D]].Position;
-                Triple nD = vertexNormals[face.D];
-
-                //package.AddTriangleVertex(A.X, A.Y, A.Z);               
-                //package.AddTriangleVertex(C.X, C.Y, C.Z);
-                //package.AddTriangleVertex(D.X, D.Y, D.Z);
-
-                //package.AddTriangleVertexNormal(nA.X, nA.Y, nA.Z);
-                //package.AddTriangleVertexNormal(nC.X, nC.Y, nC.Z);
-                //package.AddTriangleVertexNormal(nD.X, nD.Y, nD.Z);
-                
-                //package.AddTriangleVertexColor(Color.R, Color.G, Color.B, Color.A);
-                //package.AddTriangleVertexColor(Color.R, Color.G, Color.B, Color.A);
-                //package.AddTriangleVertexColor(Color.R, Color.G, Color.B, Color.A);
-
-                //package.AddTriangleVertexUV(0.0, 0.0);
-                //package.AddTriangleVertexUV(0.0, 0.0);
-                //package.AddTriangleVertexUV(0.0, 0.0);
-
+                meshGeometry.Indices.Add((int)face.A);
+                meshGeometry.Indices.Add((int)face.C);
+                meshGeometry.Indices.Add((int)face.D);
             }
+
+            //display.AddMeshModel(
+            //    new MeshGeometryModel3D {
+            //        Geometry = meshGeometry,
+            //        Material = new PhongMaterial {
+            //            DiffuseColor = DynaShapeDisplay.DefaultMeshFaceColor}});
         }
     }
 }

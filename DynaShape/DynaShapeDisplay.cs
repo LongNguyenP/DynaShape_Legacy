@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,23 +28,26 @@ namespace DynaShape
         public static Color DefaultLineColor = new Color(0.3f, 0.7f, 0.8f, 1f);
         public static Color DefaultMeshFaceColor = new Color(0, 0.7f, 1f, 0.3f);
 
+        public static DebugDashboard debugDashboard = new DebugDashboard();
+
+
         private readonly Solver solver;
 
         private PointGeometryModel3D pointModel;
         private LineGeometryModel3D lineModel;
-        private MeshGeometryModel3D meshModel;
+        public MeshGeometryModel3D meshModel;
 
         private PointGeometry3D pointGeometry;
         private LineGeometry3D lineGeometry;
-        private MeshGeometry3D meshGeometry;
+        public MeshGeometry3D meshGeometry;
+
+        //private List<MeshGeometryModel3D> meshModels;
 
         internal DispatcherOperation DispatcherOperation;
 
         public DynaShapeDisplay(Solver solver)
         {
             this.solver = solver;
-
-            InitializeGeometries();
 
             DynaShapeViewExtension.DynamoWindow.Dispatcher.Invoke(
                 () =>
@@ -56,17 +60,21 @@ namespace DynaShape
                     };
 
 
-                    lineModel = new LineGeometryModel3D()
+                    lineModel = new LineGeometryModel3D
                     {
                         Thickness = 0.5,
                         Color = Color.White,
                     };
 
 
-                    meshModel = new MeshGeometryModel3D()
+                    meshModel = new MeshGeometryModel3D
                     {
+                        Material = new PhongMaterial
+                        {
+                            DiffuseColor = DynaShapeDisplay.DefaultMeshFaceColor
+                        }
                     };
-                },
+                },   
                 DispatcherPriority.Send);
 
             DynaShapeViewExtension.ViewModel.RequestViewRefresh += RequestViewRefreshHandler;
@@ -101,6 +109,12 @@ namespace DynaShape
         }
 
 
+        //public void AddMeshModel(MeshGeometryModel3D meshModel)
+        //{
+        //    meshModels.Add(meshModel);
+        //}
+
+
         internal void Render(bool async = false)
         {
             if (async)
@@ -113,8 +127,13 @@ namespace DynaShape
         }
 
 
-        private void InitializeGeometries()
+        
+
+        private void RenderAction()
         {
+            Viewport3DX viewport = DynaShapeViewExtension.GetViewport();
+            List<Model3D> sceneItems = viewport.ItemsSource as List<Model3D>;
+
             pointGeometry = new PointGeometry3D
             {
                 Positions = new Vector3Collection(),
@@ -132,18 +151,12 @@ namespace DynaShape
             meshGeometry = new MeshGeometry3D()
             {
                 Positions = new Vector3Collection(),
+                Normals = new Vector3Collection(),
                 Indices = new IntCollection(),
-                Colors = new Color4Collection()
+                //Colors = new Color4Collection()
             };
-        }
 
-
-        private void RenderAction()
-        {
-            Viewport3DX viewport = DynaShapeViewExtension.GetViewport();
-            List<Model3D> sceneItems = viewport.ItemsSource as List<Model3D>;
-
-            InitializeGeometries();
+            //meshModels = new List<MeshGeometryModel3D>();
 
 
             //============================================
@@ -159,7 +172,6 @@ namespace DynaShape
 
                 pointGeometry.Colors.Add(new Color4(0.8f, 0.2f, 0.2f, 1f));
                 pointGeometry.Indices.Add(i);
-
             }
 
 
@@ -184,7 +196,7 @@ namespace DynaShape
 
             pointModel.Geometry = pointGeometry;
             lineModel.Geometry = lineGeometry;
-            //meshModel.Geometry = meshGeometry;
+            meshModel.Geometry = meshGeometry;
 
 
             if (pointGeometry.Positions.Count >= 1)
@@ -199,15 +211,33 @@ namespace DynaShape
                 if (!lineModel.IsAttached) lineModel.Attach(viewport.RenderHost);
                 if (!sceneItems.Contains(lineModel)) sceneItems.Add(lineModel);
             }
-       
 
-            //if (meshGeometry.Positions.Count >= 3)
-            //{
-            //    if (!meshModel.IsAttached) meshModel.Attach(viewport.RenderHost);
-            //    if (!sceneItems.Contains(meshModel)) sceneItems.Add(meshModel);
-            //}
+
+            //foreach (MeshGeometryModel3D meshModel in meshModels)
+            //    if (meshModel.Geometry.Positions.Count >= 3)
+            //    {
+            //        meshModel.Attach(viewport.RenderHost);
+            //        if (!sceneItems.Contains(meshModel)) sceneItems.Add(meshModel);
+            //    }
+
+            if (meshModel.Geometry.Positions.Count >= 3)
+            {
+                Console.WriteLine(counter + ": " + meshModel.IsAttached + ", " + sceneItems.Contains(meshModel) + "\n");
+
+                var a = meshModel.IsAttached;
+                var b = sceneItems.Contains(meshModel);
+
+                if (!meshModel.IsAttached) meshModel.Attach(viewport.RenderHost);
+                if (!sceneItems.Contains(meshModel)) sceneItems.Add(meshModel);
+            }
+
+            
         }
 
+
+        private int counter = 0;
+        private Stopwatch stopwatch = Stopwatch.StartNew();
+        private bool temp = true;
 
         private void RenderGUI()
         {
@@ -229,7 +259,7 @@ namespace DynaShape
                 float screenDistance = (float)camera.NearPlaneDistance + 0.1f;
                 v = camOrigin + v * screenDistance / v.Dot(camZ);
 
-                float markerSize = 0.03f * screenDistance;
+                float markerSize = 0.025f * screenDistance;
 
                 Triple v1 = v + camX * markerSize;
                 Triple v2 = v - camY * markerSize;
@@ -241,7 +271,7 @@ namespace DynaShape
                 lineGeometry.Positions.Add(v2.ToVector3());
                 lineGeometry.Positions.Add(v4.ToVector3());
 
-                markerSize *= 0.45f;
+                markerSize *= 0.5f;
                 v1 = v + camX * markerSize;
                 v2 = v - camY * markerSize;
                 v3 = v - camX * markerSize;
@@ -283,20 +313,26 @@ namespace DynaShape
                 lineModel.Detach();
                 lineModel.Dispose();
 
-                if (sceneItems.Contains(meshModel)) sceneItems.Remove(meshModel);
-                meshModel.Detach();
-                meshModel.Dispose();
+                //foreach (MeshGeometryModel3D meshModel in meshModels)
+                //{
+                    //if (sceneItems.Contains(meshModel)) sceneItems.Remove(meshModel);
+                    //meshModel.Detach();
+                    //meshModel.Dispose();
+                //}
             });
         }
 
-
+        // This handler prevents flickering when geometries other than DynaShape ones exist in the viewport
         private void RequestViewRefreshHandler()
         {
             List<Model3D> sceneItems = DynaShapeViewExtension.ViewModel.SceneItems as List<Model3D>;
 
             if (pointGeometry.Positions.Count >= 1 && !sceneItems.Contains(pointModel)) sceneItems.Add(pointModel);
             if (lineGeometry.Positions.Count >= 2 && !sceneItems.Contains(lineModel)) sceneItems.Add(lineModel);
-            //if (meshGeometry.Positions.Count >= 3 && !sceneItems.Contains(meshModel)) sceneItems.Add(meshModel);
+            //foreach (MeshGeometryModel3D meshModel in meshModels)
+            //    if (meshModel.Geometry.Positions.Count >= 3 && !sceneItems.Contains(meshModel)) sceneItems.Add(meshModel);
+
+            if (meshModel.Geometry.Positions.Count >= 3 && !sceneItems.Contains(meshModel)) sceneItems.Add(meshModel);
         }
     }
 }

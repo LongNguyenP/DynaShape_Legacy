@@ -38,8 +38,7 @@ namespace DynaShape
 
         internal DynaShapeDisplay Display;
 
-        private Task backgroundExecutionTask;
-        //private Thread backgroundExecutionThread;     
+        private Task backgroundExecutionTask;    
         private bool isBackgroundExecutionRunning = false;
 
 
@@ -93,26 +92,8 @@ namespace DynaShape
             isBackgroundExecutionRunning = false;
             backgroundExecutionTask.Wait();
             Display.DispatcherOperation.Task.Wait();
+
         }
-
-
-        //public void StartBackgroundExecution()
-        //{
-        //    if (isBackgroundExecutionRunning) return;
-        //    isBackgroundExecutionRunning = true;
-        //    backgroundExecutionThread = new Thread(BackgroundExecutionAction) { IsBackground = true };
-        //    backgroundExecutionThread.Start();
-        //}
-
-
-        //public void StopBackgroundExecution()
-        //{
-        //    if (!isBackgroundExecutionRunning) return;
-        //    isBackgroundExecutionRunning = false;
-        //    while (backgroundExecutionThread.IsAlive) { }
-        //    Display.DispatcherOperation.Task.Wait();
-        //}
-
 
         public void AddGoals(IEnumerable<Goal> goals, double nodeMergeThreshold = 0.001)
         {
@@ -351,7 +332,7 @@ namespace DynaShape
                 {
                     Triple move = nodeMoveSums[i] / nodeWeightSums[i];
                     Nodes[i].Position += move;
-                    if (Nodes[i].Velocity.Dot(move) < 0.0) Nodes[i].Velocity *= 0.9f;
+                    Nodes[i].Velocity = Triple.Zero;
                 }
         }
 

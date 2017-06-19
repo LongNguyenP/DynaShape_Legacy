@@ -49,7 +49,7 @@ namespace DynaShape.ZeroTouch
         {
             return new MeshBinder(
                 mesh,
-                color?.ToSharpDXColor() ?? DynaShapeDisplay.DefaultLineColor);
+                color?.ToSharpDXColor() ?? DynaShapeDisplay.DefaultMeshFaceColor);
         }
 
 
