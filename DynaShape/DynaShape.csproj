@@ -54,23 +54,23 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DSCoreNodes">
-      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.2\DSCoreNodes.dll</HintPath>
+      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.3\DSCoreNodes.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DynamoCore">
-      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.2\DynamoCore.dll</HintPath>
+      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.3\DynamoCore.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DynamoCoreWpf">
-      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.2\DynamoCoreWpf.dll</HintPath>
+      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.3\DynamoCoreWpf.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DynamoServices">
-      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.2\DynamoServices.dll</HintPath>
+      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.3\DynamoServices.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="HelixToolkit.Wpf.SharpDX">
-      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.2\HelixToolkit.Wpf.SharpDX.dll</HintPath>
+      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.3\HelixToolkit.Wpf.SharpDX.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="MathNet.Numerics, Version=3.19.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -79,23 +79,23 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="ProtoCore">
-      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.2\ProtoCore.dll</HintPath>
+      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.3\ProtoCore.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ProtoGeometry">
-      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.2\ProtoGeometry.dll</HintPath>
+      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.3\ProtoGeometry.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX">
-      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.2\SharpDX.dll</HintPath>
+      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.3\SharpDX.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX.Direct3D11">
-      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.2\SharpDX.Direct3D11.dll</HintPath>
+      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.3\SharpDX.Direct3D11.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX.Direct3D11.Effects">
-      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.2\SharpDX.Direct3D11.Effects.dll</HintPath>
+      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.3\SharpDX.Direct3D11.Effects.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />

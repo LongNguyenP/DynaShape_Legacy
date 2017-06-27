@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 using Autodesk.DesignScript.Interfaces;
@@ -14,6 +15,7 @@ using DynaShape.GeometryBinders;
 using HelixToolkit.Wpf.SharpDX;
 using HelixToolkit.Wpf.SharpDX.Core;
 using SharpDX;
+using Application = System.Windows.Application;
 using Geometry3D = HelixToolkit.Wpf.SharpDX.Geometry3D;
 using MeshGeometry3D = HelixToolkit.Wpf.SharpDX.MeshGeometry3D;
 using Model3D = HelixToolkit.Wpf.SharpDX.Model3D;
@@ -28,6 +30,7 @@ namespace DynaShape
         public static Color DefaultLineColor = new Color(0.3f, 0.7f, 0.8f, 1f);
         public static Color DefaultMeshFaceColor = new Color(0, 0.7f, 1f, 0.3f);
 
+
         public static DebugDashboard debugDashboard = new DebugDashboard();
 
 
@@ -35,13 +38,11 @@ namespace DynaShape
 
         private PointGeometryModel3D pointModel;
         private LineGeometryModel3D lineModel;
-        public MeshGeometryModel3D meshModel;
 
         private PointGeometry3D pointGeometry;
         private LineGeometry3D lineGeometry;
-        public MeshGeometry3D meshGeometry;
 
-        //private List<MeshGeometryModel3D> meshModels;
+        private List<MeshGeometryModel3D> meshModels = new List<MeshGeometryModel3D>();
 
         internal DispatcherOperation DispatcherOperation;
 
@@ -66,23 +67,50 @@ namespace DynaShape
                         Color = Color.White,
                     };
 
+                    List<string> info1 = new List<string>();
+                    foo(DynaShapeViewExtension.DynamoWindow.Content, info1, 0);
 
-                    meshModel = new MeshGeometryModel3D
-                    {
-                        Material = new PhongMaterial
-                        {
-                            DiffuseColor = DynaShapeDisplay.DefaultMeshFaceColor
-                        }
-                    };
-                },   
+                    List<string> info2 = new List<string>();
+                    ListContent(DynaShapeViewExtension.DynamoWindow.Content as Grid, 0, info2);
+                },
                 DispatcherPriority.Send);
 
             DynaShapeViewExtension.ViewModel.RequestViewRefresh += RequestViewRefreshHandler;
 
             DispatcherOperation = DynaShapeViewExtension.DynamoWindow.Dispatcher.InvokeAsync(() => { });
             while (DispatcherOperation.Status != DispatcherOperationStatus.Completed) { }
+
+            DynaShapeViewExtension.DynamoWindow.Closed += (sender, args) =>
+            {
+                Dispose();
+            };
         }
 
+        private void foo(object o, List<string> info, int indent)
+        {
+            if (!(o is Grid))
+            {
+                string pad = "";
+                for (int i = 0; i < indent; i++) pad += "  ";
+                info.Add(pad + o.GetType());
+                return;
+            }
+
+            foreach (object element in (o as Grid).Children)
+                foo(element, info, indent + 1);
+        }
+
+        private void ListContent(Grid grid, int level, List<string> info)
+        {
+            foreach (var element in grid.Children)
+            {
+                string indent = "";
+                for (int i = 0; i < level; i++) indent += "   ";
+                info.Add(indent + element.GetType() + " == " + element);
+                if (element is Grid)
+                    ListContent(element as Grid, level + 1, info);
+            }
+        }
 
         public void DrawLine(Triple start, Triple end, Color4 color)
         {
@@ -109,10 +137,10 @@ namespace DynaShape
         }
 
 
-        //public void AddMeshModel(MeshGeometryModel3D meshModel)
-        //{
-        //    meshModels.Add(meshModel);
-        //}
+        public void AddMeshModel(MeshGeometryModel3D meshModel)
+        {
+            meshModels.Add(meshModel);
+        }
 
 
         internal void Render(bool async = false)
@@ -148,15 +176,14 @@ namespace DynaShape
                 Colors = new Color4Collection()
             };
 
-            meshGeometry = new MeshGeometry3D()
-            {
-                Positions = new Vector3Collection(),
-                Normals = new Vector3Collection(),
-                Indices = new IntCollection(),
-                //Colors = new Color4Collection()
-            };
 
-            //meshModels = new List<MeshGeometryModel3D>();
+            foreach (MeshGeometryModel3D meshModel in meshModels)
+            {
+                meshModel.Detach();
+                if (sceneItems.Contains(meshModel)) sceneItems.Remove(meshModel);
+            }
+
+            meshModels = new List<MeshGeometryModel3D>();
 
 
             //============================================
@@ -194,50 +221,41 @@ namespace DynaShape
             // Attach the geometries to Helix render host
             //==============================================================
 
-            pointModel.Geometry = pointGeometry;
-            lineModel.Geometry = lineGeometry;
-            meshModel.Geometry = meshGeometry;
-
 
             if (pointGeometry.Positions.Count >= 1)
             {
+                pointModel.Geometry = pointGeometry;
                 if (!pointModel.IsAttached) pointModel.Attach(viewport.RenderHost);
                 if (!sceneItems.Contains(pointModel)) sceneItems.Add(pointModel);
+            }
+            else
+            {
+                pointModel.Detach();
+                if (sceneItems.Contains(pointModel)) sceneItems.Remove(pointModel);
             }
 
 
             if (lineGeometry.Positions.Count >= 2)
             {
+                lineModel.Geometry = lineGeometry;
                 if (!lineModel.IsAttached) lineModel.Attach(viewport.RenderHost);
                 if (!sceneItems.Contains(lineModel)) sceneItems.Add(lineModel);
             }
-
-
-            //foreach (MeshGeometryModel3D meshModel in meshModels)
-            //    if (meshModel.Geometry.Positions.Count >= 3)
-            //    {
-            //        meshModel.Attach(viewport.RenderHost);
-            //        if (!sceneItems.Contains(meshModel)) sceneItems.Add(meshModel);
-            //    }
-
-            if (meshModel.Geometry.Positions.Count >= 3)
+            else
             {
-                Console.WriteLine(counter + ": " + meshModel.IsAttached + ", " + sceneItems.Contains(meshModel) + "\n");
-
-                var a = meshModel.IsAttached;
-                var b = sceneItems.Contains(meshModel);
-
-                if (!meshModel.IsAttached) meshModel.Attach(viewport.RenderHost);
-                if (!sceneItems.Contains(meshModel)) sceneItems.Add(meshModel);
+                lineModel.Detach();
+                if (sceneItems.Contains(lineModel)) sceneItems.Remove(lineModel);
             }
 
-            
+
+            foreach (MeshGeometryModel3D meshModel in meshModels)
+                if (meshModel.Geometry.Positions.Count >= 3)
+                {
+                    meshModel.Attach(viewport.RenderHost);
+                    sceneItems.Add(meshModel);
+                }
         }
 
-
-        private int counter = 0;
-        private Stopwatch stopwatch = Stopwatch.StartNew();
-        private bool temp = true;
 
         private void RenderGUI()
         {
@@ -313,12 +331,12 @@ namespace DynaShape
                 lineModel.Detach();
                 lineModel.Dispose();
 
-                //foreach (MeshGeometryModel3D meshModel in meshModels)
-                //{
-                    //if (sceneItems.Contains(meshModel)) sceneItems.Remove(meshModel);
-                    //meshModel.Detach();
-                    //meshModel.Dispose();
-                //}
+                foreach (MeshGeometryModel3D meshModel in meshModels)
+                {
+                    if (sceneItems.Contains(meshModel)) sceneItems.Remove(meshModel);
+                    meshModel.Detach();
+                    meshModel.Dispose();
+                }
             });
         }
 
@@ -329,10 +347,8 @@ namespace DynaShape
 
             if (pointGeometry.Positions.Count >= 1 && !sceneItems.Contains(pointModel)) sceneItems.Add(pointModel);
             if (lineGeometry.Positions.Count >= 2 && !sceneItems.Contains(lineModel)) sceneItems.Add(lineModel);
-            //foreach (MeshGeometryModel3D meshModel in meshModels)
-            //    if (meshModel.Geometry.Positions.Count >= 3 && !sceneItems.Contains(meshModel)) sceneItems.Add(meshModel);
-
-            if (meshModel.Geometry.Positions.Count >= 3 && !sceneItems.Contains(meshModel)) sceneItems.Add(meshModel);
+            foreach (MeshGeometryModel3D meshModel in meshModels)
+                if (meshModel.Geometry.Positions.Count >= 3 && !sceneItems.Contains(meshModel)) sceneItems.Add(meshModel);
         }
     }
 }

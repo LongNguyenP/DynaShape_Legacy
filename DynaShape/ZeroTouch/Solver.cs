@@ -38,6 +38,7 @@ namespace DynaShape.ZeroTouch
         /// <param name="enableManipulation">Enable manipulation of the nodes in the background view with mouse</param>
         /// <returns></returns>
         [MultiReturn("nodePositions", "goalOutputs", "geometries")]
+        [CanUpdatePeriodically(true)]
         public static Dictionary<string, object> Execute(
            DynaShape.Solver solver,
            List<Goal> goals,
@@ -66,16 +67,18 @@ namespace DynaShape.ZeroTouch
                 solver.EnableMomentum = enableMomentum;
                 solver.EnableFastDisplay = enableFastDisplay;
 
-                if (execute)
-                    solver.StartBackgroundExecution();
+                if (execute) solver.StartBackgroundExecution();
                 else
+                {
                     solver.StopBackgroundExecution();
+                    if (!enableFastDisplay) solver.Iterate();
+                }              
             }
 
             return enableFastDisplay
                ? null
                : new Dictionary<string, object> {
-                   { "nodePositions", solver.GetNodePositionsAsPoints()},
+                   { "nodePositions", solver.GetStructuredNodePositionsAsPoints() },
                    { "goalOutputs", solver.GetGoalOutputs() },
                    { "geometries", solver.GetGeometries()} };
         }

@@ -77,13 +77,20 @@ namespace DynaShape.GeometryBinders
             // Render mesh triangles, using vertex normals computed above
             //===============================================================
 
-            MeshGeometry3D meshGeometry = display.meshGeometry;
+            MeshGeometry3D meshGeometry = new MeshGeometry3D()
+            {
+                Positions = new Vector3Collection(),
+                Normals = new Vector3Collection(),
+                Indices = new IntCollection(),
+            };
+
 
             for (int i = 0; i < NodeCount; i++)
             {
                 meshGeometry.Positions.Add(allNodes[NodeIndices[i]].Position.ToVector3());
                 meshGeometry.Normals.Add(vertexNormals[i].ToVector3());
             }
+
 
             foreach (IndexGroup face in faces)
             {
@@ -98,11 +105,12 @@ namespace DynaShape.GeometryBinders
                 meshGeometry.Indices.Add((int)face.D);
             }
 
-            //display.AddMeshModel(
-            //    new MeshGeometryModel3D {
-            //        Geometry = meshGeometry,
-            //        Material = new PhongMaterial {
-            //            DiffuseColor = DynaShapeDisplay.DefaultMeshFaceColor}});
+            display.AddMeshModel(
+                new MeshGeometryModel3D
+                {
+                    Geometry = meshGeometry,
+                    Material = new PhongMaterial { DiffuseColor = Color },                
+                });
         }
     }
 }

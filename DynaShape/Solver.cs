@@ -92,7 +92,6 @@ namespace DynaShape
             isBackgroundExecutionRunning = false;
             backgroundExecutionTask.Wait();
             Display.DispatcherOperation.Task.Wait();
-
         }
 
         public void AddGoals(IEnumerable<Goal> goals, double nodeMergeThreshold = 0.001)
