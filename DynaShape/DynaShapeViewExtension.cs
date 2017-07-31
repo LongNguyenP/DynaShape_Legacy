@@ -40,12 +40,6 @@ namespace DynaShape
             ViewModel.ViewMouseDown += ViewModelViewMouseDownHandler;
             ViewModel.ViewMouseMove += ViewModelViewMouseMoveHandler;
             ViewModel.RequestViewRefresh += ViewModelRequestViewRefreshHandler;
-
-
-            DynaShapeViewExtension.DynamoWindow.Closing += (sender, args) =>
-            {
-                var boo = args;
-            };
         }
 
         private void foo(object o, List<string> info, int indent)
@@ -82,19 +76,6 @@ namespace DynaShape
                         .Children[2])
                     .Children[1])
                 .View;
-        }
-
-
-        private void ListContent(Grid grid, int level, List<string> info)
-        {
-            foreach (var element in grid.Children)
-            {
-                string indent = "";
-                for (int i = 0; i < level; i++) indent += "   ";
-                info.Add(indent + element.GetType() + " == " + element);
-                if (element is Grid)
-                    ListContent(element as Grid, level + 1, info);
-            }
         }
 
 

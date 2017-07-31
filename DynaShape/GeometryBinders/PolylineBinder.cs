@@ -11,24 +11,27 @@ namespace DynaShape.GeometryBinders
     [IsVisibleInDynamoLibrary(false)]
     public class PolylineBinder : GeometryBinder
     {
-        public PolylineBinder(List<Triple> vertices, Color color)
+        public bool Loop;
+
+        public PolylineBinder(List<Triple> vertices, Color color, bool loop = false)
         {
-            StartingPositions = vertices.ToArray();
+            StartingPositions = vertices.ToArray();           
             Color = color;
+            Loop = loop;
         }
 
 
-        public PolylineBinder(List<Triple> vertices)
-            :this(vertices, DynaShapeDisplay.DefaultLineColor)
+        public PolylineBinder(List<Triple> vertices, bool loop = false)
+            :this(vertices, DynaShapeDisplay.DefaultLineColor, loop)
         {
         }
 
-
-        public override List<DesignScriptEntity> CreateGeometryObjects(List<Node> allNodes)
+        
+        public override List<object> CreateGeometryObjects(List<Node> allNodes)
         {
             List<Point> points = new List<Point>();
             for (int i = 0; i < NodeCount; i++) points.Add(allNodes[NodeIndices[i]].Position.ToPoint());
-            return new List<DesignScriptEntity> { PolyCurve.ByPoints(points) };
+            return new List<object> { PolyCurve.ByPoints(points, Loop) };
         }
 
 
@@ -36,7 +39,7 @@ namespace DynaShape.GeometryBinders
         {
             List<Triple> vertices = new List<Triple>();
             for (int i = 0; i < NodeCount; i++) vertices.Add(allNodes[NodeIndices[i]].Position);
-            display.DrawPolyline(vertices, Color);
+            display.DrawPolyline(vertices, Color, Loop);
         }
     }
 }

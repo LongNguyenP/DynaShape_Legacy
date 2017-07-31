@@ -7,20 +7,15 @@ using System.Windows.Threading;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Interfaces;
 using Autodesk.DesignScript.Runtime;
-using Dynamo.Controls;
-using Dynamo.Wpf.Rendering;
-using Dynamo.Wpf.ViewModels.Watch3D;
 using DynaShape;
 using DynaShape.GeometryBinders;
 using DynaShape.Goals;
-using HelixToolkit.Wpf.SharpDX;
-using HelixToolkit.Wpf.SharpDX.Core;
-using Point = Autodesk.DesignScript.Geometry.Point;
 
+using Mesh = Autodesk.Dynamo.MeshToolkit.Mesh;
 
 namespace DynaShape.ZeroTouch
 {
-    public static class Tests
+    public static class TestingUtilities
     {
         /// <summary>
         /// This is a quick test setup for shape matching goals. Here we create a 3D grid of cubes, and apply a shape matching goal on each cube to force them maintain their intial unit-cube shape
@@ -161,50 +156,7 @@ namespace DynaShape.ZeroTouch
             };
         }
 
+
         
-
-        private static int counter = 0;
-
-        [CanUpdatePeriodically(true)]
-        public static int MovingPoint(bool reset)
-        {
-            if (reset) counter = 0;
-
-            return counter++;
-        }
-
-
-        private static int t = 0;
-        private static List<IndexGroup> faces = new List<IndexGroup>();
-        private static int n = 100;
-
-        static Tests()
-        {
-            for (int i = 0; i < n; i++)
-                for (int j = 0; j < n; j++)
-                {
-                    faces.Add(IndexGroup.ByIndices((uint) (j + i * n), (uint) (j + i * n + 1), (uint) (j + i * n + 2),
-                        (uint) (j + i * n + 3)));
-                }
-        }
-
-        [CanUpdatePeriodically(true)]
-        public static Mesh BigMesh()
-        {
-            List<Point> points = new List<Point>();
-
-            double z = 5.0 + 5.0 * Math.Cos(t++ * Math.PI * 2.0 / 30.0);
-            
-            for(int i = 0; i < n; i++)
-                for (int j = 0; j < n; j++)
-                {
-                    points.Add(Point.ByCoordinates(i, j, z));
-                    points.Add(Point.ByCoordinates(i + 1, j, z));
-                    points.Add(Point.ByCoordinates(i + 1, j + 1, z));
-                    points.Add(Point.ByCoordinates(i, j + 1, z));  
-                }
-
-            return Mesh.ByPointsFaceIndices(points, faces);
-        }
     }
 }

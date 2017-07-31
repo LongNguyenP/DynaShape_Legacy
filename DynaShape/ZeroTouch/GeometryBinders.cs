@@ -34,12 +34,14 @@ namespace DynaShape.ZeroTouch
 
 
         public static PolylineBinder PolylineBinder(
-            List<Point> vertices,
-            [DefaultArgument("null")] Color color)
+            List<Point> vertices,          
+            [DefaultArgument("null")] Color color,
+            [DefaultArgument("false")] bool loop)
         {
             return new PolylineBinder(
                 vertices.ToTriples(),
-                color?.ToSharpDXColor() ?? DynaShapeDisplay.DefaultLineColor);
+                color?.ToSharpDXColor() ?? DynaShapeDisplay.DefaultLineColor, 
+                loop);
         }
 
 

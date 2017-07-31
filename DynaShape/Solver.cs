@@ -18,6 +18,7 @@ using ProtoCore.AST.ImperativeAST;
 using Point = Autodesk.DesignScript.Geometry.Point;
 using Vector = Autodesk.DesignScript.Geometry.Vector;
 using Dynamo.Graph.Workspaces;
+using Dynamo.Scheduler;
 using MathNet.Numerics.LinearAlgebra.Solvers;
 
 namespace DynaShape
@@ -38,8 +39,9 @@ namespace DynaShape
 
         internal DynaShapeDisplay Display;
 
-        private Task backgroundExecutionTask;    
-        private bool isBackgroundExecutionRunning = false;
+        private Task backgroundExecutionTask = new Task(() => {});
+
+        public int IterationCount = -1;
 
 
         public Solver()
@@ -53,46 +55,46 @@ namespace DynaShape
             DynaShapeViewExtension.ViewModel.ViewMouseMove += ViewportMouseMoveHandler;
             DynaShapeViewExtension.ViewModel.ViewCameraChanged += ViewportCameraChangedHandler;
             DynaShapeViewExtension.ViewModel.CanNavigateBackgroundPropertyChanged += ViewportCanNavigateBackgroundPropertyChangedHandler;
-
-            DynaShapeViewExtension.DynamoWindow.Closing += (sender, e) =>
-            {
-                StopBackgroundExecution();
-            };
         }
+
+
+        CancellationTokenSource ctSource;
 
         private void BackgroundExecutionAction()
         {
-            while (isBackgroundExecutionRunning)
+            while (!ctSource.Token.IsCancellationRequested)
             {
                 // Even when the workspace is closed, the background task still runs
                 // Therefore we need to check for this case and terminate the while loop, so that the task can completed
                 if (!DynaShapeViewExtension.Parameters.CurrentWorkspaceModel.Nodes.Any())
                 {
-                    isBackgroundExecutionRunning = false;
                     Dispose();
                     break;
                 }
 
-                Iterate(25.0);
+                if (IterationCount > 0) Iterate(IterationCount);
+                else Iterate(25.0);
+
                 if (EnableFastDisplay) Display.Render();
+
             }
         }
 
         public void StartBackgroundExecution()
         {
-            if (isBackgroundExecutionRunning) return;
-            isBackgroundExecutionRunning = true;
-            backgroundExecutionTask = Task.Factory.StartNew(BackgroundExecutionAction, TaskCreationOptions.LongRunning);
+            if (backgroundExecutionTask.Status == TaskStatus.Running) return;
+            ctSource = new CancellationTokenSource();
+            backgroundExecutionTask = Task.Factory.StartNew(BackgroundExecutionAction, ctSource.Token);
         }
 
 
         public void StopBackgroundExecution()
         {
-            if (!isBackgroundExecutionRunning) return;
-            isBackgroundExecutionRunning = false;
-            backgroundExecutionTask.Wait();
-            Display.DispatcherOperation.Task.Wait();
+            ctSource?.Cancel();
+            backgroundExecutionTask?.Wait(300);
+            Display.DispatcherOperation?.Task.Wait();
         }
+
 
         public void AddGoals(IEnumerable<Goal> goals, double nodeMergeThreshold = 0.001)
         {
@@ -232,9 +234,9 @@ namespace DynaShape
         }
 
 
-        public List<List<DesignScriptEntity>> GetGeometries()
+        public List<List<object>> GetGeometries()
         {
-            List<List<DesignScriptEntity>> geometries = new List<List<DesignScriptEntity>>(GeometryBinders.Count);
+            List<List<object>> geometries = new List<List<object>>(GeometryBinders.Count);
             for (int i = 0; i < GeometryBinders.Count; i++)
                 geometries.Add(GeometryBinders[i].CreateGeometryObjects(Nodes));
             return geometries;
@@ -324,7 +326,8 @@ namespace DynaShape
                     Triple move = nodeMoveSums[i] / nodeWeightSums[i];
                     Nodes[i].Position += move;
                     Nodes[i].Velocity += move;
-                    if (Nodes[i].Velocity.Dot(move) < 0.0) Nodes[i].Velocity *= 0.9f;
+                    if (Nodes[i].Velocity.Dot(move) < 0.0)
+                        Nodes[i].Velocity *= 0.99f;
                 }
             else
                 for (int i = 0; i < Nodes.Count; i++)
@@ -340,7 +343,7 @@ namespace DynaShape
         {
             for (int i = 0; i < iterationCount; i++) Iterate();
         }
-
+async 
 
         public void Iterate(double miliseconds)
         {

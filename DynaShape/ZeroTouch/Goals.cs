@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Runtime;
 using DynaShape.Goals;
+using Mesh = Autodesk.Dynamo.MeshToolkit.Mesh;
 
 
 namespace DynaShape.ZeroTouch
@@ -291,21 +293,57 @@ namespace DynaShape.ZeroTouch
         //==================================================================
 
         /// <summary>
-        /// Force a set of lines (as defined by pairs of nodes) to maintain equal lengths.
+        /// Force a sequence of nodes to maintain equal distances.
         /// </summary>
-        /// <param name="startPositions">The nodes at the linie start points and end points, in the following order: start1, end1, start2, end2, etc...</param>
+        /// <param name="startPositions"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static EqualLengthsGoal EqualLengthsGoal_Create(
             List<Point> startPositions,
             [DefaultArgument("1.0")] double weight)
         {
-            return new EqualLengthsGoal(startPositions.ToTriples(), (float) weight);
+            List<Triple> triples = new List<Triple> { startPositions[0].ToTriple() };
+
+            for (int i = 1; i < startPositions.Count - 1; i++)
+            {
+                triples.Add(startPositions[i].ToTriple());
+                triples.Add(triples[triples.Count - 1]);
+            }
+
+            triples.Add(startPositions[startPositions.Count - 1].ToTriple());
+
+            return new EqualLengthsGoal(triples, (float) weight);
         }
 
 
         /// <summary>
-        /// Force a set of lines (as defined by pairs of nodes) to maintain equal lengths.
+        /// Force a set of line segments to maintain equal lengths.
+        /// </summary>
+        /// <param name="lineStarts"></param>
+        /// <param name="lineEnds"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static EqualLengthsGoal EqualLengthsGoal_Create(
+            List<Point> lineStarts,
+            List<Point> lineEnds,
+            [DefaultArgument("1.0")] double weight)
+        {
+            List<Triple> triples = new List<Triple>();
+
+            int n = lineStarts.Count < lineEnds.Count ? lineStarts.Count : lineEnds.Count;
+
+            for (int i = 0; i < n; i++)
+            {
+                triples.Add(lineStarts[i].ToTriple());
+                triples.Add(lineEnds[i].ToTriple());
+            }
+
+            return new EqualLengthsGoal(triples, (float)weight);
+        }
+
+
+        /// <summary>
+        /// Force a set of line segments to maintain equal lengths.
         /// </summary>
         /// <param name="lines"></param>
         /// <param name="weight"></param>
@@ -320,7 +358,7 @@ namespace DynaShape.ZeroTouch
                 startPositions.Add(line.StartPoint.ToTriple());
                 startPositions.Add(line.EndPoint.ToTriple());
             }
-            return new EqualLengthsGoal(startPositions, (float) weight);
+            return new EqualLengthsGoal(startPositions, (float)weight);
         }
 
 
@@ -790,6 +828,92 @@ namespace DynaShape.ZeroTouch
             if (weight >= 0.0) shapeMatchingGoal.Weight = (float) weight;
             if (allowScaling.HasValue) shapeMatchingGoal.AllowScaling = allowScaling.Value;
             return shapeMatchingGoal;
+        }
+
+
+        //==================================================================
+        // Wind
+        //==================================================================
+
+        /// <summary>
+        /// Simulate wind by applying a constant force on the three vertices of a triangle,
+        /// scaled by the cosine of the angle between the wind vector and the triangle's normal.
+        /// This way, the wind has full effect when it hits the triangle head-on, and zero
+        /// effect if it blows paralell to the triangle.
+        /// </summary>
+        /// <param name="startPosition1"></param>
+        /// <param name="startPosition2"></param>
+        /// <param name="startPosition3"></param>
+        /// <param name="windVector"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static DirectionalWindGoal WindGoal_Create(
+            Point startPosition1,
+            Point startPosition2,
+            Point startPosition3,
+            [DefaultArgument("Vector.ByCoordinates(1.0, 0, 0)")] Vector windVector,
+            [DefaultArgument("1.0")] double weight)
+        {
+            return new DirectionalWindGoal(
+                startPosition1.ToTriple(),
+                startPosition2.ToTriple(),
+                startPosition3.ToTriple(),
+                windVector.ToTriple(),
+                (float)weight);
+        }
+
+
+        /// <summary>
+        /// Simulate wind blowing along a specified direction, by applying a force on the three vertices of a triangle,
+        /// The force magnitude is addtionally scaled by the cosine of the angle between the wind vector and the triangle's normal.
+        /// This way, the wind has full effect when it hits the triangle head-on, and zero
+        /// effect if it blows paralell to the triangle.
+        /// </summary>
+        /// <param name="mesh"></param>
+        /// <param name="windVector"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static List<DirectionalWindGoal> DirectionalWindGoal_Create(
+            Mesh mesh,
+            [DefaultArgument("Vector.ByCoordinates(1.0, 0, 0)")] Vector windVector,
+            [DefaultArgument("1.0")] double weight)
+        {
+            List<DirectionalWindGoal> windGoals = new List<DirectionalWindGoal>();
+
+            List<double> vertices = mesh.TrianglesAsNineNumbers.ToList();
+
+            int faceCount = vertices.Count / 9;
+
+            for (int i = 0; i < faceCount; i++)
+            {
+                int j = i * 9;
+                windGoals.Add(
+                    new DirectionalWindGoal(
+                        new Triple(vertices[j + 0], vertices[j + 1], vertices[j + 2]),
+                        new Triple(vertices[j + 3], vertices[j + 4], vertices[j + 5]),
+                        new Triple(vertices[j + 6], vertices[j + 7], vertices[j + 8]),
+                        windVector.ToTriple(),
+                        (float) weight));
+            }
+
+            return windGoals;
+        }
+
+
+        /// <summary>
+        /// Adjust the goal's parameters while the solver is running.
+        /// </summary>
+        /// <param name="windVector"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static DirectionalWindGoal DirectionalWindGoal_Change(
+            DirectionalWindGoal windGoal,
+            [DefaultArgument("null")] Vector windVector,
+            [DefaultArgument("-1.0")] double weight)
+        {
+            if (windVector != null) windGoal.WindVector = windVector.ToTriple();
+            if (weight >= 0.0) windGoal.Weight = (float)weight;
+            return windGoal;
         }
     }
 }

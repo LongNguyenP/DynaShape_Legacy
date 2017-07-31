@@ -66,7 +66,8 @@ namespace DynaShape.ZeroTouch
                 solver.EnableMouseInteraction = enableManipulation;
                 solver.EnableMomentum = enableMomentum;
                 solver.EnableFastDisplay = enableFastDisplay;
-
+                solver.IterationCount = iterations;
+                
                 if (execute) solver.StartBackgroundExecution();
                 else
                 {

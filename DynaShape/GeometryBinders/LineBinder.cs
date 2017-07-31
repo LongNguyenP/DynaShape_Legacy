@@ -22,9 +22,9 @@ namespace DynaShape.GeometryBinders
         }
 
 
-        public override List<DesignScriptEntity> CreateGeometryObjects(List<Node> allNodes)
+        public override List<object> CreateGeometryObjects(List<Node> allNodes)
         {
-            return new List<DesignScriptEntity>
+            return new List<object>
             {
                 Line.ByStartPointEndPoint(
                     allNodes[NodeIndices[0]].Position.ToPoint(),

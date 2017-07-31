@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Autodesk.DesignScript.Geometry;
-using Autodesk.DesignScript.Interfaces;
 using Autodesk.DesignScript.Runtime;
+using Autodesk.Dynamo.MeshToolkit;
 using HelixToolkit.Wpf.SharpDX;
 using HelixToolkit.Wpf.SharpDX.Core;
 using SharpDX;
@@ -12,10 +12,11 @@ namespace DynaShape.GeometryBinders
     [IsVisibleInDynamoLibrary(false)]
     public class MeshBinder : GeometryBinder
     {
-        private IndexGroup[] faces = null;
+        private IndexGroup[] faces;
+        private List<int> faceIndices;
+        private bool dynamoMesh = true;
 
-
-        public MeshBinder(Mesh mesh, Color color)
+        public MeshBinder(Autodesk.DesignScript.Geometry.Mesh mesh, Color color)
         {
             StartingPositions = mesh.VertexPositions.ToTriples().ToArray();
             Color = color;
@@ -23,19 +24,43 @@ namespace DynaShape.GeometryBinders
         }
 
 
-        public MeshBinder(Mesh mesh) 
+        public MeshBinder(Autodesk.DesignScript.Geometry.Mesh mesh) 
             : this(mesh, DynaShapeDisplay.DefaultMeshFaceColor)
         {
         }
- 
 
-        public override List<DesignScriptEntity> CreateGeometryObjects(List<Node> allNodes)
+
+        public MeshBinder(Autodesk.Dynamo.MeshToolkit.Mesh mesh, Color color)
+        {
+            dynamoMesh = false;
+            StartingPositions = mesh.Vertices().ToTriples().ToArray();
+            Color = color;            
+
+            faceIndices = mesh.VertexIndicesByTri();
+            int faceCount = faceIndices.Count / 3;
+
+            faces = new IndexGroup[faceCount];
+
+            for (uint i = 0; i < faceCount; i++)
+                faces[i] = IndexGroup.ByIndices(i * 3, i * 3 + 1, i * 3 + 2);
+        }
+
+
+        public MeshBinder(Autodesk.Dynamo.MeshToolkit.Mesh mesh)
+            : this(mesh, DynaShapeDisplay.DefaultMeshFaceColor)
+        {
+        }
+
+
+        public override List<object> CreateGeometryObjects(List<Node> allNodes)
         {
             List<Point> vertices = new List<Point>(NodeCount);
             for (int i = 0; i < NodeCount; i++)
                 vertices.Add(allNodes[NodeIndices[i]].Position.ToPoint());
             
-            return new List<DesignScriptEntity> { Mesh.ByPointsFaceIndices(vertices, faces) };
+            return dynamoMesh
+                ? new List<object> { Autodesk.DesignScript.Geometry.Mesh.ByPointsFaceIndices(vertices, faces) }
+                : new List<object> { Autodesk.Dynamo.MeshToolkit.Mesh.ByVerticesAndIndices(vertices, faceIndices) };
         }
 
 

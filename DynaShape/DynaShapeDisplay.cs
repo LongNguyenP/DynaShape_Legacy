@@ -30,10 +30,6 @@ namespace DynaShape
         public static Color DefaultLineColor = new Color(0.3f, 0.7f, 0.8f, 1f);
         public static Color DefaultMeshFaceColor = new Color(0, 0.7f, 1f, 0.3f);
 
-
-        public static DebugDashboard debugDashboard = new DebugDashboard();
-
-
         private readonly Solver solver;
 
         private PointGeometryModel3D pointModel;
@@ -49,6 +45,20 @@ namespace DynaShape
         public DynaShapeDisplay(Solver solver)
         {
             this.solver = solver;
+
+            pointGeometry = new PointGeometry3D
+            {
+                Positions = new Vector3Collection(),
+                Indices = new IntCollection(),
+                Colors = new Color4Collection()
+            };
+
+            lineGeometry = new LineGeometry3D()
+            {
+                Positions = new Vector3Collection(),
+                Indices = new IntCollection(),
+                Colors = new Color4Collection()
+            };
 
             DynaShapeViewExtension.DynamoWindow.Dispatcher.Invoke(
                 () =>
@@ -76,9 +86,6 @@ namespace DynaShape
                 DispatcherPriority.Send);
 
             DynaShapeViewExtension.ViewModel.RequestViewRefresh += RequestViewRefreshHandler;
-
-            DispatcherOperation = DynaShapeViewExtension.DynamoWindow.Dispatcher.InvokeAsync(() => { });
-            while (DispatcherOperation.Status != DispatcherOperationStatus.Completed) { }
 
             DynaShapeViewExtension.DynamoWindow.Closed += (sender, args) =>
             {
@@ -123,8 +130,10 @@ namespace DynaShape
         }
 
 
-        public void DrawPolyline(List<Triple> vertices, Color4 color)
+        public void DrawPolyline(List<Triple> vertices, Color4 color, bool loop)
         {
+            if (loop) vertices.Add(vertices[0]);
+
             for (int i = 1; i < vertices.Count; i++)
             {
                 lineGeometry.Positions.Add(new Vector3(vertices[i - 1].X, vertices[i - 1].Z, -vertices[i - 1].Y));
@@ -147,15 +156,13 @@ namespace DynaShape
         {
             if (async)
             { 
-                if (DispatcherOperation.Status == DispatcherOperationStatus.Completed)
+                if (DispatcherOperation != null && DispatcherOperation.Status == DispatcherOperationStatus.Completed)
                     DispatcherOperation = DynaShapeViewExtension.DynamoWindow.Dispatcher.InvokeAsync(RenderAction, DispatcherPriority.Render);     
             }
             else
                 DynaShapeViewExtension.DynamoWindow.Dispatcher.Invoke(RenderAction, DispatcherPriority.Render);
         }
 
-
-        
 
         private void RenderAction()
         {
@@ -221,6 +228,7 @@ namespace DynaShape
             // Attach the geometries to Helix render host
             //==============================================================
 
+            
 
             if (pointGeometry.Positions.Count >= 1)
             {
