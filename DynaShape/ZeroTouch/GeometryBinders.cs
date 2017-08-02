@@ -46,11 +46,21 @@ namespace DynaShape.ZeroTouch
 
 
         public static MeshBinder MeshBinder(
-            Mesh mesh,
+            Autodesk.DesignScript.Geometry.Mesh mesh,
             [DefaultArgument("null")] Color color)
         {
             return new MeshBinder(
                 mesh,
+                color?.ToSharpDXColor() ?? DynaShapeDisplay.DefaultMeshFaceColor);
+        }
+
+
+        public static MeshBinder MeshBinder(
+            Autodesk.Dynamo.MeshToolkit.Mesh toolkitMesh,
+            [DefaultArgument("null")] Color color)
+        {
+            return new MeshBinder(
+                toolkitMesh,
                 color?.ToSharpDXColor() ?? DynaShapeDisplay.DefaultMeshFaceColor);
         }
 

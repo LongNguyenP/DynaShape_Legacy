@@ -58,7 +58,8 @@ namespace DynaShape.ZeroTouch
                 solver.StopBackgroundExecution();
                 solver.Clear();
                 solver.AddGoals(goals);
-                if (geometryBinders != null) solver.AddGeometryBinders(geometryBinders);
+                if (geometryBinders != null)
+                    solver.AddGeometryBinders(geometryBinders);
                 solver.Display.Render();
             }
             else
