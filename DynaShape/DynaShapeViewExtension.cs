@@ -23,16 +23,16 @@ namespace DynaShape
         public static CameraData CameraData;
         public static Triple MouseRayOrigin;
         public static Triple MouseRayDirection;
-        
 
-        public void Dispose() {}
-        public void Startup(ViewStartupParams p) {}
+
+        public void Dispose() { }
+        public void Startup(ViewStartupParams p) { }
 
 
         public void Loaded(ViewLoadedParams parameters)
         {
             Parameters = parameters;
-            DynamoWindow = parameters.DynamoWindow;         
+            DynamoWindow = parameters.DynamoWindow;
             ViewModel = parameters.BackgroundPreviewViewModel as HelixWatch3DViewModel;
             if (ViewModel == null) throw new Exception("Could not obtain HelixWatch3DViewModel. Sad!");
 
@@ -62,7 +62,7 @@ namespace DynaShape
 
 
         private void ViewModelViewMouseDownHandler(object sender, MouseButtonEventArgs e)
-        {   
+        {
         }
 
 
@@ -83,10 +83,10 @@ namespace DynaShape
         {
             ViewModel.ViewCameraChanged -= ViewModelViewCameraChangedHandler;
             ViewModel.ViewMouseDown -= ViewModelViewMouseDownHandler;
-            ViewModel.ViewMouseMove -= ViewModelViewMouseMoveHandler;          
+            ViewModel.ViewMouseMove -= ViewModelViewMouseMoveHandler;
             ViewModel.RequestViewRefresh -= ViewModelRequestViewRefreshHandler;
         }
-    
+
 
         private void ViewModelViewCameraChangedHandler(object sender, RoutedEventArgs e)
         {
@@ -98,11 +98,11 @@ namespace DynaShape
         {
             IRay clickRay = ViewModel.GetClickRay(e);
             MouseRayOrigin = new Triple(clickRay.Origin.X, clickRay.Origin.Y, clickRay.Origin.Z);
-            MouseRayDirection = new Triple(clickRay.Direction.X, clickRay.Direction.Y, clickRay.Direction.Z); 
+            MouseRayDirection = new Triple(clickRay.Direction.X, clickRay.Direction.Y, clickRay.Direction.Z);
         }
 
 
-        public string UniqueId => "{DC7A6415-8512-423B-9BC3-1A1C1AEE5144}";
+        public string UniqueId => "{DC7A6415-8512-423B-9BC3-1A1C1AEE5145}";
         public string Name => "DynaShapeViewExtension";
     }
 }

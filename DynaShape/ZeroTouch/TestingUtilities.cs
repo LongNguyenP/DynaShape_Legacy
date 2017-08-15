@@ -32,7 +32,7 @@ namespace DynaShape.ZeroTouch
                 for (int j = 0; j < Y; j++)
                     for (int k = 0; k < Z; k++)
                     {
-                        points[i, j, k] = new Triple((float) i, (float) j, (float) k);
+                        points[i, j, k] = new Triple((float)i, (float)j, (float)k);
                     }
 
 
@@ -53,86 +53,86 @@ namespace DynaShape.ZeroTouch
 
             vertices.Clear();
             for (int i = 0; i < X; i++)
-            for (int j = 0; j < Y; j++)
-                vertices.Add(points[i, i % 2 == 0 ? j : Y - 1 - j, 0]);
+                for (int j = 0; j < Y; j++)
+                    vertices.Add(points[i, i % 2 == 0 ? j : Y - 1 - j, 0]);
             geometryBinders.Add(new PolylineBinder(vertices));
 
             vertices.Clear();
             for (int j = 0; j < X; j++)
-            for (int i = 0; i < Y; i++)
-                vertices.Add(points[j % 2 == 0 ? i : X - 1 - i, j, 0]);
+                for (int i = 0; i < Y; i++)
+                    vertices.Add(points[j % 2 == 0 ? i : X - 1 - i, j, 0]);
             geometryBinders.Add(new PolylineBinder(vertices));
 
             vertices.Clear();
             for (int i = 0; i < X; i++)
-            for (int j = 0; j < Y; j++)
-                vertices.Add(points[i, i % 2 == 0 ? j : Y - 1 - j, Z - 1]);
+                for (int j = 0; j < Y; j++)
+                    vertices.Add(points[i, i % 2 == 0 ? j : Y - 1 - j, Z - 1]);
             geometryBinders.Add(new PolylineBinder(vertices));
 
             vertices.Clear();
             for (int j = 0; j < X; j++)
-            for (int i = 0; i < Y; i++)
-                vertices.Add(points[j % 2 == 0 ? i : X - 1 - i, j, Z - 1]);
+                for (int i = 0; i < Y; i++)
+                    vertices.Add(points[j % 2 == 0 ? i : X - 1 - i, j, Z - 1]);
             geometryBinders.Add(new PolylineBinder(vertices));
 
 
 
             vertices.Clear();
             for (int j = 0; j < Y; j++)
-            for (int k = 0; k < Z; k++)
-                vertices.Add(points[0, j, j % 2 == 0 ? k : Z - 1 - k]);
+                for (int k = 0; k < Z; k++)
+                    vertices.Add(points[0, j, j % 2 == 0 ? k : Z - 1 - k]);
             geometryBinders.Add(new PolylineBinder(vertices));
 
             vertices.Clear();
             for (int k = 0; k < Z; k++)
+                for (int j = 0; j < Y; j++)
+                    vertices.Add(points[0, k % 2 == 0 ? j : Y - 1 - j, k]);
+            geometryBinders.Add(new PolylineBinder(vertices));
+
+            vertices.Clear();
             for (int j = 0; j < Y; j++)
-                vertices.Add(points[0, k % 2 == 0 ? j : Y - 1 - j, k]);
-            geometryBinders.Add(new PolylineBinder(vertices));
-
-            vertices.Clear();
-            for (int j = 0; j < Y; j++)
-            for (int k = 0; k < Z; k++)
-                vertices.Add(points[X - 1, j, j % 2 == 0 ? k : Z - 1 - k]);
+                for (int k = 0; k < Z; k++)
+                    vertices.Add(points[X - 1, j, j % 2 == 0 ? k : Z - 1 - k]);
             geometryBinders.Add(new PolylineBinder(vertices));
 
             vertices.Clear();
             for (int k = 0; k < Z; k++)
-            for (int j = 0; j < Y; j++)
-                vertices.Add(points[X - 1, k % 2 == 0 ? j : Y - 1 - j, k]);
+                for (int j = 0; j < Y; j++)
+                    vertices.Add(points[X - 1, k % 2 == 0 ? j : Y - 1 - j, k]);
             geometryBinders.Add(new PolylineBinder(vertices));
 
 
 
             vertices.Clear();
             for (int k = 0; k < Z; k++)
-            for (int i = 0; i < Y; i++)
-                vertices.Add(points[k % 2 == 0 ? i : X - 1 - i, 0, k]);
+                for (int i = 0; i < Y; i++)
+                    vertices.Add(points[k % 2 == 0 ? i : X - 1 - i, 0, k]);
             geometryBinders.Add(new PolylineBinder(vertices));
 
             vertices.Clear();
             for (int i = 0; i < Y; i++)
-            for (int k = 0; k < Z; k++)
-                vertices.Add(points[i, 0, i % 2 == 0 ? k : Z - 1 - k]);
+                for (int k = 0; k < Z; k++)
+                    vertices.Add(points[i, 0, i % 2 == 0 ? k : Z - 1 - k]);
             geometryBinders.Add(new PolylineBinder(vertices));
 
             vertices.Clear();
             for (int k = 0; k < Z; k++)
-            for (int i = 0; i < Y; i++)
-                vertices.Add(points[k % 2 == 0 ? i : X - 1 - i, Y - 1, k]);
+                for (int i = 0; i < Y; i++)
+                    vertices.Add(points[k % 2 == 0 ? i : X - 1 - i, Y - 1, k]);
             geometryBinders.Add(new PolylineBinder(vertices));
 
             vertices.Clear();
             for (int i = 0; i < Y; i++)
-            for (int k = 0; k < Z; k++)
-                vertices.Add(points[i, Y - 1, i % 2 == 0 ? k : Z - 1 - k]);
+                for (int k = 0; k < Z; k++)
+                    vertices.Add(points[i, Y - 1, i % 2 == 0 ? k : Z - 1 - k]);
             geometryBinders.Add(new PolylineBinder(vertices));
 
 
             for (int i = 0; i < X - 1; i++)
-            for (int j = 0; j < Y - 1; j++)
-            for (int k = 0; k < Z - 1; k++)
-            {
-                var voxelPoints = new List<Triple>()
+                for (int j = 0; j < Y - 1; j++)
+                    for (int k = 0; k < Z - 1; k++)
+                    {
+                        var voxelPoints = new List<Triple>()
                 {
                     points[i + 0, j + 0, k + 0],
                     points[i + 1, j + 0, k + 0],
@@ -145,8 +145,8 @@ namespace DynaShape.ZeroTouch
                 };
 
 
-                goals.Add(new ShapeMatchingGoal(voxelPoints, voxelPoints));
-            }
+                        goals.Add(new ShapeMatchingGoal(voxelPoints, voxelPoints));
+                    }
 
             return new Dictionary<string, object>
             {
@@ -157,6 +157,6 @@ namespace DynaShape.ZeroTouch
         }
 
 
-        
+
     }
 }

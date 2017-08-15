@@ -25,6 +25,6 @@ namespace DynaShape.GeometryBinders
 
         public virtual void CreateDisplayedGeometries(DynaShapeDisplay display, List<Node> allNodes)
         { }
-        
+
     }
 }

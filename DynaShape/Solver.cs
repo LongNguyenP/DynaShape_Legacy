@@ -39,7 +39,7 @@ namespace DynaShape
 
         internal DynaShapeDisplay Display;
 
-        private Task backgroundExecutionTask = new Task(() => {});
+        private Task backgroundExecutionTask = new Task(() => { });
 
         public int IterationCount = -1;
 
@@ -320,7 +320,7 @@ namespace DynaShape
             // Move the nodes to their new positions
             //=============================================================================================
 
-            if (EnableMomentum) 
+            if (EnableMomentum)
                 for (int i = 0; i < Nodes.Count; i++)
                 {
                     Triple move = nodeMoveSums[i] / nodeWeightSums[i];
@@ -343,9 +343,9 @@ namespace DynaShape
         {
             for (int i = 0; i < iterationCount; i++) Iterate();
         }
-async 
+        async
 
-        public void Iterate(double miliseconds)
+                public void Iterate(double miliseconds)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
             while (stopwatch.Elapsed.TotalMilliseconds < miliseconds)

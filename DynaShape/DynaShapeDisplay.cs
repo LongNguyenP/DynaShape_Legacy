@@ -155,9 +155,9 @@ namespace DynaShape
         internal void Render(bool async = false)
         {
             if (async)
-            { 
+            {
                 if (DispatcherOperation != null && DispatcherOperation.Status == DispatcherOperationStatus.Completed)
-                    DispatcherOperation = DynaShapeViewExtension.DynamoWindow.Dispatcher.InvokeAsync(RenderAction, DispatcherPriority.Render);     
+                    DispatcherOperation = DynaShapeViewExtension.DynamoWindow.Dispatcher.InvokeAsync(RenderAction, DispatcherPriority.Render);
             }
             else
                 DynaShapeViewExtension.DynamoWindow.Dispatcher.Invoke(RenderAction, DispatcherPriority.Render);
@@ -228,7 +228,7 @@ namespace DynaShape
             // Attach the geometries to Helix render host
             //==============================================================
 
-            
+
 
             if (pointGeometry.Positions.Count >= 1)
             {

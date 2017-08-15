@@ -35,7 +35,7 @@ namespace DynaShape.GeometryBinders
         {
             dynamoMesh = false;
             StartingPositions = mesh.Vertices().ToTriples().ToArray();
-            Color = color;            
+            Color = color;
 
             faceIndices = mesh.VertexIndicesByTri();
             int faceCount = faceIndices.Count / 3;
@@ -61,7 +61,7 @@ namespace DynaShape.GeometryBinders
             List<Point> vertices = new List<Point>(NodeCount);
             for (int i = 0; i < NodeCount; i++)
                 vertices.Add(allNodes[NodeIndices[i]].Position.ToPoint());
-            
+
             return dynamoMesh
                 ? new List<object> { Autodesk.DesignScript.Geometry.Mesh.ByPointsFaceIndices(vertices, faces) }
                 : new List<object> { Autodesk.Dynamo.MeshToolkit.Mesh.ByVerticesAndIndices(vertices, faceIndices) };
@@ -138,7 +138,7 @@ namespace DynaShape.GeometryBinders
                 new MeshGeometryModel3D
                 {
                     Geometry = meshGeometry,
-                    Material = new PhongMaterial { DiffuseColor = Color },                
+                    Material = new PhongMaterial { DiffuseColor = Color },
                 });
         }
     }

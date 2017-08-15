@@ -15,18 +15,18 @@ namespace DynaShape.GeometryBinders
 
         public PolylineBinder(List<Triple> vertices, Color color, bool loop = false)
         {
-            StartingPositions = vertices.ToArray();           
+            StartingPositions = vertices.ToArray();
             Color = color;
             Loop = loop;
         }
 
 
         public PolylineBinder(List<Triple> vertices, bool loop = false)
-            :this(vertices, DynaShapeDisplay.DefaultLineColor, loop)
+            : this(vertices, DynaShapeDisplay.DefaultLineColor, loop)
         {
         }
 
-        
+
         public override List<object> CreateGeometryObjects(List<Node> allNodes)
         {
             List<Point> points = new List<Point>();

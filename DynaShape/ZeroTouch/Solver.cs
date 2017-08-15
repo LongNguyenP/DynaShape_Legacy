@@ -52,7 +52,7 @@ namespace DynaShape.ZeroTouch
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-       
+
             if (reset)
             {
                 solver.StopBackgroundExecution();
@@ -68,13 +68,13 @@ namespace DynaShape.ZeroTouch
                 solver.EnableMomentum = enableMomentum;
                 solver.EnableFastDisplay = enableFastDisplay;
                 solver.IterationCount = iterations;
-                
+
                 if (execute) solver.StartBackgroundExecution();
                 else
                 {
                     solver.StopBackgroundExecution();
                     if (!enableFastDisplay) solver.Iterate();
-                }              
+                }
             }
 
             return enableFastDisplay
