@@ -357,6 +357,27 @@ namespace DynaShape
         }
 
 
+        public void Execute(int maxIterationCount, double keThreshold)
+        {
+            while (CurrentIteration < maxIterationCount)
+            {
+                Iterate();
+                if (GetKineticEnergy() < keThreshold) break;
+            }
+        }
+
+
+        public double GetKineticEnergy()
+        {
+            double ke = 0.0;
+
+            for (int i = 0; i < Nodes.Count; i++)
+                ke += Nodes[i].Velocity.LengthSquared;
+
+            return ke;
+        }
+
+
         private void ViewportCameraChangedHandler(object sender, RoutedEventArgs args)
         {
             NearestNodeIndex = -1;
