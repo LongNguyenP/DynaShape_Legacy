@@ -43,11 +43,13 @@ namespace DynaShape
 
         public int IterationCount = -1;
 
+        public int CurrentIteration { get; private set; }
 
         public Solver()
         {
             if (DynaShapeViewExtension.ViewModel == null) throw new Exception("Oh no, DynaShape could not get access to the Helix ViewModel. Sad!");
 
+            CurrentIteration = 0;
             Display = new DynaShapeDisplay(this);
 
             DynaShapeViewExtension.ViewModel.ViewMouseDown += ViewportMouseDownHandler;
@@ -268,6 +270,8 @@ namespace DynaShape
 
         public void Iterate()
         {
+            CurrentIteration++;
+
             //=================================================================================
             // Apply momentum
             //=================================================================================
@@ -343,9 +347,9 @@ namespace DynaShape
         {
             for (int i = 0; i < iterationCount; i++) Iterate();
         }
-        async
 
-                public void Iterate(double miliseconds)
+
+        public void Iterate(double miliseconds)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
             while (stopwatch.Elapsed.TotalMilliseconds < miliseconds)

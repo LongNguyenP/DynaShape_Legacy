@@ -141,14 +141,5 @@ namespace DynaShape.ZeroTouch
             if (loop) lines.Add(Line.ByStartPointEndPoint(points[points.Count - 1], points[0]));
             return lines;
         }
-
-        //public static Mesh DiagridMesh(
-        //    [DefaultArgument("CoordinateSystem.ByOriginVectors(Point.Origin(), Vector.XAxis(), Vector.YAxis())")] CoordinateSystem cs,
-        //    [DefaultArgument("10.0")]double radius,
-        //    [DefaultArgument("10.0")]double lengthY,
-        //    [DefaultArgument("10")]int div)
-        //{
-
-        //}
     }
 }
