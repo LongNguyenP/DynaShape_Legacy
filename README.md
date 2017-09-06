@@ -18,7 +18,7 @@ _DynaShape
     └── MathNet.Numerics.dll
 </pre>
 
-*Important:* Notice that there is an underscore character in the "_DynaShape" folder name as shown above. This is to make sure that Dynamo will load DynaShape alphabetically after MeshToolkit. 
+*Important:* Notice that there is an underscore character in the *"_DynaShape"* folder name as shown above. This is to ensure that Dynamo will load DynaShape alphabetically after MeshToolkit. 
 
 Once the package folder has been assembled, you can "install" the package to Dynamo by to *Dynamo-Main-Menu > Settings > Manage Node and Package Paths...*, and add a path to the package folder.
 
