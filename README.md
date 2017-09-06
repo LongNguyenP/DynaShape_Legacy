@@ -2,18 +2,23 @@
 
 ## Build, package and install
 
-The source code is written entirely in Visual C#. All the dependent dll files can be found in the the Dynamo Core main folder (e.g. *C:\Program Files\Dynamo\Dynamo Core\1.x*), except *MathNet.Numerics.dll* (which can be downloaded from NuGet, recommended version 3.11 or above)
+The source code is written entirely in Visual C#. The dependent dll files are as follow
+- All core Dynamo dlls can be found in the main Dynamo Core main folder (e.g. *C:\Program Files\Dynamo\Dynamo Core\1.x*)
+- *MathNet.Numerics.dll (which can be downloaded from NuGet, recommended version 3.11 or above). Normally this will be done automatically by Visual Studio NuGet Manager right at the first time you build the project on your computer.
+- *MeshToolkit.dll*. This is contained within the MeshToolkit package, which can be downloaded with the Dynamo package manager. 
 
 After *DynaShape.dll* has been built successfully from the source, you can then assemble the Dynamo package folder according to the following structure:
 
 <pre>
-DynaShape
+_DynaShape
 ├── pkg.json (provided with the Visual Studio solution)
 └── bin
     ├── DynaShape.dll
     ├── DynaShape_DynamoCustomization.xml (provided with the Visual Studio solution)
     └── MathNet.Numerics.dll
 </pre>
+
+*Important:* Notice that there is an underscore character in the "_DynaShape" folder name as shown above. This is to make sure that Dynamo will load DynaShape alphabetically after MeshToolkit, otherwise DynaShape will not be loaded correctly_
 
 Once the package folder has been assembled, you can "install" the package to Dynamo by to *Dynamo-Main-Menu > Settings > Manage Node and Package Paths...*, and add a path to the package folder.
 
