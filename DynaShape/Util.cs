@@ -65,7 +65,11 @@ namespace DynaShape
             for (int i = 0; i < array.Length; i++) array[i] = value;
         }
 
+        private static float toRadian = (float)Math.PI / 180f;
+        private static float toDegree = 180f / (float)Math.PI;
 
+        public static float ToRadian(this float Degree) => Degree * toRadian;
+        public static float ToDegree(this float Radian) => Radian * toDegree;
 
         /// <summary>
         /// Compute the line that best fit a set of input points (least squared orthogonal distance)

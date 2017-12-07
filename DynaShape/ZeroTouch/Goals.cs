@@ -70,6 +70,76 @@ namespace DynaShape.ZeroTouch
 
 
         //==================================================================
+        // Angle
+        //==================================================================
+
+        /// <summary>
+        /// Keep the angle formed by three nodes at a target value
+        /// </summary>
+        /// <param name="A"></param>
+        /// <param name="B"></param>
+        /// <param name="C"></param>
+        /// <param name="targetAngle"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static AngleGoal AngleGoal_Create(
+            Point A,
+            Point B,
+            Point C,
+            [DefaultArgument("0.0")] double targetAngle,
+            [DefaultArgument("1.0")] double weight)
+        {
+            return new AngleGoal(
+                A.ToTriple(),
+                B.ToTriple(),
+                C.ToTriple(),
+                ((float)targetAngle).ToRadian(),
+                (float)weight);
+        }
+
+
+        /// <summary>
+        /// Maintain the angle formed by three nodes
+        /// </summary>
+        /// <param name="A"></param>
+        /// <param name="B"></param>
+        /// <param name="C"></param>
+        /// <param name="targetAngle"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static AngleGoal AngleGoal_Create(
+            Point A,
+            Point B,
+            Point C,
+            [DefaultArgument("1.0")] double weight)
+        {
+            return new AngleGoal(
+                A.ToTriple(),
+                B.ToTriple(),
+                C.ToTriple(),
+                (float)weight);
+        }
+
+
+        /// <summary>
+        /// Adjust the goal's parameters while the solver is running.
+        /// </summary>
+        /// <param name="anchorGoal"></param>
+        /// <param name="anchor"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static AngleGoal AngleGoal_Change(
+            AngleGoal angleGoal,
+            float targetAngle,
+            [DefaultArgument("-1.0")] double weight)
+        {
+            angleGoal.TargetAngle = targetAngle.ToRadian();
+            if (weight >= 0.0) angleGoal.Weight = (float)weight;
+            return angleGoal;
+        }
+
+
+        //==================================================================
         // CoCircular
         //==================================================================
 

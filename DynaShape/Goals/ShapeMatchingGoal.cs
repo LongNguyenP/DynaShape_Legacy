@@ -85,7 +85,7 @@ namespace DynaShape.Goals
 
         internal void ShapeMatch(Triple[] positions)
         {
-            // Here we compute the most optimal translation, rotation (and optionally scalling) that bring the targetShapePoints as close as possible to the current node positions
+            // Here we compute the "best" translation, rotation (and optionally scalling) that bring the targetShapePoints as close as possible to the current node positions
             // Reference: Umeyama S. 1991, Least-Squares Estimation of Transformation Paramters Between Two Point Patterns
 
 
