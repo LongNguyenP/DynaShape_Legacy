@@ -48,7 +48,8 @@ namespace DynaShape.ZeroTouch
            [DefaultArgument("true")] bool execute,
            [DefaultArgument("true")] bool enableMomentum,
            [DefaultArgument("true")] bool enableFastDisplay,
-           [DefaultArgument("false")] bool enableManipulation)
+           [DefaultArgument("false")] bool enableManipulation,
+           int mode)
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -68,6 +69,7 @@ namespace DynaShape.ZeroTouch
                 solver.EnableMomentum = enableMomentum;
                 solver.EnableFastDisplay = enableFastDisplay;
                 solver.IterationCount = iterations;
+                solver.Mode = mode;
 
                 if (execute) solver.StartBackgroundExecution();
                 else
