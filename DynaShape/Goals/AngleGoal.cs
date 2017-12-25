@@ -17,6 +17,7 @@ namespace DynaShape.Goals
             StartingPositions = new[] { A, B, C };
             Moves = new Triple[3];
             Moves[1] = Triple.Zero;
+            Weights = new float[3];
         }
 
 
@@ -54,6 +55,8 @@ namespace DynaShape.Goals
 
             Moves[0] = B + m * mA.Dot(BA) - A;
             Moves[2] = B + m * mB.Dot(BC) - C;
+
+            Weights[0] = Weights[1] = Weights[2] = Weight;
         }
     }
 }

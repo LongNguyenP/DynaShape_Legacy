@@ -14,6 +14,7 @@ namespace DynaShape.Goals
             Weight = weight;
             StartingPositions = nodeStartingPositions.ToArray();
             Moves = new Triple[StartingPositions.Length];
+            Weights = new float[StartingPositions.Length];
         }
 
         public override void Compute(List<Node> allNodes)
@@ -32,6 +33,7 @@ namespace DynaShape.Goals
             {
                 Triple v = allNodes[NodeIndices[i]].Position - lineOrigin;
                 Moves[i] = v.Dot(lineDirection) * lineDirection - v;
+                Weights[i] = Weight;
             }
         }
     }

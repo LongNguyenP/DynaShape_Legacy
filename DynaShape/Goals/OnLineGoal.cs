@@ -16,10 +16,10 @@ namespace DynaShape.Goals
         {
             TargetLineOrigin = lineOrigin;
             TargetLineDirection = lineDirection;
-
             Weight = weight;
             StartingPositions = nodeStartingPositions.ToArray();
             Moves = new Triple[StartingPositions.Length];
+            Weights = new float[StartingPositions.Length];
         }
 
 
@@ -39,6 +39,7 @@ namespace DynaShape.Goals
             {
                 Triple v = allNodes[NodeIndices[i]].Position - TargetLineOrigin;
                 Moves[i] = v.Dot(TargetLineDirection) * TargetLineDirection - v;
+                Weights[i] = Weight;
             }
         }
     }

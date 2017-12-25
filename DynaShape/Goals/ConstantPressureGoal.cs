@@ -8,14 +8,14 @@ using Autodesk.DesignScript.Runtime;
 namespace DynaShape.Goals
 {
     [IsVisibleInDynamoLibrary(false)]
-    public class DirectionalWindGoal : Goal
+    public class ConstantPressureGoal : Goal
     {
-        public Triple WindVector;
+        public float Pressure;
 
-        public DirectionalWindGoal(Triple nodePosition1, Triple nodePosition2, Triple nodePosition3, Triple windVector, float weight = 1000f)
+        public ConstantPressureGoal(Triple nodePosition1, Triple nodePosition2, Triple nodePosition3, float pressure, float weight = 1000f)
         {
             Weight = weight;
-            WindVector = windVector;
+            Pressure = pressure;
             StartingPositions = new[] { nodePosition1, nodePosition2, nodePosition3 };
             Moves = new Triple[3];
             Weights = new float[3];
@@ -27,7 +27,7 @@ namespace DynaShape.Goals
             Triple n = (allNodes[NodeIndices[1]].Position - allNodes[NodeIndices[0]].Position)
                 .Cross(allNodes[NodeIndices[2]].Position - allNodes[NodeIndices[0]].Position);
 
-            Moves[0] = Moves[1] = Moves[2] = WindVector * (WindVector.Dot(n) * 0.16666666666666666f);
+            Moves[0] = Moves[1] = Moves[2] = n * Pressure * 0.16666666666666666666666f;
             Weights[0] = Weights[1] = Weights[2] = Weight;
         }
     }

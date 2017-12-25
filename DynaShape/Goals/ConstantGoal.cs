@@ -15,11 +15,13 @@ namespace DynaShape.Goals
             Weight = weight;
             StartingPositions = nodeStartingPositions.ToArray();
             Moves = new Triple[StartingPositions.Length];
+            Weights = new float[StartingPositions.Length];
         }
 
         public override void Compute(List<Node> allNodes)
         {
             Moves.FillArray(Move);
+            Weights.FillArray(Weight);
         }
     }
 }

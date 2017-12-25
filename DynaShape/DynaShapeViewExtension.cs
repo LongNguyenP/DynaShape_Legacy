@@ -42,19 +42,6 @@ namespace DynaShape
             ViewModel.RequestViewRefresh += ViewModelRequestViewRefreshHandler;
         }
 
-        private void foo(object o, List<string> info, int indent)
-        {
-            if (!(o is Grid))
-            {
-                string pad = "";
-                for (int i = 0; i < indent; i++) pad += "  ";
-                info.Add(pad + o.GetType());
-                return;
-            }
-
-            foreach (object element in (o as Grid).Children)
-                foo(element, info, indent + 1);
-        }
 
         private void ViewModelRequestViewRefreshHandler()
         {

@@ -14,15 +14,17 @@ namespace DynaShape.Goals
             Weight = weight;
             FloorHeight = floorHeight;
             StartingPositions = nodeStartingPositions.ToArray();
-            Moves = new Triple[NodeCount];
+            Moves = new Triple[nodeStartingPositions.Count];
+            Weights = new float[nodeStartingPositions.Count];
         }
 
         public override void Compute(List<Node> allNodes)
         {
             for (int i = 0; i < NodeCount; i++)
-                Moves[i] = allNodes[i].Position.Z > FloorHeight
-                    ? Triple.Zero
-                    : new Triple(0f, 0f, FloorHeight - allNodes[i].Position.Z);
+            {
+                Moves[i] = new Triple(0f, 0f, allNodes[i].Position.Z > FloorHeight ? 0f : FloorHeight - allNodes[i].Position.Z);
+                Weights[i] = allNodes[i].Position.Z > FloorHeight ? 0f : Weight;
+            }
         }
     }
 }

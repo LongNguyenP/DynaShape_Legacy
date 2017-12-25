@@ -14,6 +14,7 @@ namespace DynaShape.Goals
             Weight = weight;
             StartingPositions = nodeStartingPositions.ToArray();
             Moves = new Triple[StartingPositions.Length];
+            Weights = new float[StartingPositions.Length];
         }
 
 
@@ -30,7 +31,10 @@ namespace DynaShape.Goals
             Util.ComputeBestFitPlane(points, out planeOrigin, out planeNormal);
 
             for (int i = 0; i < NodeCount; i++)
+            {
                 Moves[i] = (planeOrigin - allNodes[NodeIndices[i]].Position).Dot(planeNormal) * planeNormal;
+                Weights[i] = Weight;
+            }
         }
     }
 }

@@ -20,6 +20,7 @@ namespace DynaShape.Goals
             Weight = weight;
             StartingPositions = nodeStartingPositions.ToArray();
             Moves = new Triple[StartingPositions.Length];
+            Weights = new float[StartingPositions.Length];
             AllowScaling = allowScaling;
             SetTargetShapePoints(targetShapePositions);
         }
@@ -141,13 +142,13 @@ namespace DynaShape.Goals
 
             float indicator = 1f;
 
-            if (R.Determinant < 0f && !is2D)
-            {
-                R.V20 *= -1f;
-                R.V21 *= -1f;
-                R.V22 *= -1f;
-                indicator = -1f;
-            }
+            //if (R.Determinant < 0f && !is2D)
+            //{
+            //    R.V20 *= -1f;
+            //    R.V21 *= -1f;
+            //    R.V22 *= -1f;
+            //    indicator = -1f;
+            //}
 
             if (AllowScaling)
                 R *= sigmaInversed * (indicator * e.X + e.Y + e.Z);
@@ -163,6 +164,7 @@ namespace DynaShape.Goals
                 Moves[i].X = R.V00 * targetShapePoints[i].X + R.V01 * targetShapePoints[i].Y + R.V02 * targetShapePoints[i].Z + center.X - positions[i].X;
                 Moves[i].Y = R.V10 * targetShapePoints[i].X + R.V11 * targetShapePoints[i].Y + R.V12 * targetShapePoints[i].Z + center.Y - positions[i].Y;
                 Moves[i].Z = R.V20 * targetShapePoints[i].X + R.V21 * targetShapePoints[i].Y + R.V22 * targetShapePoints[i].Z + center.Z - positions[i].Z;
+                Weights[i] = Weight;
             }
         }
     }

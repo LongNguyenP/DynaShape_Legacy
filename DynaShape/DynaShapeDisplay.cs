@@ -228,8 +228,6 @@ namespace DynaShape
             // Attach the geometries to Helix render host
             //==============================================================
 
-
-
             if (pointGeometry.Positions.Count >= 1)
             {
                 pointModel.Geometry = pointGeometry;

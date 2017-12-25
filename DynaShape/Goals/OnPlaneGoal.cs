@@ -16,10 +16,10 @@ namespace DynaShape.Goals
         {
             TargetPlaneOrigin = planeOrigin;
             TargetPlaneNormal = planeNormal;
-
             Weight = weight;
             StartingPositions = nodeStartingPositions.ToArray();
             Moves = new Triple[StartingPositions.Length];
+            Weights = new float[StartingPositions.Length];
         }
 
 
@@ -32,7 +32,10 @@ namespace DynaShape.Goals
         public override void Compute(List<Node> allNodes)
         {
             for (int i = 0; i < NodeCount; i++)
+            {
                 Moves[i] = TargetPlaneNormal * -TargetPlaneNormal.Dot(allNodes[NodeIndices[i]].Position);
+                Weights[i] = Weight;
+            }
         }
     }
 }

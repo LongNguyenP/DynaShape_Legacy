@@ -16,6 +16,7 @@ namespace DynaShape.Goals
             TargetLength = targetLength;
             StartingPositions = new[] { firstNodePosition, secondNodePosition };
             Moves = new Triple[2];
+            Weights = new float[2];
         }
 
 
@@ -33,6 +34,7 @@ namespace DynaShape.Goals
 
             Moves[0] = move;
             Moves[1] = -move;
+            Weights[0] = Weights[1] = Weight;
         }
     }
 }

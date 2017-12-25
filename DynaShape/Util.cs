@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Autodesk.DesignScript.Runtime;
-using MathNet.Numerics.LinearAlgebra;
-using MathNet.Numerics.LinearAlgebra.Factorization;
 using SharpDX;
+using Matrix3x3 = AForge.Math.Matrix3x3;
 using Point = Autodesk.DesignScript.Geometry.Point;
 using Vector = Autodesk.DesignScript.Geometry.Vector;
 
@@ -78,6 +77,41 @@ namespace DynaShape
         /// <param name="lineOrigin">The output line origin</param>
         /// <param name="lineDirection">The output line direction</param>
         /// <returns>0 if the input points are identical, 1 if the input points are already colinear, 2 otherwise</returns>
+        //public static int ComputeBestFitLine(List<Triple> points, out Triple lineOrigin, out Triple lineDirection)
+        //{
+        //    Triple centroid = Triple.Zero;
+        //    for (int i = 0; i < points.Count; i++) centroid += points[i];
+        //    centroid /= points.Count;
+
+        //    float[,] P = new float[points.Count, 3];
+
+        //    for (int i = 0; i < points.Count; i++)
+        //    {
+        //        P[i, 0] = points[i].X - centroid.X;
+        //        P[i, 1] = points[i].Y - centroid.Y;
+        //        P[i, 2] = points[i].Z - centroid.Z;
+        //    }
+
+        //    Matrix<float> covariance = Matrix<float>.Build.Dense(3, 3);
+
+        //    for (int i = 0; i < 3; i++)
+        //        for (int j = 0; j < 3; j++)
+        //            for (int k = 0; k < points.Count; k++)
+        //                covariance[i, j] += P[k, i] * P[k, j];
+
+        //    Evd<float> evd = covariance.Evd();
+
+        //    lineOrigin = centroid;
+
+        //    if (evd.Rank == 0) // The input points are idendtical, so we just pick an arbitrary direction for the line
+        //        lineDirection = Triple.BasisX;
+        //    else // Otherwise the direction of the best fit line is the most dominant eigen vector 
+        //        lineDirection = new Triple(evd.EigenVectors[0, 2], evd.EigenVectors[1, 2], evd.EigenVectors[2, 2]);
+
+        //    return evd.Rank > 2 ? 2 : evd.Rank;
+        //}
+
+
         public static int ComputeBestFitLine(List<Triple> points, out Triple lineOrigin, out Triple lineDirection)
         {
             Triple centroid = Triple.Zero;
@@ -93,23 +127,30 @@ namespace DynaShape
                 P[i, 2] = points[i].Z - centroid.Z;
             }
 
-            Matrix<float> covariance = Matrix<float>.Build.Dense(3, 3);
+            Matrix3x3 covariance = new Matrix3x3();
 
-            for (int i = 0; i < 3; i++)
-            for (int j = 0; j < 3; j++)
             for (int k = 0; k < points.Count; k++)
-                covariance[i, j] += P[k, i] * P[k, j];
+            {
+                covariance.V00 += P[k, 0] * P[k, 0];
+                covariance.V01 += P[k, 0] * P[k, 1];
+                covariance.V02 += P[k, 0] * P[k, 2];
+                covariance.V10 += P[k, 1] * P[k, 0];
+                covariance.V11 += P[k, 1] * P[k, 1];
+                covariance.V12 += P[k, 1] * P[k, 2];
+                covariance.V20 += P[k, 2] * P[k, 0];
+                covariance.V21 += P[k, 2] * P[k, 1];
+                covariance.V22 += P[k, 2] * P[k, 2];
+            }
 
-            Evd<float> evd = covariance.Evd();
+            Matrix3x3 u, v;
+            AForge.Math.Vector3 e;
+            covariance.SVD(out u, out e, out v);
 
             lineOrigin = centroid;
 
-            if (evd.Rank == 0) // The input points are idendtical, so we just pick an arbitrary direction for the line
-                lineDirection = Triple.BasisX;
-            else // Otherwise the direction of the best fit line is the most dominant eigen vector 
-                lineDirection = new Triple(evd.EigenVectors[0, 2], evd.EigenVectors[1, 2], evd.EigenVectors[2, 2]);
+            lineDirection = new Triple(u.V00, u.V10, u.V20);
 
-            return evd.Rank > 2 ? 2 : evd.Rank;
+            return 3;
         }
 
 
@@ -121,6 +162,47 @@ namespace DynaShape
         /// <param name="planeOrigin">The output plane origin</param>
         /// <param name="planeNormal">The output plane normal vector</param>
         /// <returns>0 if the input points are identical, 1 if the input points are colinear, 2 if the input points are coplanar (already on a plane), 3 otherwise</returns>
+        //public static int ComputeBestFitPlane(List<Triple> points, out Triple planeOrigin, out Triple planeNormal)
+        //{
+        //    Triple centroid = Triple.Zero;
+        //    for (int i = 0; i < points.Count; i++) centroid += points[i];
+        //    centroid /= points.Count;
+
+        //    float[,] P = new float[points.Count, 3];
+
+        //    for (int i = 0; i < points.Count; i++)
+        //    {
+        //        P[i, 0] = points[i].X - centroid.X;
+        //        P[i, 1] = points[i].Y - centroid.Y;
+        //        P[i, 2] = points[i].Z - centroid.Z;
+        //    }
+
+        //    Matrix<float> covariance = Matrix<float>.Build.Dense(3, 3);
+
+        //    for (int i = 0; i < 3; i++)
+        //    for (int j = 0; j < 3; j++)
+        //    for (int k = 0; k < points.Count; k++)
+        //        covariance[i, j] += P[k, i] * P[k, j];
+
+        //    Evd<float> evd = covariance.Evd();
+
+        //    planeOrigin = centroid;
+
+        //    if (evd.Rank == 0) // The input points are idendtical, so we just pick an arbitrary normal vector
+        //        planeNormal = Triple.BasisZ;
+        //    else if (evd.Rank == 1
+        //    ) // The input points are colinear, so we just pick an arbitrary vector perpendicular to the only eigen vector
+        //        planeNormal = new Triple(evd.EigenVectors[0, 1], evd.EigenVectors[1, 1], evd.EigenVectors[2, 1])
+        //            .GeneratePerpendicular();
+        //    else // The normal is perpendicular to the two dominant eigen vectors
+        //    {
+        //        Triple e1 = new Triple(evd.EigenVectors[0, 1], evd.EigenVectors[1, 1], evd.EigenVectors[2, 1]);
+        //        Triple e2 = new Triple(evd.EigenVectors[0, 2], evd.EigenVectors[1, 2], evd.EigenVectors[2, 2]);
+        //        planeNormal = e2.Cross(e1).Normalise();
+        //    }
+
+        //    return evd.Rank;
+        //}
         public static int ComputeBestFitPlane(List<Triple> points, out Triple planeOrigin, out Triple planeNormal)
         {
             Triple centroid = Triple.Zero;
@@ -136,33 +218,33 @@ namespace DynaShape
                 P[i, 2] = points[i].Z - centroid.Z;
             }
 
-            Matrix<float> covariance = Matrix<float>.Build.Dense(3, 3);
+            Matrix3x3 covariance = new Matrix3x3();
 
-            for (int i = 0; i < 3; i++)
-            for (int j = 0; j < 3; j++)
             for (int k = 0; k < points.Count; k++)
-                covariance[i, j] += P[k, i] * P[k, j];
+            {
+                covariance.V00 += P[k, 0] * P[k, 0];
+                covariance.V01 += P[k, 0] * P[k, 1];
+                covariance.V02 += P[k, 0] * P[k, 2];
+                covariance.V10 += P[k, 1] * P[k, 0];
+                covariance.V11 += P[k, 1] * P[k, 1];
+                covariance.V12 += P[k, 1] * P[k, 2];
+                covariance.V20 += P[k, 2] * P[k, 0];
+                covariance.V21 += P[k, 2] * P[k, 1];
+                covariance.V22 += P[k, 2] * P[k, 2];
+            }
 
-            Evd<float> evd = covariance.Evd();
+            Matrix3x3 u, v;
+            AForge.Math.Vector3 e;
+            covariance.SVD(out u, out e, out v);
 
             planeOrigin = centroid;
 
-            if (evd.Rank == 0) // The input points are idendtical, so we just pick an arbitrary normal vector
-                planeNormal = Triple.BasisZ;
-            else if (evd.Rank == 1
-            ) // The input points are colinear, so we just pick an arbitrary vector perpendicular to the only eigen vector
-                planeNormal = new Triple(evd.EigenVectors[0, 1], evd.EigenVectors[1, 1], evd.EigenVectors[2, 1])
-                    .GeneratePerpendicular();
-            else // The normal is perpendicular to the two dominant eigen vectors
-            {
-                Triple e1 = new Triple(evd.EigenVectors[0, 1], evd.EigenVectors[1, 1], evd.EigenVectors[2, 1]);
-                Triple e2 = new Triple(evd.EigenVectors[0, 2], evd.EigenVectors[1, 2], evd.EigenVectors[2, 2]);
-                planeNormal = e2.Cross(e1).Normalise();
-            }
-
-            return evd.Rank;
+            Triple e1 = new Triple(u.V00, u.V10, u.V20);
+            Triple e2 = new Triple(u.V01, u.V11, u.V21);
+            planeNormal = e2.Cross(e1).Normalise();
+            
+            return 3;
         }
-
 
         public static bool ComputeBestFitCircle(List<Triple> points, out Triple circleCenter, out Triple circleNormal,
             out float circleRadius)
@@ -173,8 +255,7 @@ namespace DynaShape
             Triple planeOrigin, planeNormal;
             int planeFittingResult = ComputeBestFitPlane(points, out planeOrigin, out planeNormal);
 
-            if (planeFittingResult < 2
-            ) // The points are either all identical, or colinear (i.e. already on the same "circle" of infinite radius)
+            if (planeFittingResult < 2) // The points are either all identical, or colinear (i.e. already on the same "circle" of infinite radius)
             {
                 circleCenter = circleNormal = new Triple(float.NaN);
                 circleRadius = float.NaN;
