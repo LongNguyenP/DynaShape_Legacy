@@ -149,7 +149,7 @@
     <Compile Include="Goals\Goal.cs" />
     <Compile Include="Goals\LengthGoal.cs" />
     <Compile Include="Goals\ParallelLinesGoal.cs" />
-    <Compile Include="Goals\ShapeMatchingGoal.cs" />
+    <Compile Include="ZeroTouch\ShapeMatchingGoal.cs" />
     <Compile Include="Node.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ZeroTouch\TestingUtilities.cs" />
