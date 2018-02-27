@@ -144,9 +144,17 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>Copy "$(TargetPath)" "%25AppData%25\Dynamo\Dynamo Core\1.3\packages\_DynaShape\bin\DynaShape.dll"
-Copy "$(TargetDir)\DynaShape.xml" "%25AppData%25\Dynamo\Dynamo Core\1.3\packages\_DynaShape\bin\DynaShape.xml"
-Copy "$(TargetPath)" "%25AppData%25\Dynamo\Dynamo Revit\1.3\packages\_DynaShape\bin\DynaShape.dll"
-Copy "$(TargetDir)\DynaShape.xml" "%25AppData%25\Dynamo\Dynamo Revit\1.3\packages\_DynaShape\bin\DynaShape.xml"</PostBuildEvent>
+    <PostBuildEvent>echo Copying files to Dynamo Core packages directory
+Copy "$(TargetDir)\DynaShape.dll" "%25AppData%25\Dynamo\Dynamo Core\1.3\packages\_DynaShape\bin"
+Copy "$(TargetDir)\DynaShape.xml" "%25AppData%25\Dynamo\Dynamo Core\1.3\packages\_DynaShape\bin"
+
+echo Copying files to Dynamo Revit packages directory
+Copy "$(TargetDir)\DynaShape.dll" "%25AppData%25\Dynamo\Dynamo Revit\1.3\packages\_DynaShape\bin"
+Copy "$(TargetDir)\DynaShape.xml" "%25AppData%25\Dynamo\Dynamo Revit\1.3\packages\_DynaShape\bin"
+
+echo Copying files to DynaShapeInstaller project
+Copy "$(TargetDir)\DynaShape.dll" "$(SolutionDir)\..\DynaShapeInstaller_VS\DynaShapeSetup\Resources"
+Copy "$(TargetDir)\DynaShape.xml" "$(SolutionDir)\..\DynaShapeInstaller_VS\DynaShapeSetup\Resources"
+Copy "$(SolutionDir)\ManifestFiles\pkg.json" "$(SolutionDir)\..\DynaShapeInstaller_VS\DynaShapeSetup\Resources"</PostBuildEvent>
   </PropertyGroup>
 </Project>
