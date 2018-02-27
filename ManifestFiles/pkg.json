@@ -2,7 +2,7 @@
     "license": "MIT License",
     "file_hash": null,
     "name": "DynaShape",
-    "version": "0.3.1",
+    "version": "0.4.0.0",
     "description": "",
     "group": "DynaShape",
     "keywords": [],
@@ -12,9 +12,9 @@
     "engine": "dynamo",
     "engine_metadata": "",
     "site_url": "",
-    "repository_url": "",
+    "repository_url": "https://github.com/LongNguyenP/DynaShape",
     "contains_binaries": true,
     "node_libraries": [
-        "DynaShape, Version=0.3.1.1, Culture=neutral, PublicKeyToken=null"
+        "DynaShape, Version=0.4.0.0, Culture=neutral, PublicKeyToken=null"
     ]
 }

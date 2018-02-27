@@ -30,12 +30,12 @@ namespace DynaShape.ZeroTouch
             Triple[,,] points = new Triple[X, Y, Z];
             List<Point> pointsLinear = new List<Point>();
             for (int i = 0; i < X; i++)
-            for (int j = 0; j < Y; j++)
-            for (int k = 0; k < Z; k++)
-            {
-                points[i, j, k] = new Triple(i, j, k + 5f);
-                pointsLinear.Add(Point.ByCoordinates(i, j, k + 5f));
-            }
+                for (int j = 0; j < Y; j++)
+                    for (int k = 0; k < Z; k++)
+                    {
+                        points[i, j, k] = new Triple(i, j, k + 5f);
+                        pointsLinear.Add(Point.ByCoordinates(i, j, k + 5f));
+                    }
 
 
             List<Goal> anchorGoals = new List<Goal>();
@@ -131,10 +131,10 @@ namespace DynaShape.ZeroTouch
 
 
             for (int i = 0; i < X - 1; i++)
-            for (int j = 0; j < Y - 1; j++)
-            for (int k = 0; k < Z - 1; k++)
-            {
-                var voxelPoints = new List<Triple>()
+                for (int j = 0; j < Y - 1; j++)
+                    for (int k = 0; k < Z - 1; k++)
+                    {
+                        var voxelPoints = new List<Triple>()
                 {
                     points[i + 0, j + 0, k + 0],
                     points[i + 1, j + 0, k + 0],
@@ -147,8 +147,8 @@ namespace DynaShape.ZeroTouch
                 };
 
 
-                goals.Add(new ShapeMatchingGoal(voxelPoints, voxelPoints));
-            }
+                        goals.Add(new ShapeMatchingGoal(voxelPoints, voxelPoints));
+                    }
 
             //goals.Add(new FloorGoal(pointsLinear));
             //goals.Add(new ConstantGoal(pointsLinear, Triple.BasisZ * -0.1f));

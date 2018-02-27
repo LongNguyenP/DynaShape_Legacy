@@ -149,7 +149,7 @@
     <Compile Include="Goals\Goal.cs" />
     <Compile Include="Goals\LengthGoal.cs" />
     <Compile Include="Goals\ParallelLinesGoal.cs" />
-    <Compile Include="ZeroTouch\ShapeMatchingGoal.cs" />
+    <Compile Include="Goals\ShapeMatchingGoal.cs" />
     <Compile Include="Node.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ZeroTouch\TestingUtilities.cs" />
@@ -163,7 +163,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>Copy "$(TargetPath)" "C:\Users\Long\AppData\Roaming\Dynamo\Dynamo Core\1.3\packages\_DynaShape\bin\DynaShape.dll"
-Copy "$(TargetDir)\DynaShape.xml" "C:\Users\Long\AppData\Roaming\Dynamo\Dynamo Core\1.3\packages\_DynaShape\bin\DynaShape.xml"</PostBuildEvent>
+    <PostBuildEvent>Copy "$(TargetPath)" "%25AppData%25\Dynamo\Dynamo Core\1.3\packages\_DynaShape\bin\DynaShape.dll"
+Copy "$(TargetDir)\DynaShape.xml" "%25AppData%25\Dynamo\Dynamo Core\1.3\packages\_DynaShape\bin\DynaShape.xml"
+Copy "$(TargetPath)" "%25AppData%25\Dynamo\Dynamo Revit\1.3\packages\_DynaShape\bin\DynaShape.dll"
+Copy "$(TargetDir)\DynaShape.xml" "%25AppData%25\Dynamo\Dynamo Revit\1.3\packages\_DynaShape\bin\DynaShape.xml"</PostBuildEvent>
   </PropertyGroup>
 </Project>
