@@ -16,6 +16,7 @@ namespace DynaShape.Goals
             Weight = weight;
             StartingPositions = new[] { firstNodePosition, secondNodePosition };
             Moves = new Triple[2];
+            Weights = new float[2];
         }
 
 
@@ -30,6 +31,7 @@ namespace DynaShape.Goals
             Triple v = allNodes[NodeIndices[1]].Position - allNodes[NodeIndices[0]].Position;
             Moves[0] = 0.5f * (v - v.Dot(TargetDirection) * TargetDirection);
             Moves[1] = -Moves[0];
+            Weights[0] = Weights[1] = Weight;
         }
     }
 }

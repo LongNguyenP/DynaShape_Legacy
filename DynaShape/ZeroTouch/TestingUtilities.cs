@@ -24,15 +24,17 @@ namespace DynaShape.ZeroTouch
         /// <param name="Y">Number of nodes along the Y axis, minimum is 2</param>
         /// <param name="Z">Number of nodes along the Z axis, minimum is 2</param>
         /// <returns>The ShapeMatching goals, Anchor goals, and polyline binders</returns>
-        [MultiReturn("goals", "geometryBinders", "anchorGoals")]
+        [MultiReturn("goals", "geometryBinders", "anchorGoals", "points")]
         public static Dictionary<string, object> WonkyCubes(int X = 21, int Y = 21, int Z = 2)
         {
             Triple[,,] points = new Triple[X, Y, Z];
+            List<Point> pointsLinear = new List<Point>();
             for (int i = 0; i < X; i++)
                 for (int j = 0; j < Y; j++)
                     for (int k = 0; k < Z; k++)
                     {
-                        points[i, j, k] = new Triple((float)i, (float)j, (float)k);
+                        points[i, j, k] = new Triple(i, j, k + 5f);
+                        pointsLinear.Add(Point.ByCoordinates(i, j, k + 5f));
                     }
 
 
@@ -148,15 +150,16 @@ namespace DynaShape.ZeroTouch
                         goals.Add(new ShapeMatchingGoal(voxelPoints, voxelPoints));
                     }
 
+            //goals.Add(new FloorGoal(pointsLinear));
+            //goals.Add(new ConstantGoal(pointsLinear, Triple.BasisZ * -0.1f));
+
             return new Dictionary<string, object>
             {
                 {"goals", goals},
                 {"geometryBinders", geometryBinders},
-                {"anchorGoals", anchorGoals}
+                {"anchorGoals", anchorGoals},
+                {"points", pointsLinear}
             };
         }
-
-
-
     }
 }

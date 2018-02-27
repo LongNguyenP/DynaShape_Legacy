@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO.Packaging;
+using AForge.Math;
 using Autodesk.DesignScript.Runtime;
-using MathNet.Numerics.LinearAlgebra;
-using MathNet.Numerics.LinearAlgebra.Factorization;
 
 
 namespace DynaShape.Goals
@@ -21,6 +20,7 @@ namespace DynaShape.Goals
             Weight = weight;
             StartingPositions = nodeStartingPositions.ToArray();
             Moves = new Triple[StartingPositions.Length];
+            Weights = new float[StartingPositions.Length];
             AllowScaling = allowScaling;
             SetTargetShapePoints(targetShapePositions);
         }
@@ -61,31 +61,31 @@ namespace DynaShape.Goals
             // Determine if the target shape is 2D, as this case required special handling when doing shape matching operator
             //===================================================================================================================
 
-            Matrix<float> covariance = Matrix<float>.Build.Dense(3, 3);
+            Matrix3x3 covariance = new Matrix3x3();
 
             for (int i = 0; i < NodeCount; i++)
             {
-                covariance[0, 0] += targetShapePoints[i].X * targetShapePoints[i].X;
-                covariance[0, 1] += targetShapePoints[i].X * targetShapePoints[i].Y;
-                covariance[0, 2] += targetShapePoints[i].X * targetShapePoints[i].Z;
+                covariance.V00 += targetShapePoints[i].X * targetShapePoints[i].X;
+                covariance.V01 += targetShapePoints[i].X * targetShapePoints[i].Y;
+                covariance.V02 += targetShapePoints[i].X * targetShapePoints[i].Z;
 
-                covariance[1, 0] += targetShapePoints[i].Y * targetShapePoints[i].X;
-                covariance[1, 1] += targetShapePoints[i].Y * targetShapePoints[i].Y;
-                covariance[1, 2] += targetShapePoints[i].Y * targetShapePoints[i].Z;
+                covariance.V10 += targetShapePoints[i].Y * targetShapePoints[i].X;
+                covariance.V11 += targetShapePoints[i].Y * targetShapePoints[i].Y;
+                covariance.V12 += targetShapePoints[i].Y * targetShapePoints[i].Z;
 
-                covariance[2, 0] += targetShapePoints[i].Z * targetShapePoints[i].X;
-                covariance[2, 1] += targetShapePoints[i].Z * targetShapePoints[i].Y;
-                covariance[2, 2] += targetShapePoints[i].Z * targetShapePoints[i].Z;
+                covariance.V20 += targetShapePoints[i].Z * targetShapePoints[i].X;
+                covariance.V21 += targetShapePoints[i].Z * targetShapePoints[i].Y;
+                covariance.V22 += targetShapePoints[i].Z * targetShapePoints[i].Z;
             }
 
-            is2D = covariance.Determinant().IsAlmostZero();
+            is2D = covariance.Determinant.IsAlmostZero();
         }
 
 
 
         internal void ShapeMatch(Triple[] positions)
         {
-            // Here we compute the most optimal translation, rotation (and optionally scalling) that bring the targetShapePoints as close as possible to the current node positions
+            // Here we compute the "best" translation, rotation (and optionally scalling) that bring the targetShapePoints as close as possible to the current node positions
             // Reference: Umeyama S. 1991, Least-Squares Estimation of Transformation Paramters Between Two Point Patterns
 
 
@@ -112,43 +112,46 @@ namespace DynaShape.Goals
                    positions[i].Z - center.Z);
 
 
-            //================================================================================================================
+            //==================================================================================================================
             // Compute the rotation matrix that bring the original rest positions to the current positions as close as possible
-            //================================================================================================================
+            //==================================================================================================================
 
-            Matrix<float> covariance = Matrix<float>.Build.Dense(3, 3);
+            Matrix3x3 covariance = new Matrix3x3();
 
             for (int i = 0; i < NodeCount; i++)
             {
-                covariance[0, 0] += positionsCentered[i].X * targetShapePoints[i].X;
-                covariance[0, 1] += positionsCentered[i].X * targetShapePoints[i].Y;
-                covariance[0, 2] += positionsCentered[i].X * targetShapePoints[i].Z;
+                covariance.V00 += positionsCentered[i].X * targetShapePoints[i].X;
+                covariance.V01 += positionsCentered[i].X * targetShapePoints[i].Y;
+                covariance.V02 += positionsCentered[i].X * targetShapePoints[i].Z;
 
-                covariance[1, 0] += positionsCentered[i].Y * targetShapePoints[i].X;
-                covariance[1, 1] += positionsCentered[i].Y * targetShapePoints[i].Y;
-                covariance[1, 2] += positionsCentered[i].Y * targetShapePoints[i].Z;
+                covariance.V10 += positionsCentered[i].Y * targetShapePoints[i].X;
+                covariance.V11 += positionsCentered[i].Y * targetShapePoints[i].Y;
+                covariance.V12 += positionsCentered[i].Y * targetShapePoints[i].Z;
 
-                covariance[2, 0] += positionsCentered[i].Z * targetShapePoints[i].X;
-                covariance[2, 1] += positionsCentered[i].Z * targetShapePoints[i].Y;
-                covariance[2, 2] += positionsCentered[i].Z * targetShapePoints[i].Z;
+                covariance.V20 += positionsCentered[i].Z * targetShapePoints[i].X;
+                covariance.V21 += positionsCentered[i].Z * targetShapePoints[i].Y;
+                covariance.V22 += positionsCentered[i].Z * targetShapePoints[i].Z;
             }
 
-            Svd<float> svd = covariance.Svd();
+            Matrix3x3 u, v;
+            Vector3 e;
 
-            Matrix<float> R = svd.U * svd.VT;
+            covariance.SVD(out u, out e, out v);
+
+            Matrix3x3 R = u * v.Transpose();
 
             float indicator = 1f;
 
-            if (R.Determinant() < 0f && !is2D)
-            {
-                R[2, 0] *= -1f;
-                R[2, 1] *= -1f;
-                R[2, 2] *= -1f;
-                indicator = -1f;
-            }
+            //if (R.Determinant < 0f && !is2D)
+            //{
+            //    R.V20 *= -1f;
+            //    R.V21 *= -1f;
+            //    R.V22 *= -1f;
+            //    indicator = -1f;
+            //}
 
             if (AllowScaling)
-                R *= sigmaInversed * (indicator * svd.S[0] + svd.S[1] + svd.S[2]);
+                R *= sigmaInversed * (indicator * e.X + e.Y + e.Z);
 
 
             //=========================================================================
@@ -158,11 +161,11 @@ namespace DynaShape.Goals
 
             for (int i = 0; i < NodeCount; i++)
             {
-                Moves[i].X = R[0, 0] * targetShapePoints[i].X + R[0, 1] * targetShapePoints[i].Y + R[0, 2] * targetShapePoints[i].Z + center.X - positions[i].X;
-                Moves[i].Y = R[1, 0] * targetShapePoints[i].X + R[1, 1] * targetShapePoints[i].Y + R[1, 2] * targetShapePoints[i].Z + center.Y - positions[i].Y;
-                Moves[i].Z = R[2, 0] * targetShapePoints[i].X + R[2, 1] * targetShapePoints[i].Y + R[2, 2] * targetShapePoints[i].Z + center.Z - positions[i].Z;
+                Moves[i].X = R.V00 * targetShapePoints[i].X + R.V01 * targetShapePoints[i].Y + R.V02 * targetShapePoints[i].Z + center.X - positions[i].X;
+                Moves[i].Y = R.V10 * targetShapePoints[i].X + R.V11 * targetShapePoints[i].Y + R.V12 * targetShapePoints[i].Z + center.Y - positions[i].Y;
+                Moves[i].Z = R.V20 * targetShapePoints[i].X + R.V21 * targetShapePoints[i].Y + R.V22 * targetShapePoints[i].Z + center.Z - positions[i].Z;
+                Weights[i] = Weight;
             }
-
         }
     }
 }

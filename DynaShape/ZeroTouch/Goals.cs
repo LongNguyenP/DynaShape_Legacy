@@ -70,6 +70,76 @@ namespace DynaShape.ZeroTouch
 
 
         //==================================================================
+        // Angle
+        //==================================================================
+
+        /// <summary>
+        /// Keep the angle formed by three nodes at a target value
+        /// </summary>
+        /// <param name="A"></param>
+        /// <param name="B"></param>
+        /// <param name="C"></param>
+        /// <param name="targetAngle"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static AngleGoal AngleGoal_Create(
+            Point A,
+            Point B,
+            Point C,
+            [DefaultArgument("0.0")] double targetAngle,
+            [DefaultArgument("1.0")] double weight)
+        {
+            return new AngleGoal(
+                A.ToTriple(),
+                B.ToTriple(),
+                C.ToTriple(),
+                ((float)targetAngle).ToRadian(),
+                (float)weight);
+        }
+
+
+        /// <summary>
+        /// Maintain the angle formed by three nodes
+        /// </summary>
+        /// <param name="A"></param>
+        /// <param name="B"></param>
+        /// <param name="C"></param>
+        /// <param name="targetAngle"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static AngleGoal AngleGoal_Create(
+            Point A,
+            Point B,
+            Point C,
+            [DefaultArgument("1.0")] double weight)
+        {
+            return new AngleGoal(
+                A.ToTriple(),
+                B.ToTriple(),
+                C.ToTriple(),
+                (float)weight);
+        }
+
+
+        /// <summary>
+        /// Adjust the goal's parameters while the solver is running.
+        /// </summary>
+        /// <param name="anchorGoal"></param>
+        /// <param name="anchor"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static AngleGoal AngleGoal_Change(
+            AngleGoal angleGoal,
+            float targetAngle,
+            [DefaultArgument("-1.0")] double weight)
+        {
+            angleGoal.TargetAngle = targetAngle.ToRadian();
+            if (weight >= 0.0) angleGoal.Weight = (float)weight;
+            return angleGoal;
+        }
+
+
+        //==================================================================
         // CoCircular
         //==================================================================
 
@@ -175,6 +245,122 @@ namespace DynaShape.ZeroTouch
         }
 
 
+
+        //==================================================================
+        // ConstantPressure
+        //==================================================================
+
+        /// <summary>
+        /// Applying a force perpendicular to a triangular surface, with magnitude proportional to the surface area.
+        /// </summary>
+        /// <param name="startPosition1"></param>
+        /// <param name="startPosition2"></param>
+        /// <param name="startPosition3"></param>
+        /// <param name="pressure">The pressure being applied on the triangle</param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static ConstantPressureGoal ConstantPressureGoal_Create(
+            Point startPosition1,
+            Point startPosition2,
+            Point startPosition3,
+            [DefaultArgument("0.1")]double pressure,
+            [DefaultArgument("1.0")] double weight)
+        {
+            return new ConstantPressureGoal(startPosition1.ToTriple(), startPosition2.ToTriple(), startPosition3.ToTriple(), (float)pressure, (float)weight);
+        }
+
+
+        /// <summary>
+        /// Applying forces perpendicular to each triangular face of a mesh, with magnitude proportional to the surface area of the triangle
+        /// </summary>
+        /// <param name="mesh"></param>
+        /// <param name="pressure"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static List<ConstantPressureGoal> ConstantPressureGoal_Create(
+            Mesh mesh,
+            [DefaultArgument("0.1")]double pressure,
+            [DefaultArgument("1.0")] double weight)
+        {
+            List<ConstantPressureGoal> pressureGoals = new List<ConstantPressureGoal>();
+
+            List<double> vertices = mesh.TrianglesAsNineNumbers.ToList();
+
+            int faceCount = vertices.Count / 9;
+
+            for (int i = 0; i < faceCount; i++)
+            {
+                int j = i * 9;
+                pressureGoals.Add(
+                    new ConstantPressureGoal(
+                        new Triple(vertices[j + 0], vertices[j + 1], vertices[j + 2]),
+                        new Triple(vertices[j + 3], vertices[j + 4], vertices[j + 5]),
+                        new Triple(vertices[j + 6], vertices[j + 7], vertices[j + 8]),
+                        (float)pressure,
+                        (float)weight));
+            }
+
+            return pressureGoals;
+        }
+
+
+        /// <summary>
+        /// Adjust the goal's parameters while the solver is running.
+        /// </summary>
+        /// <param name="constantPressureGoal"></param>
+        /// <param name="pressure"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static ConstantPressureGoal ConstantPressureGoal_Change(
+            ConstantPressureGoal constantPressureGoal,
+            [DefaultArgument("-1.0")] double pressure,
+            [DefaultArgument("-1.0")] double weight)
+        {
+            if (pressure >= 0.0) constantPressureGoal.Pressure = (float)pressure;
+            if (weight >= 0.0) constantPressureGoal.Weight = (float)weight;
+            return constantPressureGoal;
+        }
+
+
+        //==================================================================
+        // ConstantVolumePressure
+        //==================================================================
+
+        /// <summary>
+        /// Simulate pressure trapped inside a closed volume. The pressure decreases as the volume expands (Boyle's law)
+        /// </summary>
+        /// <param name="mesh">A closed mesh</param>
+        /// <param name="volumePressureConstant">The constant that is the product of the pressure and volume. This means that pressure will automatically decrease as the mesh volume increases (and vice versa)</param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static ConstantVolumePressureGoal ConstantVolumePressureGoal_Create(
+            Mesh mesh,
+            [DefaultArgument("0.0")] double volumePressureConstant,
+            [DefaultArgument("1.0")] double weight)
+        {
+            return new ConstantVolumePressureGoal(mesh, (float)volumePressureConstant, (float) weight);
+        }
+
+
+        /// <summary>
+        /// Adjust the goal's parameters while the solver is running.
+        /// </summary>
+        /// <param name="constantVolumePressureGoal"></param>
+        /// <param name="volumePressureConstant"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static ConstantVolumePressureGoal ConstantVolumePressureGoal_Change(
+            ConstantVolumePressureGoal constantVolumePressureGoal,
+            [DefaultArgument("-1.0")] double volumePressureConstant,
+            [DefaultArgument("-1.0")] double weight)
+        {
+            if (volumePressureConstant >= 0.0) constantVolumePressureGoal.VolumePressureConstant = (float)volumePressureConstant;
+            if (weight >= 0.0) constantVolumePressureGoal.Weight = (float)weight;
+            return constantVolumePressureGoal;
+        }
+
+
+
         //==================================================================
         // CoPlanar
         //==================================================================
@@ -241,6 +427,92 @@ namespace DynaShape.ZeroTouch
         {
             if (weight >= 0.0) coSphericalGoal.Weight = (float)weight;
             return coSphericalGoal;
+        }
+
+
+        //==================================================================
+        // Directional Wind
+        //==================================================================
+
+        /// <summary>
+        /// Simulate wind by applying a constant force on the three vertices of a triangle,
+        /// scaled by the cosine of the angle between the wind vector and the triangle's normal.
+        /// This way, the wind has full effect when it hits the triangle head-on, and zero
+        /// effect if it blows paralell to the triangle.
+        /// </summary>
+        /// <param name="startPosition1"></param>
+        /// <param name="startPosition2"></param>
+        /// <param name="startPosition3"></param>
+        /// <param name="windVector"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static DirectionalWindGoal DirectionalWindGoal_Create(
+            Point startPosition1,
+            Point startPosition2,
+            Point startPosition3,
+            [DefaultArgument("Vector.ByCoordinates(1.0, 0, 0)")] Vector windVector,
+            [DefaultArgument("1.0")] double weight)
+        {
+            return new DirectionalWindGoal(
+                startPosition1.ToTriple(),
+                startPosition2.ToTriple(),
+                startPosition3.ToTriple(),
+                windVector.ToTriple(),
+                (float)weight);
+        }
+
+
+        /// <summary>
+        /// Simulate wind blowing along a specified direction, by applying a force on the three vertices of a triangle,
+        /// The force magnitude is addtionally scaled by the cosine of the angle between the wind vector and the triangle's normal.
+        /// This way, the wind has full effect when it hits the triangle head-on, and zero
+        /// effect if it blows paralell to the triangle.
+        /// </summary>
+        /// <param name="mesh"></param>
+        /// <param name="windVector"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static List<DirectionalWindGoal> DirectionalWindGoal_Create(
+            Mesh mesh,
+            [DefaultArgument("Vector.ByCoordinates(1.0, 0, 0)")] Vector windVector,
+            [DefaultArgument("1.0")] double weight)
+        {
+            List<DirectionalWindGoal> windGoals = new List<DirectionalWindGoal>();
+
+            List<double> vertices = mesh.TrianglesAsNineNumbers.ToList();
+
+            int faceCount = vertices.Count / 9;
+
+            for (int i = 0; i < faceCount; i++)
+            {
+                int j = i * 9;
+                windGoals.Add(
+                    new DirectionalWindGoal(
+                        new Triple(vertices[j + 0], vertices[j + 1], vertices[j + 2]),
+                        new Triple(vertices[j + 3], vertices[j + 4], vertices[j + 5]),
+                        new Triple(vertices[j + 6], vertices[j + 7], vertices[j + 8]),
+                        windVector.ToTriple(),
+                        (float)weight));
+            }
+
+            return windGoals;
+        }
+
+
+        /// <summary>
+        /// Adjust the goal's parameters while the solver is running.
+        /// </summary>
+        /// <param name="windVector"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static DirectionalWindGoal DirectionalWindGoal_Change(
+            DirectionalWindGoal windGoal,
+            [DefaultArgument("null")] Vector windVector,
+            [DefaultArgument("-1.0")] double weight)
+        {
+            if (windVector != null) windGoal.WindVector = windVector.ToTriple();
+            if (weight >= 0.0) windGoal.Weight = (float)weight;
+            return windGoal;
         }
 
 
@@ -784,6 +1056,7 @@ namespace DynaShape.ZeroTouch
         }
 
 
+
         //==================================================================
         // ShapeMatching
         //==================================================================
@@ -831,89 +1104,6 @@ namespace DynaShape.ZeroTouch
         }
 
 
-        //==================================================================
-        // Wind
-        //==================================================================
-
-        /// <summary>
-        /// Simulate wind by applying a constant force on the three vertices of a triangle,
-        /// scaled by the cosine of the angle between the wind vector and the triangle's normal.
-        /// This way, the wind has full effect when it hits the triangle head-on, and zero
-        /// effect if it blows paralell to the triangle.
-        /// </summary>
-        /// <param name="startPosition1"></param>
-        /// <param name="startPosition2"></param>
-        /// <param name="startPosition3"></param>
-        /// <param name="windVector"></param>
-        /// <param name="weight"></param>
-        /// <returns></returns>
-        public static DirectionalWindGoal WindGoal_Create(
-            Point startPosition1,
-            Point startPosition2,
-            Point startPosition3,
-            [DefaultArgument("Vector.ByCoordinates(1.0, 0, 0)")] Vector windVector,
-            [DefaultArgument("1.0")] double weight)
-        {
-            return new DirectionalWindGoal(
-                startPosition1.ToTriple(),
-                startPosition2.ToTriple(),
-                startPosition3.ToTriple(),
-                windVector.ToTriple(),
-                (float)weight);
-        }
-
-
-        /// <summary>
-        /// Simulate wind blowing along a specified direction, by applying a force on the three vertices of a triangle,
-        /// The force magnitude is addtionally scaled by the cosine of the angle between the wind vector and the triangle's normal.
-        /// This way, the wind has full effect when it hits the triangle head-on, and zero
-        /// effect if it blows paralell to the triangle.
-        /// </summary>
-        /// <param name="mesh"></param>
-        /// <param name="windVector"></param>
-        /// <param name="weight"></param>
-        /// <returns></returns>
-        public static List<DirectionalWindGoal> DirectionalWindGoal_Create(
-            Mesh mesh,
-            [DefaultArgument("Vector.ByCoordinates(1.0, 0, 0)")] Vector windVector,
-            [DefaultArgument("1.0")] double weight)
-        {
-            List<DirectionalWindGoal> windGoals = new List<DirectionalWindGoal>();
-
-            List<double> vertices = mesh.TrianglesAsNineNumbers.ToList();
-
-            int faceCount = vertices.Count / 9;
-
-            for (int i = 0; i < faceCount; i++)
-            {
-                int j = i * 9;
-                windGoals.Add(
-                    new DirectionalWindGoal(
-                        new Triple(vertices[j + 0], vertices[j + 1], vertices[j + 2]),
-                        new Triple(vertices[j + 3], vertices[j + 4], vertices[j + 5]),
-                        new Triple(vertices[j + 6], vertices[j + 7], vertices[j + 8]),
-                        windVector.ToTriple(),
-                        (float)weight));
-            }
-
-            return windGoals;
-        }
-
-
-        /// <summary>
-        /// Adjust the goal's parameters while the solver is running.
-        /// </summary>
-        /// <param name="windVector"></param>
-        /// <param name="weight"></param>
-        /// <returns></returns>
-        public static DirectionalWindGoal DirectionalWindGoal_Change(
-            DirectionalWindGoal windGoal,
-            [DefaultArgument("null")] Vector windVector,
-            [DefaultArgument("-1.0")] double weight)
-        {
-            if (windVector != null) windGoal.WindVector = windVector.ToTriple();
-            if (weight >= 0.0) windGoal.Weight = (float)weight;
-            return windGoal;
-        }
+        
     }
 }

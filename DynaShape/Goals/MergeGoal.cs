@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Xaml;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Runtime;
 
@@ -14,6 +15,7 @@ namespace DynaShape.Goals
             Weight = weight;
             StartingPositions = nodeStartingPositions.ToArray();
             Moves = new Triple[StartingPositions.Length];
+            Weights = new float[StartingPositions.Length];
         }
 
 
@@ -24,7 +26,10 @@ namespace DynaShape.Goals
             center /= NodeCount;
 
             for (int i = 0; i < NodeCount; i++)
+            {
                 Moves[i] = center - allNodes[NodeIndices[i]].Position;
+                Weights[i] = Weight;
+            }
         }
     }
 }

@@ -19,6 +19,7 @@ namespace DynaShape.Goals
             Weight = weight;
             StartingPositions = nodeStartingPositions.ToArray();
             Moves = new Triple[StartingPositions.Length];
+            Weights = new float[StartingPositions.Length];
         }
 
 
@@ -29,6 +30,7 @@ namespace DynaShape.Goals
             {
                 Triple nodePosition = allNodes[NodeIndices[i]].Position;
                 Moves[i] = TargetCurve.ClosestPointTo(nodePosition.ToPoint()).ToTriple() - nodePosition;
+                Weights[i] = Weight;
             }
         }
     }

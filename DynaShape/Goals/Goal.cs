@@ -8,6 +8,7 @@ namespace DynaShape.Goals
     public abstract class Goal
     {
         public float Weight;
+        public float[] Weights;
         public Triple[] StartingPositions;
         public int[] NodeIndices;
         public Triple[] Moves;

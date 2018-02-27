@@ -21,9 +21,9 @@ namespace DynaShape
 
         public Triple(double x, double y, double z)
         {
-            X = (float) x;
-            Y = (float) y;
-            Z = (float) z;
+            X = (float)x;
+            Y = (float)y;
+            Z = (float)z;
         }
 
 
@@ -50,7 +50,7 @@ namespace DynaShape
                 Math.Round(X, decimalDigitsCount) + ")";
 
 
-        public float Length => (float) Math.Sqrt(X * X + Y * Y + Z * Z);
+        public float Length => (float)Math.Sqrt(X * X + Y * Y + Z * Z);
         public float LengthSquared => X * X + Y * Y + Z * Z;
 
 
@@ -67,8 +67,8 @@ namespace DynaShape
         public static Triple BasisZ => new Triple(0f, 0f, 1f);
 
 
-        public static Triple FromPoint(Point p) => new Triple((float) p.X, (float) p.Y, (float) p.Z);
-        public static Triple FromVector(Point v) => new Triple((float) v.X, (float) v.Y, (float) v.Z);
+        public static Triple FromPoint(Point p) => new Triple((float)p.X, (float)p.Y, (float)p.Z);
+        public static Triple FromVector(Point v) => new Triple((float)v.X, (float)v.Y, (float)v.Z);
 
 
         public Point ToPoint() => Point.ByCoordinates(X, Y, Z);
@@ -94,13 +94,13 @@ namespace DynaShape
 
         public Triple Normalise()
         {
-            float temp = 1f / (float) Math.Sqrt(X * X + Y * Y + Z * Z);
+            float temp = 1f / (float)Math.Sqrt(X * X + Y * Y + Z * Z);
             return new Triple(X * temp, Y * temp, Z * temp);
         }
 
 
         public float DistanceTo(Triple t)
-            => (float) Math.Sqrt((X - t.X) * (X - t.X) + (Y - t.Y) * (Y - t.Y) + (Z - t.Z) * (Z - t.Z));
+            => (float)Math.Sqrt((X - t.X) * (X - t.X) + (Y - t.Y) * (Y - t.Y) + (Z - t.Z) * (Z - t.Z));
 
 
         public Triple GeneratePerpendicular()
@@ -127,6 +127,28 @@ namespace DynaShape
                     : Math.Abs(Y) < Math.Abs(Z)
                         ? new Triple(Z, 0f, -X)
                         : new Triple(-Y, X, 0f);
+        }
+
+
+        public Triple Rotate(Triple origin, Triple Axis, float angle)
+        {
+            Triple z = Axis.Normalise();
+            Triple x = z.GeneratePerpendicular().Normalise();
+            Triple y = z.Cross(x).Normalise();
+
+            Triple v = this - origin;
+
+            float vx = x.Dot(v);
+            float vy = y.Dot(v);
+            float vz = z.Dot(v);
+
+            float sin = (float)Math.Sin(angle);
+            float cos = (float)Math.Cos(angle);
+
+            float vx_ = cos * vx - sin * vy;
+            float vy_ = sin * vx + cos * vy;
+
+            return origin + x * vx_ + y * vy_ + z * vz;
         }
     }
 }

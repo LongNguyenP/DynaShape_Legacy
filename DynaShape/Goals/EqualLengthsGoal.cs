@@ -10,10 +10,11 @@ namespace DynaShape.Goals
     {
         public EqualLengthsGoal(List<Triple> pointPairs, float weight = 1f)
         {
+            Weight = weight;
             if (pointPairs.Count % 2 != 0) throw new Exception("Equal-Length Goal: Node count must be even");
             StartingPositions = pointPairs.ToArray();
-            Moves = new Triple[StartingPositions.Length];
-            Weight = weight;
+            Moves = new Triple[StartingPositions.Length];        
+            Weights = new float[StartingPositions.Length];
         }
 
 
@@ -32,6 +33,7 @@ namespace DynaShape.Goals
                 move *= 0.5f * (move.Length - targetLength) / targetLength;
                 Moves[2 * i] = move;
                 Moves[2 * i + 1] = -move;
+                Weights[2 * i] = Weights[2 * i + 1] = Weight;
             }
         }
     }

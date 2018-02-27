@@ -14,6 +14,7 @@ namespace DynaShape.Goals
             Weight = weight;
             StartingPositions = nodeStartingPositions.ToArray();
             Moves = new Triple[StartingPositions.Length];
+            Weights = new float[StartingPositions.Length];
         }
 
         public override void Compute(List<Node> allNodes)
@@ -34,6 +35,7 @@ namespace DynaShape.Goals
                 Triple move = sphereCenter - allNodes[NodeIndices[i]].Position;
                 float l = move.Length;
                 Moves[i] = move * (l - sphereRadius) / l;
+                Weights[i] = Weight;
             }
         }
     }

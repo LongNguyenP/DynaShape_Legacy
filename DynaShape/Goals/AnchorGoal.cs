@@ -11,10 +11,11 @@ namespace DynaShape.Goals
 
         public AnchorGoal(Triple nodeStartingPosition, Triple anchor, float weight = 1000f)
         {
-            Weight = weight;
             Anchor = anchor;
             StartingPositions = new[] { nodeStartingPosition };
+            Weight = weight;
             Moves = new Triple[1];
+            Weights = new float[1];
         }
 
 
@@ -25,6 +26,9 @@ namespace DynaShape.Goals
 
 
         public override void Compute(List<Node> allNodes)
-            => Moves[0] = Anchor - allNodes[NodeIndices[0]].Position;
+        {
+            Moves[0] = Anchor - allNodes[NodeIndices[0]].Position;
+            Weights[0] = Weight;
+        }
     }
 }
