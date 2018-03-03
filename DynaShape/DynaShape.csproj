@@ -102,6 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DynaShapeDisplay.cs" />
+    <Compile Include="GeometryBinders\TexturedMeshBinder.cs" />
     <Compile Include="Goals\AngleGoal.cs" />
     <Compile Include="Goals\ConstantVolumePressureGoal.cs" />
     <Compile Include="Goals\ConstantPressureGoal.cs" />

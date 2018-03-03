@@ -161,5 +161,10 @@ namespace DynaShape.ZeroTouch
                 {"points", pointsLinear}
             };
         }
+
+        public static TexturedMeshBinder TexturedMeshBinder()
+        {
+            return new TexturedMeshBinder();
+        }
     }
 }

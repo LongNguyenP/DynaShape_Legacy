@@ -14,7 +14,7 @@ namespace DynaShape.GeometryBinders
     {
         private IndexGroup[] faces;
         private List<int> faceIndices;
-        private bool dynamoMesh = true;
+
 
 
         public MeshBinder(Autodesk.DesignScript.Geometry.Mesh mesh, Color color)
@@ -33,7 +33,6 @@ namespace DynaShape.GeometryBinders
 
         public MeshBinder(Autodesk.Dynamo.MeshToolkit.Mesh mesh, Color color)
         {
-            dynamoMesh = false;
             StartingPositions = mesh.Vertices().ToTriples().ToArray();
             Color = color;
 
@@ -62,9 +61,7 @@ namespace DynaShape.GeometryBinders
             for (int i = 0; i < NodeCount; i++)
                 vertices.Add(allNodes[NodeIndices[i]].Position.ToPoint());
 
-            return dynamoMesh
-                ? new List<object> { Autodesk.DesignScript.Geometry.Mesh.ByPointsFaceIndices(vertices, faces) }
-                : new List<object> { Autodesk.Dynamo.MeshToolkit.Mesh.ByVerticesAndIndices(vertices, faceIndices) };
+            new List<object> { Autodesk.Dynamo.MeshToolkit.Mesh.ByVerticesAndIndices(vertices, faceIndices) };
         }
 
 
