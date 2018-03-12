@@ -162,9 +162,17 @@ namespace DynaShape.ZeroTouch
             };
         }
 
-        public static TexturedMeshBinder TexturedMeshBinder()
+
+        public static Plane BestFitPlane(List<Point> points)
         {
-            return new TexturedMeshBinder();
+            Util.ComputeBestFitPlane(points.ToTriples(), out Triple origin, out Triple normal);
+            return Plane.ByOriginNormal(origin.ToPoint(), normal.ToVector());
+        }
+
+        public static Circle BestFitCircle(List<Point> points)
+        {
+            Util.ComputeBestFitCircle(points.ToTriples(), out Triple center, out Triple normal, out float radius);
+            return Circle.ByCenterPointRadiusNormal(center.ToPoint(), radius, normal.ToVector());
         }
     }
 }

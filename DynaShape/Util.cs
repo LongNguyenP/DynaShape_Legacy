@@ -14,7 +14,7 @@ namespace DynaShape
     {
         public static Vector ZeroVector => Vector.ByCoordinates(0.0, 0.0, 0.0);
         public static Point Duplicate(this Point point) => Point.ByCoordinates(point.X, point.Y, point.Z);
-        public static Vector Duplicate(this Triple vector) => Vector.ByCoordinates(vector.X, vector.Y, vector.Z);
+        public static Vector Duplicate(this Vector vector) => Vector.ByCoordinates(vector.X, vector.Y, vector.Z);
 
         public static Triple ToTriple(this Point point) => new Triple(point.X, point.Y, point.Z);
         public static Triple ToTriple(this Vector vector) => new Triple(vector.X, vector.Y, vector.Z);
@@ -154,14 +154,6 @@ namespace DynaShape
         }
 
 
-
-        /// <summary>
-        /// Compute the plane that best fit a set of input points (least squared orthogonal distance)
-        /// </summary>
-        /// <param name="points">The input points</param>
-        /// <param name="planeOrigin">The output plane origin</param>
-        /// <param name="planeNormal">The output plane normal vector</param>
-        /// <returns>0 if the input points are identical, 1 if the input points are colinear, 2 if the input points are coplanar (already on a plane), 3 otherwise</returns>
         //public static int ComputeBestFitPlane(List<Triple> points, out Triple planeOrigin, out Triple planeNormal)
         //{
         //    Triple centroid = Triple.Zero;
@@ -203,7 +195,16 @@ namespace DynaShape
 
         //    return evd.Rank;
         //}
-        public static int ComputeBestFitPlane(List<Triple> points, out Triple planeOrigin, out Triple planeNormal)
+
+        /// <summary>
+        /// Compute the plane that best fit a set of input points (least squared orthogonal distance)
+        /// </summary>
+        /// <param name="points">The input points</param>
+        /// <param name="planeOrigin">The output plane origin</param>
+        /// <param name="planeNormal">The output plane normal vector</param>
+        /// <param name="tolerance">The tolerance value which is used to determined if the input points are coincidental, colinear, coplanar or non-coplanar</param>
+        /// <returns>0 if the input points are identical, 1 if the input points are colinear, 2 if the input points are coplanar (already on a plane), 3 otherwise</returns>
+        public static int ComputeBestFitPlane(List<Triple> points, out Triple planeOrigin, out Triple planeNormal, float tolerance = 1E-6f)
         {
             Triple centroid = Triple.Zero;
             for (int i = 0; i < points.Count; i++) centroid += points[i];
@@ -233,29 +234,75 @@ namespace DynaShape
                 covariance.V22 += P[k, 2] * P[k, 2];
             }
 
-            Matrix3x3 u, v;
-            AForge.Math.Vector3 e;
-            covariance.SVD(out u, out e, out v);
-
             planeOrigin = centroid;
 
-            Triple e1 = new Triple(u.V00, u.V10, u.V20);
-            Triple e2 = new Triple(u.V01, u.V11, u.V21);
-            planeNormal = e2.Cross(e1).Normalise();
-            
-            return 3;
+            Matrix3x3 u, v;
+            AForge.Math.Vector3 e;
+
+            // TODO: This is not a good approach, the SVD seem to be numerically unstable for nearly colinear set of input points, ...
+            // TODO: ...Tthe try-catch is just a temperory fix for now
+            try
+            {
+                covariance.SVD(out u, out e, out v);
+            }
+            catch (Exception)
+            {
+                planeNormal = Triple.BasisZ;
+                return 0;
+            }
+
+            // Case 0: The input points are coincidental, so we just need to pick an arbitrary normal vector
+            if (Math.Abs(e.Max) < tolerance)
+            {
+                planeNormal = Triple.BasisZ;
+                return 0;
+            }
+
+            // Case 1:The input points are colinear, so we just pick an arbitrary vector perpendicular to the only eigen vector
+            int eMidIndex = 3 - e.MaxIndex - e.MinIndex;
+            float eigenMidValue = eMidIndex == 0 ? e.X : (eMidIndex == 1 ? e.Y : e.Z);
+
+            if (Math.Abs(eigenMidValue) < tolerance)
+            {
+                planeNormal = new Triple(u.V00, u.V10, u.V20).GeneratePerpendicular();
+                return 1;
+            }
+
+            // Case 2:The input points are neigher coincidental nor colinear, therefore the best fit plane is determined by the two dominant eigenvectors
+            Triple[] eigenvectors =
+            {
+                new Triple(u.V00, u.V10, u.V20),
+                new Triple(u.V01, u.V11, u.V21),
+                new Triple(u.V02, u.V12, u.V22),
+            };
+
+            planeNormal = eigenvectors[e.MaxIndex].Cross(eigenvectors[eMidIndex]).Normalise();
+
+            return Math.Abs(e.Max) < tolerance
+                ? 2  // The input points are already coplanar
+                : 3; // The input points are NOT coplanar
+
+
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="points"></param>
+        /// <param name="circleCenter"></param>
+        /// <param name="circleNormal"></param>
+        /// <param name="circleRadius"></param>
+        /// <returns></returns>
         public static bool ComputeBestFitCircle(List<Triple> points, out Triple circleCenter, out Triple circleNormal,
             out float circleRadius)
         {
-            // Apporach: Project the input points to the best fit plane, then fit a circle through these points using the the analytical approach ...
-            // ... described in the paper "A simple approach for the estimation of circular arc center and its radius" by Thomas S & Chan Y.
+            // The approach used below is described in the paper "A simple approach for the estimation of circular arc center and its radius" by Thomas S & Chan Y.
+            // The core idea is to project the input points to the best fit plane, then fit a circle through these points via an analytical approach.
 
-            Triple planeOrigin, planeNormal;
-            int planeFittingResult = ComputeBestFitPlane(points, out planeOrigin, out planeNormal);
+            int planeFittingResult = ComputeBestFitPlane(points, out Triple planeOrigin, out Triple planeNormal);
 
-            if (planeFittingResult < 2) // The points are either all identical, or colinear (i.e. already on the same "circle" of infinite radius)
+            if (planeFittingResult < 2) // The input points are either coincidental, or colinear
             {
                 circleCenter = circleNormal = new Triple(float.NaN);
                 circleRadius = float.NaN;
@@ -307,8 +354,7 @@ namespace DynaShape
             y = (a1 * c2 - a2 * c1) * temp;
 
             circleCenter = planeOrigin + (x * planeBasisX + y * planeBasisY);
-            circleRadius =
-                (float) Math.Sqrt((sumX2 - 2f * sumX * x + n * x * x + sumY2 - 2f * sumY * y + n * y * y) / n);
+            circleRadius = (float) Math.Sqrt((sumX2 - 2f * sumX * x + n * x * x + sumY2 - 2f * sumY * y + n * y * y) / n);
             circleNormal = planeNormal;
             return true;
         }

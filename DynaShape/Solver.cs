@@ -96,18 +96,13 @@ namespace DynaShape
                     break;
                 }
 
-
-                if (Mode == 0)
-                    if (IterationCount > 0) Iterate(IterationCount);
-                    else Iterate(25.0);
-                else
-                    if (IterationCount > 0) Iterate(IterationCount);
-                    else Iterate2(25.0);
-
+                if (IterationCount > 0) Iterate(IterationCount);
+                else Iterate(50.0);
 
                 if (EnableFastDisplay) Display.Render();
             }
         }
+
 
         public void StartBackgroundExecution()
         {
@@ -303,14 +298,11 @@ namespace DynaShape
             // Apply momentum
             //=================================================================================
 
-
             foreach (Node node in Nodes)
                 node.Position += node.Velocity;
 
             for (int k = 0; k < 50; k++)
             {
-
-
                 //=================================================================================
                 // Process each goal indepently, in parallel
                 //=================================================================================
@@ -457,13 +449,12 @@ namespace DynaShape
                 foreach (Node node in Nodes)
                     node.Position += node.Velocity;
 
-
             //=================================================================================
             // Process each goal indepently, in parallel
             //=================================================================================
 
-            Parallel.ForEach(Goals, goal => goal.Compute(Nodes));
-
+            //Parallel.ForEach(Goals, goal => goal.Compute(Nodes));
+            foreach (Goal goal in Goals) goal.Compute(Nodes);
 
             //=================================================================================
             // Compute the total move vector that acts on each node
@@ -495,7 +486,6 @@ namespace DynaShape
                 Triple mouseRayPull = v.Dot(DynaShapeViewExtension.MouseRayDirection) * DynaShapeViewExtension.MouseRayDirection - v;
                 nodeMoveSums[HandleNodeIndex] += mouseInteractionWeight * mouseRayPull;
             }
-
 
             //=============================================================================================
             // Move the nodes to their new positions

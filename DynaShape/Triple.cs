@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.Cryptography.X509Certificates;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Runtime;
 
@@ -45,9 +44,7 @@ namespace DynaShape
 
 
         public string ToString(int decimalDigitsCount)
-            =>
-                "(" + Math.Round(X, decimalDigitsCount) + ", " + Math.Round(X, decimalDigitsCount) + ", " +
-                Math.Round(X, decimalDigitsCount) + ")";
+            => "(" + Math.Round(X, decimalDigitsCount) + ", " + Math.Round(X, decimalDigitsCount) + ", " + Math.Round(X, decimalDigitsCount) + ")";
 
 
         public float Length => (float)Math.Sqrt(X * X + Y * Y + Z * Z);
@@ -99,14 +96,12 @@ namespace DynaShape
         }
 
 
-        public float DistanceTo(Triple t)
-            => (float)Math.Sqrt((X - t.X) * (X - t.X) + (Y - t.Y) * (Y - t.Y) + (Z - t.Z) * (Z - t.Z));
+        public float DistanceTo(Triple t) => (float)Math.Sqrt((X - t.X) * (X - t.X) + (Y - t.Y) * (Y - t.Y) + (Z - t.Z) * (Z - t.Z));
 
 
         public Triple GeneratePerpendicular()
-            =>
-                IsZero
-                    ? new Triple(0f, 0f, 0f)
+            => X == 0f && Y == 0f && Z == 0f
+                ? new Triple(0f, 0f, 0f)
                     : Math.Abs(X) < Math.Abs(Y)
                         ? Math.Abs(X) < Math.Abs(Z)
                             ? new Triple(0f, -Z, Y)
@@ -118,7 +113,7 @@ namespace DynaShape
 
         public Triple TryGeneratePerpendicular()
         {
-            if (IsZero) throw new Exception("Cannot genernate perpendicular vector for a zero vector");
+            if (X == 0f && Y == 0f && Z == 0f) throw new Exception("Cannot genernate perpendicular vector for a zero vector");
             return
                 Math.Abs(X) < Math.Abs(Y)
                     ? Math.Abs(X) < Math.Abs(Z)
@@ -130,9 +125,9 @@ namespace DynaShape
         }
 
 
-        public Triple Rotate(Triple origin, Triple Axis, float angle)
+        public Triple Rotate(Triple origin, Triple axis, float angle)
         {
-            Triple z = Axis.Normalise();
+            Triple z = axis.Normalise();
             Triple x = z.GeneratePerpendicular().Normalise();
             Triple y = z.Cross(x).Normalise();
 

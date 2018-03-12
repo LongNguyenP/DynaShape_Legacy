@@ -14,14 +14,30 @@ namespace DynaShape.GeometryBinders
     {
         private IndexGroup[] faces;
         private List<int> faceIndices;
-
-
+        private bool dynamoMesh = true;
+        private IntCollection meshIndices;
 
         public MeshBinder(Autodesk.DesignScript.Geometry.Mesh mesh, Color color)
         {
+            dynamoMesh = true;
             StartingPositions = mesh.VertexPositions.ToTriples().ToArray();
             Color = color;
             faces = mesh.FaceIndices;
+
+            meshIndices = new IntCollection();
+
+            foreach (IndexGroup face in faces)
+            {
+                meshIndices.Add((int)face.A);
+                meshIndices.Add((int)face.B);
+                meshIndices.Add((int)face.C);
+
+                if (face.D == uint.MaxValue) continue;
+
+                meshIndices.Add((int)face.A);
+                meshIndices.Add((int)face.C);
+                meshIndices.Add((int)face.D);
+            }
         }
 
 
@@ -33,6 +49,7 @@ namespace DynaShape.GeometryBinders
 
         public MeshBinder(Autodesk.Dynamo.MeshToolkit.Mesh mesh, Color color)
         {
+            dynamoMesh = false;
             StartingPositions = mesh.Vertices().ToTriples().ToArray();
             Color = color;
 
@@ -46,6 +63,15 @@ namespace DynaShape.GeometryBinders
                     (uint)faceIndices[i * 3],
                     (uint)faceIndices[i * 3 + 1],
                     (uint)faceIndices[i * 3 + 2]);
+
+            meshIndices = new IntCollection();
+
+            foreach (IndexGroup face in faces)
+            {
+                meshIndices.Add((int)face.A);
+                meshIndices.Add((int)face.B);
+                meshIndices.Add((int)face.C);
+            }
         }
 
 
@@ -61,7 +87,10 @@ namespace DynaShape.GeometryBinders
             for (int i = 0; i < NodeCount; i++)
                 vertices.Add(allNodes[NodeIndices[i]].Position.ToPoint());
 
-            new List<object> { Autodesk.Dynamo.MeshToolkit.Mesh.ByVerticesAndIndices(vertices, faceIndices) };
+            return dynamoMesh
+                ? new List<object> { Autodesk.DesignScript.Geometry.Mesh.ByPointsFaceIndices(vertices, faces) }
+                : new List<object> { Autodesk.Dynamo.MeshToolkit.Mesh.ByVerticesAndIndices(vertices, faceIndices) };
+            
         }
 
 
@@ -107,28 +136,13 @@ namespace DynaShape.GeometryBinders
             {
                 Positions = new Vector3Collection(),
                 Normals = new Vector3Collection(),
-                Indices = new IntCollection(),
+                Indices = this.meshIndices,
             };
-
 
             for (int i = 0; i < NodeCount; i++)
             {
                 meshGeometry.Positions.Add(allNodes[NodeIndices[i]].Position.ToVector3());
                 meshGeometry.Normals.Add(vertexNormals[i].ToVector3());
-            }
-
-
-            foreach (IndexGroup face in faces)
-            {
-                meshGeometry.Indices.Add((int)face.A);
-                meshGeometry.Indices.Add((int)face.B);
-                meshGeometry.Indices.Add((int)face.C);
-
-                if (face.D == uint.MaxValue) continue;
-
-                meshGeometry.Indices.Add((int)face.A);
-                meshGeometry.Indices.Add((int)face.C);
-                meshGeometry.Indices.Add((int)face.D);
             }
 
             display.AddMeshModel(

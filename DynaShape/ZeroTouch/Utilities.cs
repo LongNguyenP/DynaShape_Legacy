@@ -3,10 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Runtime;
+using HelixToolkit.Wpf.SharpDX.Core;
+using SharpDX;
 using Mesh = Autodesk.Dynamo.MeshToolkit.Mesh;
+using Point = Autodesk.DesignScript.Geometry.Point;
 
 namespace DynaShape.ZeroTouch
 {
+    [IsVisibleInDynamoLibrary(false)]
+    public class TextureCoordinateSet
+    {
+        public Vector2Collection Content;
+
+        public TextureCoordinateSet(Vector2Collection content)
+        {
+            Content = content;
+        }
+    }
+
     /// <summary>
     /// </summary>
     public static class Utilities
@@ -21,7 +35,7 @@ namespace DynaShape.ZeroTouch
         /// <param name="divY">The mesh face division in the Y dimension</param>
         /// <param name="alternatingDiagons">Alternating the diagonal direction of the triangular faces</param>
         /// <returns></returns>
-        [MultiReturn("mesh", "quadFaceVertexIndices")]
+        [MultiReturn("mesh", "quadFaceVertexIndices", "textureCoordinates")]
         public static Dictionary<string, object> PlaneMesh(
             [DefaultArgument("CoordinateSystem.ByOriginVectors(Point.Origin(), Vector.XAxis(), Vector.YAxis())")] CoordinateSystem cs,
             [DefaultArgument("20.0")]double lengthX,
@@ -30,18 +44,24 @@ namespace DynaShape.ZeroTouch
             [DefaultArgument("20")]int divY,
             [DefaultArgument("true")]bool alternatingDiagons)
         {
+            if (divX < 1 || divY < 0) throw new Exception("divX and divY must be larger than 0");
+
             List<Point> vertices = new List<Point>((divX + 1) * (divY + 1));
+            Vector2Collection textureCoordinates = new Vector2Collection();
 
             for (int j = 0; j <= divY; j++)
                 for (int i = 0; i <= divX; i++)
+                { 
                     vertices.Add(
                         Point.ByCartesianCoordinates(
                             cs,
                             ((double)i / divX - 0.5f) * lengthX,
                             ((double)j / divY - 0.5f) * lengthY));
 
-            List<int> indices = new List<int>();
+                    textureCoordinates.Add(new Vector2((float)i / (float)(divX), 1f - (float)j / (float)(divY)));
+                }
 
+            List<int> indices = new List<int>();
             List<List<int>> quadFaceVertexIndices = new List<List<int>>();
 
             for (int j = 0; j < divY; j++)
@@ -90,6 +110,7 @@ namespace DynaShape.ZeroTouch
             {
                 { "mesh", Mesh.ByVerticesAndIndices(vertices, indices) },
                 { "quadFaceVertexIndices", quadFaceVertexIndices },
+                { "textureCoordinates", new TextureCoordinateSet(textureCoordinates) },
             };
         }
 
@@ -111,6 +132,8 @@ namespace DynaShape.ZeroTouch
             [DefaultArgument("20")] int divX,
             [DefaultArgument("20")] int divY)
         {
+            if (divX < 1 || divY < 0) throw new Exception("divX and divY must be larger than 0");
+
             List<Point> all = new List<Point>((divX + 1) * (divY + 1));
             for (int j = 0; j <= divY; j++)
                 for (int i = 0; i <= divX; i++)

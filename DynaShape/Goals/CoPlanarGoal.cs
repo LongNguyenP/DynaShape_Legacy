@@ -25,10 +25,9 @@ namespace DynaShape.Goals
                 points.Add(allNodes[NodeIndices[i]].Position);
 
             // Here we use our own plane fitting function (implemented in the Util class)
-            // .. which runs much faster than calling the Dynamo method Plane.ByBestFitThroughPoints
+            // .. which runs much faster than calling the DynamoAPI method Plane.ByBestFitThroughPoints()
 
-            Triple planeOrigin, planeNormal;
-            Util.ComputeBestFitPlane(points, out planeOrigin, out planeNormal);
+            Util.ComputeBestFitPlane(points, out Triple planeOrigin, out Triple planeNormal);
 
             for (int i = 0; i < NodeCount; i++)
             {

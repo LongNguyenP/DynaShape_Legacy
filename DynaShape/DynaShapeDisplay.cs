@@ -87,10 +87,7 @@ namespace DynaShape
 
             DynaShapeViewExtension.ViewModel.RequestViewRefresh += RequestViewRefreshHandler;
 
-            DynaShapeViewExtension.DynamoWindow.Closed += (sender, args) =>
-            {
-                Dispose();
-            };
+            DynaShapeViewExtension.DynamoWindow.Closed += (sender, args) => { Dispose(); };
         }
 
         private void foo(object o, List<string> info, int indent)
@@ -204,7 +201,7 @@ namespace DynaShape
                     solver.Nodes[i].Position.Z,
                     -solver.Nodes[i].Position.Y));
 
-                pointGeometry.Colors.Add(new Color4(0.8f, 0.2f, 0.2f, 1f));
+                pointGeometry.Colors.Add(DefaultPointColor);
                 pointGeometry.Indices.Add(i);
             }
 
