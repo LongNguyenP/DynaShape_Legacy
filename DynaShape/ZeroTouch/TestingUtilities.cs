@@ -162,16 +162,9 @@ namespace DynaShape.ZeroTouch
             };
         }
 
-
         public static Plane BestFitPlane(List<Point> points)
         {
             Util.ComputeBestFitPlane(points.ToTriples(), out Triple origin, out Triple normal);
-            return Plane.ByOriginNormal(origin.ToPoint(), normal.ToVector());
-        }
-
-        public static Plane BestFitPlaneAccord(List<Point> points)
-        {
-            Util.ComputeBestFitPlaneAccord(points.ToTriples(), out Triple origin, out Triple normal);
             return Plane.ByOriginNormal(origin.ToPoint(), normal.ToVector());
         }
 

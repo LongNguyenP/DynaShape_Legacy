@@ -5,6 +5,7 @@ using SharpDX;
 using Matrix3x3 = AForge.Math.Matrix3x3;
 using Point = Autodesk.DesignScript.Geometry.Point;
 using Vector = Autodesk.DesignScript.Geometry.Vector;
+using Math = System.Math;
 
 
 namespace DynaShape
@@ -111,7 +112,6 @@ namespace DynaShape
         //    return evd.Rank > 2 ? 2 : evd.Rank;
         //}
 
-
         public static int ComputeBestFitLine(List<Triple> points, out Triple lineOrigin, out Triple lineDirection)
         {
             Triple centroid = Triple.Zero;
@@ -152,7 +152,6 @@ namespace DynaShape
 
             return 3;
         }
-
 
         //public static int ComputeBestFitPlane(List<Triple> points, out Triple planeOrigin, out Triple planeNormal)
         //{
@@ -196,83 +195,6 @@ namespace DynaShape
         //    return evd.Rank;
         //}
 
-        /// <summary>
-        /// Compute the plane that best fit a set of input points (least squared orthogonal distance)
-        /// </summary>
-        /// <param name="points">The input points</param>
-        /// <param name="planeOrigin">The output plane origin</param>
-        /// <param name="planeNormal">The output plane normal vector</param>
-        /// <param name="tolerance">The tolerance value which is used to determined if the input points are coincidental, colinear, coplanar or non-coplanar</param>
-        /// <returns>0 if the input points are identical, 1 if the input points are colinear, 2 if the input points are coplanar (already on a plane), 3 otherwise</returns>
-        public static int ComputeBestFitPlaneAccord(List<Triple> points, out Triple planeOrigin, out Triple planeNormal, float tolerance = 1E-6f)
-        {
-            Triple centroid = Triple.Zero;
-            for (int i = 0; i < points.Count; i++) centroid += points[i];
-            centroid /= points.Count;
-
-            float[,] P = new float[points.Count, 3];
-
-            for (int i = 0; i < points.Count; i++)
-            {
-                P[i, 0] = points[i].X - centroid.X;
-                P[i, 1] = points[i].Y - centroid.Y;
-                P[i, 2] = points[i].Z - centroid.Z;
-            }
-
-            Accord.Math.Matrix3x3 covariance = new Accord.Math.Matrix3x3();
-
-            for (int k = 0; k < points.Count; k++)
-            {
-                covariance.V00 += P[k, 0] * P[k, 0];
-                covariance.V01 += P[k, 0] * P[k, 1];
-                covariance.V02 += P[k, 0] * P[k, 2];
-                covariance.V10 += P[k, 1] * P[k, 0];
-                covariance.V11 += P[k, 1] * P[k, 1];
-                covariance.V12 += P[k, 1] * P[k, 2];
-                covariance.V20 += P[k, 2] * P[k, 0];
-                covariance.V21 += P[k, 2] * P[k, 1];
-                covariance.V22 += P[k, 2] * P[k, 2];
-            }
-
-            planeOrigin = centroid;
-
-            Accord.Math.Matrix3x3 u, v;
-            Accord.Math.Vector3 e;
-
-            covariance.SVD(out u, out e, out v);
-
-            // Case 0: The input points are coincidental, so we just need to pick an arbitrary normal vector
-            if (Math.Abs(e.Max) < tolerance)
-            {
-                planeNormal = Triple.BasisZ;
-                return 0;
-            }
-
-            // Case 1:The input points are colinear, so we just pick an arbitrary vector perpendicular to the only eigen vector
-            int eMidIndex = 3 - e.MaxIndex - e.MinIndex;
-            float eigenMidValue = eMidIndex == 0 ? e.X : (eMidIndex == 1 ? e.Y : e.Z);
-
-            if (Math.Abs(eigenMidValue) < tolerance)
-            {
-                planeNormal = new Triple(u.V00, u.V10, u.V20).GeneratePerpendicular();
-                return 1;
-            }
-
-            // Case 2:The input points are neigher coincidental nor colinear, therefore the best fit plane is determined by the two dominant eigenvectors
-            Triple[] eigenvectors =
-            {
-                new Triple(u.V00, u.V10, u.V20),
-                new Triple(u.V01, u.V11, u.V21),
-                new Triple(u.V02, u.V12, u.V22),
-            };
-
-            planeNormal = eigenvectors[e.MaxIndex].Cross(eigenvectors[eMidIndex]).Normalise();
-
-            return Math.Abs(e.Max) < tolerance
-                ? 2  // The input points are already coplanar
-                : 3; // The input points are NOT coplanar
-        }
-
         public static int ComputeBestFitPlane(List<Triple> points, out Triple planeOrigin, out Triple planeNormal, float tolerance = 1E-6f)
         {
             Triple centroid = Triple.Zero;
@@ -288,7 +210,7 @@ namespace DynaShape
                 P[i, 2] = points[i].Z - centroid.Z;
             }
 
-            AForge.Math.Matrix3x3 covariance = new AForge.Math.Matrix3x3();
+            Matrix3x3 covariance = new Matrix3x3();
 
             for (int k = 0; k < points.Count; k++)
             {
@@ -305,20 +227,10 @@ namespace DynaShape
 
             planeOrigin = centroid;
 
-            AForge.Math.Matrix3x3 u, v;
+            Matrix3x3 u, v;
             AForge.Math.Vector3 e;
 
-            // TODO: This is not a good approach, the SVD seem to be numerically unstable for nearly colinear set of input points, ...
-            // TODO: ...Tthe try-catch is just a temperory fix for now
-            //try
-            //{
-            covariance.SVD(out u, out e, out v);
-            //}
-            //catch (Exception)
-            //{
-            //    planeNormal = Triple.BasisZ;
-            //    return 0;
-            //}
+            ComputeSvd(covariance, out u, out e, out v);
 
             // Case 0: The input points are coincidental, so we just need to pick an arbitrary normal vector
             if (Math.Abs(e.Max) < tolerance)
@@ -351,7 +263,7 @@ namespace DynaShape
                 ? 2  // The input points are already coplanar
                 : 3; // The input points are NOT coplanar
         }
-
+   
         /// <summary>
         /// 
         /// </summary>
@@ -424,7 +336,6 @@ namespace DynaShape
             circleNormal = planeNormal;
             return true;
         }
-
 
         public static bool ComputeBestFitSphere(List<Triple> points, out Triple sphereCenter, out float sphereRadius)
         {
@@ -521,6 +432,432 @@ namespace DynaShape
                 (temp - 2f * (x0 * sX + y0 * sY + z0 * sZ)) / N);
 
             return true;
+        }
+
+        public static void ComputeSvd(Matrix3x3 m, out Matrix3x3 u, out AForge.Math.Vector3 e, out Matrix3x3 v)
+        {
+            double[,] a = 
+            {
+        {
+          (double) m.V00,
+          (double) m.V01,
+          (double) m.V02
+        },
+        {
+          (double) m.V10,
+          (double) m.V11,
+          (double) m.V12
+        },
+        {
+          (double) m.V20,
+          (double) m.V21,
+          (double) m.V22
+        }
+            };
+            double[] w;
+            double[,] v1;
+            ComputeSvd(a, out w, out v1);
+            u = new Matrix3x3();
+            u.V00 = (float)a[0, 0];
+            u.V01 = (float)a[0, 1];
+            u.V02 = (float)a[0, 2];
+            u.V10 = (float)a[1, 0];
+            u.V11 = (float)a[1, 1];
+            u.V12 = (float)a[1, 2];
+            u.V20 = (float)a[2, 0];
+            u.V21 = (float)a[2, 1];
+            u.V22 = (float)a[2, 2];
+            v = new Matrix3x3();
+            v.V00 = (float)v1[0, 0];
+            v.V01 = (float)v1[0, 1];
+            v.V02 = (float)v1[0, 2];
+            v.V10 = (float)v1[1, 0];
+            v.V11 = (float)v1[1, 1];
+            v.V12 = (float)v1[1, 2];
+            v.V20 = (float)v1[2, 0];
+            v.V21 = (float)v1[2, 1];
+            v.V22 = (float)v1[2, 2];
+            e = new AForge.Math.Vector3();
+            e.X = (float)w[0];
+            e.Y = (float)w[1];
+            e.Z = (float)w[2];
+        }
+
+        public static void ComputeSvd(double[,] a, out double[] w, out double[,] v)
+        {
+            int m = a.GetLength(0); // Row count
+            int n = a.GetLength(1); // Column count
+
+            if (m < n)
+            {
+                throw new ArgumentException("Number of rows in A must be greater or equal to number of columns");
+            }
+
+            w = new double[n];
+            v = new double[n, n];
+
+
+            int flag, i, its, j, jj, k, l = 0, nm = 0;
+            double anorm, c, f, g, h, s, scale, x, y, z;
+
+            double[] rv1 = new double[n];
+
+            // householder reduction to bidiagonal form
+            g = scale = anorm = 0.0;
+
+            for (i = 0; i < n; i++)
+            {
+                l = i + 1;
+                rv1[i] = scale * g;
+                g = s = scale = 0;
+
+                if (i < m)
+                {
+                    for (k = i; k < m; k++)
+                    {
+                        scale += Math.Abs(a[k, i]);
+                    }
+
+                    if (scale != 0.0)
+                    {
+                        for (k = i; k < m; k++)
+                        {
+                            a[k, i] /= scale;
+                            s += a[k, i] * a[k, i];
+                        }
+
+                        f = a[i, i];
+                        g = -Sign(Math.Sqrt(s), f);
+                        h = f * g - s;
+                        a[i, i] = f - g;
+
+                        if (i != n - 1)
+                        {
+                            for (j = l; j < n; j++)
+                            {
+                                for (s = 0.0, k = i; k < m; k++)
+                                {
+                                    s += a[k, i] * a[k, j];
+                                }
+
+                                f = s / h;
+
+                                for (k = i; k < m; k++)
+                                {
+                                    a[k, j] += f * a[k, i];
+                                }
+                            }
+                        }
+
+                        for (k = i; k < m; k++)
+                        {
+                            a[k, i] *= scale;
+                        }
+                    }
+                }
+
+                w[i] = scale * g;
+                g = s = scale = 0.0;
+
+                if ((i < m) && (i != n - 1))
+                {
+                    for (k = l; k < n; k++)
+                    {
+                        scale += Math.Abs(a[i, k]);
+                    }
+
+                    if (scale != 0.0)
+                    {
+                        for (k = l; k < n; k++)
+                        {
+                            a[i, k] /= scale;
+                            s += a[i, k] * a[i, k];
+                        }
+
+                        f = a[i, l];
+                        g = -Sign(Math.Sqrt(s), f);
+                        h = f * g - s;
+                        a[i, l] = f - g;
+
+                        for (k = l; k < n; k++)
+                        {
+                            rv1[k] = a[i, k] / h;
+                        }
+
+                        if (i != m - 1)
+                        {
+                            for (j = l; j < m; j++)
+                            {
+                                for (s = 0.0, k = l; k < n; k++)
+                                {
+                                    s += a[j, k] * a[i, k];
+                                }
+                                for (k = l; k < n; k++)
+                                {
+                                    a[j, k] += s * rv1[k];
+                                }
+                            }
+                        }
+
+                        for (k = l; k < n; k++)
+                        {
+                            a[i, k] *= scale;
+                        }
+                    }
+                }
+                anorm = Math.Max(anorm, (Math.Abs(w[i]) + Math.Abs(rv1[i])));
+            }
+
+            // accumulation of right-hand transformations
+            for (i = n - 1; i >= 0; i--)
+            {
+                if (i < n - 1)
+                {
+                    if (g != 0.0)
+                    {
+                        for (j = l; j < n; j++)
+                        {
+                            v[j, i] = (a[i, j] / a[i, l]) / g;
+                        }
+
+                        for (j = l; j < n; j++)
+                        {
+                            for (s = 0, k = l; k < n; k++)
+                            {
+                                s += a[i, k] * v[k, j];
+                            }
+                            for (k = l; k < n; k++)
+                            {
+                                v[k, j] += s * v[k, i];
+                            }
+                        }
+                    }
+                    for (j = l; j < n; j++)
+                    {
+                        v[i, j] = v[j, i] = 0;
+                    }
+                }
+                v[i, i] = 1;
+                g = rv1[i];
+                l = i;
+            }
+
+            // accumulation of left-hand transformations
+            for (i = n - 1; i >= 0; i--)
+            {
+                l = i + 1;
+                g = w[i];
+
+                if (i < n - 1)
+                {
+                    for (j = l; j < n; j++)
+                    {
+                        a[i, j] = 0.0;
+                    }
+                }
+
+                if (g != 0)
+                {
+                    g = 1.0 / g;
+
+                    if (i != n - 1)
+                    {
+                        for (j = l; j < n; j++)
+                        {
+                            for (s = 0, k = l; k < m; k++)
+                            {
+                                s += a[k, i] * a[k, j];
+                            }
+
+                            f = (s / a[i, i]) * g;
+
+                            for (k = i; k < m; k++)
+                            {
+                                a[k, j] += f * a[k, i];
+                            }
+                        }
+                    }
+
+                    for (j = i; j < m; j++)
+                    {
+                        a[j, i] *= g;
+                    }
+                }
+                else
+                {
+                    for (j = i; j < m; j++)
+                    {
+                        a[j, i] = 0;
+                    }
+                }
+                ++a[i, i];
+            }
+
+            // diagonalization of the bidiagonal form: Loop over singular values
+            // and over allowed iterations
+            for (k = n - 1; k >= 0; k--)
+            {
+                for (its = 1; its <= 30; its++)
+                {
+                    flag = 1;
+
+                    for (l = k; l >= 0; l--)
+                    {
+                        // test for splitting
+                        nm = l - 1;
+
+                        if (Math.Abs(rv1[l]) + anorm == anorm)
+                        {
+                            flag = 0;
+                            break;
+                        }
+
+                        if (Math.Abs(w[nm]) + anorm == anorm)
+                            break;
+                    }
+
+                    if (flag != 0)
+                    {
+                        c = 0.0;
+                        s = 1.0;
+                        for (i = l; i <= k; i++)
+                        {
+                            f = s * rv1[i];
+
+                            if (Math.Abs(f) + anorm != anorm)
+                            {
+                                g = w[i];
+                                h = Pythag(f, g);
+                                w[i] = h;
+                                h = 1.0 / h;
+                                c = g * h;
+                                s = -f * h;
+
+                                for (j = 0; j < m; j++)
+                                {
+                                    y = a[j, nm];
+                                    z = a[j, i];
+                                    a[j, nm] = y * c + z * s;
+                                    a[j, i] = z * c - y * s;
+                                }
+                            }
+                        }
+                    }
+
+                    z = w[k];
+
+                    if (l == k)
+                    {
+                        // convergence
+                        if (z < 0.0)
+                        {
+                            // singular value is made nonnegative
+                            w[k] = -z;
+
+                            for (j = 0; j < n; j++)
+                            {
+                                v[j, k] = -v[j, k];
+                            }
+                        }
+                        break;
+                    }
+
+                    if (its == 30)
+                    {
+                        throw new InvalidOperationException("No convergence in 30 svdcmp iterations");
+                    }
+
+                    // shift from bottom 2-by-2 minor
+                    x = w[l];
+                    nm = k - 1;
+                    y = w[nm];
+                    g = rv1[nm];
+                    h = rv1[k];
+                    f = ((y - z) * (y + z) + (g - h) * (g + h)) / (2.0 * h * y);
+                    g = Pythag(f, 1.0);
+                    f = ((x - z) * (x + z) + h * ((y / (f + Sign(g, f))) - h)) / x;
+
+                    // next QR transformation
+                    c = s = 1.0;
+
+                    for (j = l; j <= nm; j++)
+                    {
+                        i = j + 1;
+                        g = rv1[i];
+                        y = w[i];
+                        h = s * g;
+                        g = c * g;
+                        z = Pythag(f, h);
+                        rv1[j] = z;
+                        c = f / z;
+                        s = h / z;
+                        f = x * c + g * s;
+                        g = g * c - x * s;
+                        h = y * s;
+                        y *= c;
+
+                        for (jj = 0; jj < n; jj++)
+                        {
+                            x = v[jj, j];
+                            z = v[jj, i];
+                            v[jj, j] = x * c + z * s;
+                            v[jj, i] = z * c - x * s;
+                        }
+
+                        z = Pythag(f, h);
+                        w[j] = z;
+
+                        if (z != 0)
+                        {
+                            z = 1.0 / z;
+                            c = f * z;
+                            s = h * z;
+                        }
+
+                        f = c * g + s * y;
+                        x = c * y - s * g;
+
+                        for (jj = 0; jj < m; jj++)
+                        {
+                            y = a[jj, j];
+                            z = a[jj, i];
+                            a[jj, j] = y * c + z * s;
+                            a[jj, i] = z * c - y * s;
+                        }
+                    }
+
+                    rv1[l] = 0.0;
+                    rv1[k] = f;
+                    w[k] = x;
+                }
+            }
+        }
+
+        private static double Sign(double a, double b)
+        {
+            return (b >= 0.0) ? Math.Abs(a) : -Math.Abs(a);
+        }
+
+        private static double Pythag(double a, double b)
+        {
+            double at = Math.Abs(a), bt = Math.Abs(b), ct, result;
+
+            if (at > bt)
+            {
+                ct = bt / at;
+                result = at * Math.Sqrt(1.0 + ct * ct);
+            }
+            else if (bt > 0.0)
+            {
+                ct = at / bt;
+                result = bt * Math.Sqrt(1.0 + ct * ct);
+            }
+            else
+            {
+                result = 0.0;
+            }
+
+            return result;
         }
     }
 }
