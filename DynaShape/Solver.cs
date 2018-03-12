@@ -29,12 +29,10 @@ namespace DynaShape
         public bool EnableMomentum = true;
         public bool EnableFastDisplay = true;
 
-        public int Mode = 0;
-
         public List<Node> Nodes = new List<Node>();
         public List<Goal> Goals = new List<Goal>();
         public List<GeometryBinder> GeometryBinders = new List<GeometryBinder>();
-
+        
         internal int HandleNodeIndex = -1;
         internal int NearestNodeIndex = -1;
 
@@ -453,8 +451,7 @@ namespace DynaShape
             // Process each goal indepently, in parallel
             //=================================================================================
 
-            //Parallel.ForEach(Goals, goal => goal.Compute(Nodes));
-            foreach (Goal goal in Goals) goal.Compute(Nodes);
+            Parallel.ForEach(Goals, goal => goal.Compute(Nodes));
 
             //=================================================================================
             // Compute the total move vector that acts on each node
@@ -498,7 +495,7 @@ namespace DynaShape
                     Nodes[i].Position += move;
                     Nodes[i].Velocity += move;
                     if (Nodes[i].Velocity.Dot(move) < 0.0)
-                        Nodes[i].Velocity *= 0.99f;
+                        Nodes[i].Velocity *= 0.95f;
                 }
             else
                 for (int i = 0; i < Nodes.Count; i++)

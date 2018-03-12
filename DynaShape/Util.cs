@@ -436,74 +436,56 @@ namespace DynaShape
 
         public static void ComputeSvd(Matrix3x3 m, out Matrix3x3 u, out AForge.Math.Vector3 e, out Matrix3x3 v)
         {
-            double[,] a = 
+            float[,] a = {
+                {m.V00, m.V01, m.V02},
+                {m.V10, m.V11, m.V12},
+                {m.V20, m.V21, m.V22}};
+
+            ComputeSvd(a, out float[] w, out float[,]  v1);
+            u = new Matrix3x3
             {
-        {
-          (double) m.V00,
-          (double) m.V01,
-          (double) m.V02
-        },
-        {
-          (double) m.V10,
-          (double) m.V11,
-          (double) m.V12
-        },
-        {
-          (double) m.V20,
-          (double) m.V21,
-          (double) m.V22
-        }
+                V00 = a[0, 0],
+                V01 = a[0, 1],
+                V02 = a[0, 2],
+                V10 = a[1, 0],
+                V11 = a[1, 1],
+                V12 = a[1, 2],
+                V20 = a[2, 0],
+                V21 = a[2, 1],
+                V22 = a[2, 2]
             };
-            double[] w;
-            double[,] v1;
-            ComputeSvd(a, out w, out v1);
-            u = new Matrix3x3();
-            u.V00 = (float)a[0, 0];
-            u.V01 = (float)a[0, 1];
-            u.V02 = (float)a[0, 2];
-            u.V10 = (float)a[1, 0];
-            u.V11 = (float)a[1, 1];
-            u.V12 = (float)a[1, 2];
-            u.V20 = (float)a[2, 0];
-            u.V21 = (float)a[2, 1];
-            u.V22 = (float)a[2, 2];
-            v = new Matrix3x3();
-            v.V00 = (float)v1[0, 0];
-            v.V01 = (float)v1[0, 1];
-            v.V02 = (float)v1[0, 2];
-            v.V10 = (float)v1[1, 0];
-            v.V11 = (float)v1[1, 1];
-            v.V12 = (float)v1[1, 2];
-            v.V20 = (float)v1[2, 0];
-            v.V21 = (float)v1[2, 1];
-            v.V22 = (float)v1[2, 2];
-            e = new AForge.Math.Vector3();
-            e.X = (float)w[0];
-            e.Y = (float)w[1];
-            e.Z = (float)w[2];
+            v = new Matrix3x3
+            {
+                V00 = v1[0, 0],
+                V01 = v1[0, 1],
+                V02 = v1[0, 2],
+                V10 = v1[1, 0],
+                V11 = v1[1, 1],
+                V12 = v1[1, 2],
+                V20 = v1[2, 0],
+                V21 = v1[2, 1],
+                V22 = v1[2, 2]
+            };
+            e = new AForge.Math.Vector3(w[0], w[1], w[2]);
         }
 
-        public static void ComputeSvd(double[,] a, out double[] w, out double[,] v)
+        public static void ComputeSvd(float[,] a, out float[] w, out float[,] v)
         {
             int m = a.GetLength(0); // Row count
             int n = a.GetLength(1); // Column count
 
-            if (m < n)
-            {
-                throw new ArgumentException("Number of rows in A must be greater or equal to number of columns");
-            }
+            if (m < n) throw new ArgumentException("Number of rows in A must be greater or equal to number of columns");
 
-            w = new double[n];
-            v = new double[n, n];
-
+            w = new float[n];
+            v = new float[n, n];
 
             int flag, i, its, j, jj, k, l = 0, nm = 0;
-            double anorm, c, f, g, h, s, scale, x, y, z;
+            float anorm, c, f, g, h, s, scale, x, y, z;
 
-            double[] rv1 = new double[n];
+            float[] rv1 = new float[n];
 
             // householder reduction to bidiagonal form
-            g = scale = anorm = 0.0;
+            g = scale = anorm = 0f;
 
             for (i = 0; i < n; i++)
             {
@@ -513,12 +495,9 @@ namespace DynaShape
 
                 if (i < m)
                 {
-                    for (k = i; k < m; k++)
-                    {
-                        scale += Math.Abs(a[k, i]);
-                    }
+                    for (k = i; k < m; k++) scale += Math.Abs(a[k, i]);
 
-                    if (scale != 0.0)
+                    if (scale != 0f)
                     {
                         for (k = i; k < m; k++)
                         {
@@ -527,44 +506,28 @@ namespace DynaShape
                         }
 
                         f = a[i, i];
-                        g = -Sign(Math.Sqrt(s), f);
+                        g = -Sign((float)Math.Sqrt(s), f);
                         h = f * g - s;
                         a[i, i] = f - g;
 
                         if (i != n - 1)
-                        {
                             for (j = l; j < n; j++)
                             {
-                                for (s = 0.0, k = i; k < m; k++)
-                                {
-                                    s += a[k, i] * a[k, j];
-                                }
-
+                                for (s = 0f, k = i; k < m; k++) s += a[k, i] * a[k, j];
                                 f = s / h;
-
-                                for (k = i; k < m; k++)
-                                {
-                                    a[k, j] += f * a[k, i];
-                                }
+                                for (k = i; k < m; k++) a[k, j] += f * a[k, i];
                             }
-                        }
 
-                        for (k = i; k < m; k++)
-                        {
-                            a[k, i] *= scale;
-                        }
+                        for (k = i; k < m; k++) a[k, i] *= scale;
                     }
                 }
 
                 w[i] = scale * g;
-                g = s = scale = 0.0;
+                g = s = scale = 0f;
 
                 if ((i < m) && (i != n - 1))
                 {
-                    for (k = l; k < n; k++)
-                    {
-                        scale += Math.Abs(a[i, k]);
-                    }
+                    for (k = l; k < n; k++) scale += Math.Abs(a[i, k]);
 
                     if (scale != 0.0)
                     {
@@ -575,34 +538,20 @@ namespace DynaShape
                         }
 
                         f = a[i, l];
-                        g = -Sign(Math.Sqrt(s), f);
+                        g = -Sign((float)Math.Sqrt(s), f);
                         h = f * g - s;
                         a[i, l] = f - g;
 
-                        for (k = l; k < n; k++)
-                        {
-                            rv1[k] = a[i, k] / h;
-                        }
+                        for (k = l; k < n; k++) rv1[k] = a[i, k] / h;
 
                         if (i != m - 1)
-                        {
                             for (j = l; j < m; j++)
                             {
-                                for (s = 0.0, k = l; k < n; k++)
-                                {
-                                    s += a[j, k] * a[i, k];
-                                }
-                                for (k = l; k < n; k++)
-                                {
-                                    a[j, k] += s * rv1[k];
-                                }
+                                for (s = 0f, k = l; k < n; k++) s += a[j, k] * a[i, k];
+                                for (k = l; k < n; k++) a[j, k] += s * rv1[k];
                             }
-                        }
 
-                        for (k = l; k < n; k++)
-                        {
-                            a[i, k] *= scale;
-                        }
+                        for (k = l; k < n; k++) a[i, k] *= scale;
                     }
                 }
                 anorm = Math.Max(anorm, (Math.Abs(w[i]) + Math.Abs(rv1[i])));
@@ -615,28 +564,17 @@ namespace DynaShape
                 {
                     if (g != 0.0)
                     {
+                        for (j = l; j < n; j++) v[j, i] = (a[i, j] / a[i, l]) / g;
                         for (j = l; j < n; j++)
                         {
-                            v[j, i] = (a[i, j] / a[i, l]) / g;
+                            for (s = 0, k = l; k < n; k++) s += a[i, k] * v[k, j];
+                            for (k = l; k < n; k++) v[k, j] += s * v[k, i];
                         }
+                    }
 
-                        for (j = l; j < n; j++)
-                        {
-                            for (s = 0, k = l; k < n; k++)
-                            {
-                                s += a[i, k] * v[k, j];
-                            }
-                            for (k = l; k < n; k++)
-                            {
-                                v[k, j] += s * v[k, i];
-                            }
-                        }
-                    }
-                    for (j = l; j < n; j++)
-                    {
-                        v[i, j] = v[j, i] = 0;
-                    }
+                    for (j = l; j < n; j++) v[i, j] = v[j, i] = 0;
                 }
+
                 v[i, i] = 1;
                 g = rv1[i];
                 l = i;
@@ -649,47 +587,26 @@ namespace DynaShape
                 g = w[i];
 
                 if (i < n - 1)
-                {
-                    for (j = l; j < n; j++)
-                    {
-                        a[i, j] = 0.0;
-                    }
-                }
+                    for (j = l; j < n; j++) a[i, j] = 0f;
 
                 if (g != 0)
                 {
-                    g = 1.0 / g;
-
+                    g = 1f / g;
                     if (i != n - 1)
                     {
                         for (j = l; j < n; j++)
                         {
-                            for (s = 0, k = l; k < m; k++)
-                            {
-                                s += a[k, i] * a[k, j];
-                            }
-
+                            for (s = 0, k = l; k < m; k++) s += a[k, i] * a[k, j];
                             f = (s / a[i, i]) * g;
-
-                            for (k = i; k < m; k++)
-                            {
-                                a[k, j] += f * a[k, i];
-                            }
+                            for (k = i; k < m; k++) a[k, j] += f * a[k, i];
                         }
                     }
 
-                    for (j = i; j < m; j++)
-                    {
-                        a[j, i] *= g;
-                    }
+                    for (j = i; j < m; j++) a[j, i] *= g;
                 }
                 else
-                {
-                    for (j = i; j < m; j++)
-                    {
-                        a[j, i] = 0;
-                    }
-                }
+                    for (j = i; j < m; j++) a[j, i] = 0;
+                
                 ++a[i, i];
             }
 
@@ -712,14 +629,12 @@ namespace DynaShape
                             break;
                         }
 
-                        if (Math.Abs(w[nm]) + anorm == anorm)
-                            break;
+                        if (Math.Abs(w[nm]) + anorm == anorm) break;
                     }
 
                     if (flag != 0)
                     {
-                        c = 0.0;
-                        s = 1.0;
+                        s = 1f;
                         for (i = l; i <= k; i++)
                         {
                             f = s * rv1[i];
@@ -729,7 +644,7 @@ namespace DynaShape
                                 g = w[i];
                                 h = Pythag(f, g);
                                 w[i] = h;
-                                h = 1.0 / h;
+                                h = 1f / h;
                                 c = g * h;
                                 s = -f * h;
 
@@ -753,19 +668,12 @@ namespace DynaShape
                         {
                             // singular value is made nonnegative
                             w[k] = -z;
-
-                            for (j = 0; j < n; j++)
-                            {
-                                v[j, k] = -v[j, k];
-                            }
+                            for (j = 0; j < n; j++) v[j, k] = -v[j, k];
                         }
                         break;
                     }
 
-                    if (its == 30)
-                    {
-                        throw new InvalidOperationException("No convergence in 30 svdcmp iterations");
-                    }
+                    if (its == 30) throw new InvalidOperationException("No convergence in 30 svd iterations");
 
                     // shift from bottom 2-by-2 minor
                     x = w[l];
@@ -773,12 +681,12 @@ namespace DynaShape
                     y = w[nm];
                     g = rv1[nm];
                     h = rv1[k];
-                    f = ((y - z) * (y + z) + (g - h) * (g + h)) / (2.0 * h * y);
-                    g = Pythag(f, 1.0);
+                    f = ((y - z) * (y + z) + (g - h) * (g + h)) / (2f* h * y);
+                    g = Pythag(f, 1f);
                     f = ((x - z) * (x + z) + h * ((y / (f + Sign(g, f))) - h)) / x;
 
                     // next QR transformation
-                    c = s = 1.0;
+                    c = s = 1f;
 
                     for (j = l; j <= nm; j++)
                     {
@@ -809,7 +717,7 @@ namespace DynaShape
 
                         if (z != 0)
                         {
-                            z = 1.0 / z;
+                            z = 1f / z;
                             c = f * z;
                             s = h * z;
                         }
@@ -826,38 +734,35 @@ namespace DynaShape
                         }
                     }
 
-                    rv1[l] = 0.0;
+                    rv1[l] = 0f;
                     rv1[k] = f;
                     w[k] = x;
                 }
             }
         }
 
-        private static double Sign(double a, double b)
+        private static float Sign(float a, float b)
         {
             return (b >= 0.0) ? Math.Abs(a) : -Math.Abs(a);
         }
 
-        private static double Pythag(double a, double b)
+        private static float Pythag(float a, float b)
         {
-            double at = Math.Abs(a), bt = Math.Abs(b), ct, result;
+            float at = Math.Abs(a), bt = Math.Abs(b), ct;
 
             if (at > bt)
             {
                 ct = bt / at;
-                result = at * Math.Sqrt(1.0 + ct * ct);
-            }
-            else if (bt > 0.0)
-            {
-                ct = at / bt;
-                result = bt * Math.Sqrt(1.0 + ct * ct);
-            }
-            else
-            {
-                result = 0.0;
+                return at * (float)Math.Sqrt(1f + ct * ct);
             }
 
-            return result;
+            if (bt > 0.0)
+            {
+                ct = at / bt;
+                return bt * (float)Math.Sqrt(1f + ct * ct);
+            }
+
+            return 0f;
         }
     }
 }
