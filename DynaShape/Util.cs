@@ -42,7 +42,6 @@ namespace DynaShape
             return triples;
         }
 
-
         public static List<Triple> ToTriples(this IEnumerable<Vector> vectors)
         {
             List<Triple> triples = new List<Triple>();
@@ -51,14 +50,12 @@ namespace DynaShape
             return triples;
         }
 
-
         public static T[] InitializeArray<T>(int length, T value)
         {
             T[] array = new T[length];
             for (int i = 0; i < length; i++) array[i] = value;
             return array;
         }
-
 
         public static void FillArray<T>(this T[] array, T value)
         {
@@ -75,44 +72,11 @@ namespace DynaShape
         /// Compute the line that best fit a set of input points (least squared orthogonal distance)
         /// </summary>
         /// <param name="points">The input points</param>
-        /// <param name="lineOrigin">The output line origin</param>
-        /// <param name="lineDirection">The output line direction</param>
-        /// <returns>0 if the input points are identical, 1 if the input points are already colinear, 2 otherwise</returns>
-        //public static int ComputeBestFitLine(List<Triple> points, out Triple lineOrigin, out Triple lineDirection)
-        //{
-        //    Triple centroid = Triple.Zero;
-        //    for (int i = 0; i < points.Count; i++) centroid += points[i];
-        //    centroid /= points.Count;
-
-        //    float[,] P = new float[points.Count, 3];
-
-        //    for (int i = 0; i < points.Count; i++)
-        //    {
-        //        P[i, 0] = points[i].X - centroid.X;
-        //        P[i, 1] = points[i].Y - centroid.Y;
-        //        P[i, 2] = points[i].Z - centroid.Z;
-        //    }
-
-        //    Matrix<float> covariance = Matrix<float>.Build.Dense(3, 3);
-
-        //    for (int i = 0; i < 3; i++)
-        //        for (int j = 0; j < 3; j++)
-        //            for (int k = 0; k < points.Count; k++)
-        //                covariance[i, j] += P[k, i] * P[k, j];
-
-        //    Evd<float> evd = covariance.Evd();
-
-        //    lineOrigin = centroid;
-
-        //    if (evd.Rank == 0) // The input points are idendtical, so we just pick an arbitrary direction for the line
-        //        lineDirection = Triple.BasisX;
-        //    else // Otherwise the direction of the best fit line is the most dominant eigen vector 
-        //        lineDirection = new Triple(evd.EigenVectors[0, 2], evd.EigenVectors[1, 2], evd.EigenVectors[2, 2]);
-
-        //    return evd.Rank > 2 ? 2 : evd.Rank;
-        //}
-
-        public static int ComputeBestFitLine(List<Triple> points, out Triple lineOrigin, out Triple lineDirection)
+        /// <param name="lineOrigin">Origin of the best fit line</param>
+        /// <param name="lineDirection">Direction of the best fit line</param>
+        /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, colinear, or non-colinear</param>
+        /// <returns>0 if the input points are coincidental; 1 if they are already colinear; 2 otherwise</returns>       
+        public static int ComputeBestFitLine(List<Triple> points, out Triple lineOrigin, out Triple lineDirection, float tolerance = 1E-10f)
         {
             Triple centroid = Triple.Zero;
             for (int i = 0; i < points.Count; i++) centroid += points[i];
@@ -153,49 +117,15 @@ namespace DynaShape
             return 3;
         }
 
-        //public static int ComputeBestFitPlane(List<Triple> points, out Triple planeOrigin, out Triple planeNormal)
-        //{
-        //    Triple centroid = Triple.Zero;
-        //    for (int i = 0; i < points.Count; i++) centroid += points[i];
-        //    centroid /= points.Count;
-
-        //    float[,] P = new float[points.Count, 3];
-
-        //    for (int i = 0; i < points.Count; i++)
-        //    {
-        //        P[i, 0] = points[i].X - centroid.X;
-        //        P[i, 1] = points[i].Y - centroid.Y;
-        //        P[i, 2] = points[i].Z - centroid.Z;
-        //    }
-
-        //    Matrix<float> covariance = Matrix<float>.Build.Dense(3, 3);
-
-        //    for (int i = 0; i < 3; i++)
-        //    for (int j = 0; j < 3; j++)
-        //    for (int k = 0; k < points.Count; k++)
-        //        covariance[i, j] += P[k, i] * P[k, j];
-
-        //    Evd<float> evd = covariance.Evd();
-
-        //    planeOrigin = centroid;
-
-        //    if (evd.Rank == 0) // The input points are idendtical, so we just pick an arbitrary normal vector
-        //        planeNormal = Triple.BasisZ;
-        //    else if (evd.Rank == 1
-        //    ) // The input points are colinear, so we just pick an arbitrary vector perpendicular to the only eigen vector
-        //        planeNormal = new Triple(evd.EigenVectors[0, 1], evd.EigenVectors[1, 1], evd.EigenVectors[2, 1])
-        //            .GeneratePerpendicular();
-        //    else // The normal is perpendicular to the two dominant eigen vectors
-        //    {
-        //        Triple e1 = new Triple(evd.EigenVectors[0, 1], evd.EigenVectors[1, 1], evd.EigenVectors[2, 1]);
-        //        Triple e2 = new Triple(evd.EigenVectors[0, 2], evd.EigenVectors[1, 2], evd.EigenVectors[2, 2]);
-        //        planeNormal = e2.Cross(e1).Normalise();
-        //    }
-
-        //    return evd.Rank;
-        //}
-
-        public static int ComputeBestFitPlane(List<Triple> points, out Triple planeOrigin, out Triple planeNormal, float tolerance = 1E-6f)
+        /// <summary>
+        /// Compute the plane that best fit a set of input points (least squared orthogonal distance)
+        /// </summary>
+        /// <param name="points">The input points</param>
+        /// <param name="planeOrigin">Origin of the best fit plane</param>
+        /// <param name="planeNormal">Normal of the best fit plane</param>
+        /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, colinear, coplanar, or non-coplanar</param>
+        /// <returns>0 if the input points are coincidental; 1 if they are colinear; 2 if they are already coplanar; 3 otherwise</returns>
+        public static int ComputeBestFitPlane(List<Triple> points, out Triple planeOrigin, out Triple planeNormal, float tolerance = 1E-10f)
         {
             Triple centroid = Triple.Zero;
             for (int i = 0; i < points.Count; i++) centroid += points[i];
@@ -263,22 +193,22 @@ namespace DynaShape
                 ? 2  // The input points are already coplanar
                 : 3; // The input points are NOT coplanar
         }
-   
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="points"></param>
-        /// <param name="circleCenter"></param>
-        /// <param name="circleNormal"></param>
-        /// <param name="circleRadius"></param>
-        /// <returns></returns>
-        public static bool ComputeBestFitCircle(List<Triple> points, out Triple circleCenter, out Triple circleNormal,
-            out float circleRadius)
-        {
-            // The approach used below is described in the paper "A simple approach for the estimation of circular arc center and its radius" by Thomas S & Chan Y.
-            // The core idea is to project the input points to the best fit plane, then fit a circle through these points via an analytical approach.
 
-            int planeFittingResult = ComputeBestFitPlane(points, out Triple planeOrigin, out Triple planeNormal);
+        /// <summary>
+        /// Approximate the circle that best fit a set of input points
+        /// </summary>
+        /// <param name="points">The input points</param>
+        /// <param name="circleCenter">Center of the best fit circle</param>
+        /// <param name="circleNormal">Normal of the best fit circle</param>
+        /// <param name="circleRadius">Radius of the best fit circle</param>
+        /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, colinear, or non-colinear</param>
+        /// <returns>False if the input points are coincidental or colinear; True otherwise</returns>
+        public static bool ComputeBestFitCircle(List<Triple> points, out Triple circleCenter, out Triple circleNormal, out float circleRadius, float tolerance = 1E-10f)
+        {
+            // The core idea is to project the input points to the best fit plane, then fit a circle through these points via an analytical approach.
+            // Reference: Thomas S & Chan Y: "A simple approach for the estimation of circular arc center and its radius
+
+            int planeFittingResult = ComputeBestFitPlane(points, out Triple planeOrigin, out Triple planeNormal, tolerance);
 
             if (planeFittingResult < 2) // The input points are either coincidental, or colinear
             {
@@ -337,9 +267,17 @@ namespace DynaShape
             return true;
         }
 
-        public static bool ComputeBestFitSphere(List<Triple> points, out Triple sphereCenter, out float sphereRadius)
+        /// <summary>
+        /// Compute the sphere that best fit a set of input points (least squared orthogonal distance)
+        /// </summary>
+        /// <param name="points">The input points</param>
+        /// <param name="sphereCenter">Center of the best fit sphere</param>
+        /// <param name="sphereRadius">Radius of the best fit sphere</param>
+        /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, colinear, coplanar, or non-coplanar</param>
+        /// <returns>False if the input points are coincidental, colinear or coplanar; True otherwise</returns>
+        public static bool ComputeBestFitSphere(List<Triple> points, out Triple sphereCenter, out float sphereRadius, float tolerance = 1E-10f)
         {
-            // Based on "Fast Geometric Fit Algorithm for Sphere Using Exact Solution" by Sumith YD
+            // Reference: Sumith YD: Fast Geometric Fit Algorithm for Sphere Using Exact Solution
 
             float sX = 0f;
             float sY = 0f;
@@ -413,7 +351,7 @@ namespace DynaShape
 
             float delta = a * (f * l - g * k) - e * (b * l - c * k) + j * (b * g - c * f);
 
-            if (Math.Abs(delta) < 1e-10)
+            if (Math.Abs(delta) < tolerance)
             {
                 sphereCenter = new Triple(float.NaN);
                 sphereRadius = float.NaN;
@@ -434,7 +372,7 @@ namespace DynaShape
             return true;
         }
 
-        public static void ComputeSvd(Matrix3x3 m, out Matrix3x3 u, out AForge.Math.Vector3 e, out Matrix3x3 v)
+        internal static void ComputeSvd(Matrix3x3 m, out Matrix3x3 u, out AForge.Math.Vector3 e, out Matrix3x3 v)
         {
             float[,] a = {
                 {m.V00, m.V01, m.V02},
@@ -469,7 +407,7 @@ namespace DynaShape
             e = new AForge.Math.Vector3(w[0], w[1], w[2]);
         }
 
-        public static void ComputeSvd(float[,] a, out float[] w, out float[,] v)
+        internal static void ComputeSvd(float[,] a, out float[] w, out float[,] v)
         {
             int m = a.GetLength(0); // Row count
             int n = a.GetLength(1); // Column count
