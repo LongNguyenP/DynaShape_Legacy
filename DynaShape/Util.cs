@@ -281,10 +281,78 @@ namespace DynaShape
             return Math.Abs(e.Max) < tolerance
                 ? 2  // The input points are already coplanar
                 : 3; // The input points are NOT coplanar
-
-
         }
 
+
+        public static int ComputeBestFitPlaneAccord(List<Triple> points, out Triple planeOrigin, out Triple planeNormal, float tolerance = 1E-6f)
+        {
+            Triple centroid = Triple.Zero;
+            for (int i = 0; i < points.Count; i++) centroid += points[i];
+            centroid /= points.Count;
+
+            float[,] P = new float[points.Count, 3];
+
+            for (int i = 0; i < points.Count; i++)
+            {
+                P[i, 0] = points[i].X - centroid.X;
+                P[i, 1] = points[i].Y - centroid.Y;
+                P[i, 2] = points[i].Z - centroid.Z;
+            }
+
+            Accord.Math.Matrix3x3 covariance = new Accord.Math.Matrix3x3();
+
+            for (int k = 0; k < points.Count; k++)
+            {
+                covariance.V00 += P[k, 0] * P[k, 0];
+                covariance.V01 += P[k, 0] * P[k, 1];
+                covariance.V02 += P[k, 0] * P[k, 2];
+                covariance.V10 += P[k, 1] * P[k, 0];
+                covariance.V11 += P[k, 1] * P[k, 1];
+                covariance.V12 += P[k, 1] * P[k, 2];
+                covariance.V20 += P[k, 2] * P[k, 0];
+                covariance.V21 += P[k, 2] * P[k, 1];
+                covariance.V22 += P[k, 2] * P[k, 2];
+            }
+
+            planeOrigin = centroid;
+
+            Accord.Math.Matrix3x3 u, v;
+            Accord.Math.Vector3 e;
+
+            covariance.SVD(out u, out e, out v);
+
+
+            // Case 0: The input points are coincidental, so we just need to pick an arbitrary normal vector
+            if (Math.Abs(e.Max) < tolerance)
+            {
+                planeNormal = Triple.BasisZ;
+                return 0;
+            }
+
+            // Case 1:The input points are colinear, so we just pick an arbitrary vector perpendicular to the only eigen vector
+            int eMidIndex = 3 - e.MaxIndex - e.MinIndex;
+            float eigenMidValue = eMidIndex == 0 ? e.X : (eMidIndex == 1 ? e.Y : e.Z);
+
+            if (Math.Abs(eigenMidValue) < tolerance)
+            {
+                planeNormal = new Triple(u.V00, u.V10, u.V20).GeneratePerpendicular();
+                return 1;
+            }
+
+            // Case 2:The input points are neigher coincidental nor colinear, therefore the best fit plane is determined by the two dominant eigenvectors
+            Triple[] eigenvectors =
+            {
+                new Triple(u.V00, u.V10, u.V20),
+                new Triple(u.V01, u.V11, u.V21),
+                new Triple(u.V02, u.V12, u.V22),
+            };
+
+            planeNormal = eigenvectors[e.MaxIndex].Cross(eigenvectors[eMidIndex]).Normalise();
+
+            return Math.Abs(e.Max) < tolerance
+                ? 2  // The input points are already coplanar
+                : 3; // The input points are NOT coplanar
+        }
 
         /// <summary>
         /// 
