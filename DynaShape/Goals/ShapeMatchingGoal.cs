@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO.Packaging;
-using AForge.Math;
 using Autodesk.DesignScript.Runtime;
 
 
@@ -56,29 +55,26 @@ namespace DynaShape.Goals
 
             sigmaInversed = 1f / sigma;
 
-
             //===================================================================================================================
             // Determine if the target shape is 2D, as this case required special handling when doing shape matching operator
             //===================================================================================================================
 
-            Matrix3x3 covariance = new Matrix3x3();
+            float[,] p = new float[3, 3];
 
             for (int i = 0; i < NodeCount; i++)
             {
-                covariance.V00 += targetShapePoints[i].X * targetShapePoints[i].X;
-                covariance.V01 += targetShapePoints[i].X * targetShapePoints[i].Y;
-                covariance.V02 += targetShapePoints[i].X * targetShapePoints[i].Z;
-
-                covariance.V10 += targetShapePoints[i].Y * targetShapePoints[i].X;
-                covariance.V11 += targetShapePoints[i].Y * targetShapePoints[i].Y;
-                covariance.V12 += targetShapePoints[i].Y * targetShapePoints[i].Z;
-
-                covariance.V20 += targetShapePoints[i].Z * targetShapePoints[i].X;
-                covariance.V21 += targetShapePoints[i].Z * targetShapePoints[i].Y;
-                covariance.V22 += targetShapePoints[i].Z * targetShapePoints[i].Z;
+                p[0, 0] += targetShapePoints[i].X * targetShapePoints[i].X;
+                p[0, 1] += targetShapePoints[i].X * targetShapePoints[i].Y;
+                p[0, 2] += targetShapePoints[i].X * targetShapePoints[i].Z;
+                p[1, 0] += targetShapePoints[i].Y * targetShapePoints[i].X;
+                p[1, 1] += targetShapePoints[i].Y * targetShapePoints[i].Y;
+                p[1, 2] += targetShapePoints[i].Y * targetShapePoints[i].Z;
+                p[2, 0] += targetShapePoints[i].Z * targetShapePoints[i].X;
+                p[2, 1] += targetShapePoints[i].Z * targetShapePoints[i].Y;
+                p[2, 2] += targetShapePoints[i].Z * targetShapePoints[i].Z;
             }
 
-            is2D = covariance.Determinant.IsAlmostZero();
+            is2D = Util.Determinant3x3(p).IsAlmostZero();
         }
 
         private void ShapeMatch(Triple[] positions)
@@ -94,7 +90,6 @@ namespace DynaShape.Goals
             for (int i = 0; i < NodeCount; i++) center += positions[i];
             center /= NodeCount;
 
-
             //==========================================================================================
             // Mean Centering
             // i.e. Substract the current center from the current positions ...
@@ -108,48 +103,63 @@ namespace DynaShape.Goals
                    positions[i].Y - center.Y,
                    positions[i].Z - center.Z);
 
-
             //==================================================================================================================
             // Compute the rotation matrix that bring the original rest positions to the current positions as close as possible
             //==================================================================================================================
 
-            Matrix3x3 covariance = new Matrix3x3();
+            float[,] p = new float[3, 3];
 
             for (int i = 0; i < NodeCount; i++)
             {
-                covariance.V00 += positionsCentered[i].X * targetShapePoints[i].X;
-                covariance.V01 += positionsCentered[i].X * targetShapePoints[i].Y;
-                covariance.V02 += positionsCentered[i].X * targetShapePoints[i].Z;
-
-                covariance.V10 += positionsCentered[i].Y * targetShapePoints[i].X;
-                covariance.V11 += positionsCentered[i].Y * targetShapePoints[i].Y;
-                covariance.V12 += positionsCentered[i].Y * targetShapePoints[i].Z;
-
-                covariance.V20 += positionsCentered[i].Z * targetShapePoints[i].X;
-                covariance.V21 += positionsCentered[i].Z * targetShapePoints[i].Y;
-                covariance.V22 += positionsCentered[i].Z * targetShapePoints[i].Z;
+                p[0, 0] += positionsCentered[i].X * targetShapePoints[i].X;
+                p[0, 1] += positionsCentered[i].X * targetShapePoints[i].Y;
+                p[0, 2] += positionsCentered[i].X * targetShapePoints[i].Z;
+                p[1, 0] += positionsCentered[i].Y * targetShapePoints[i].X;
+                p[1, 1] += positionsCentered[i].Y * targetShapePoints[i].Y;
+                p[1, 2] += positionsCentered[i].Y * targetShapePoints[i].Z;
+                p[2, 0] += positionsCentered[i].Z * targetShapePoints[i].X;
+                p[2, 1] += positionsCentered[i].Z * targetShapePoints[i].Y;
+                p[2, 2] += positionsCentered[i].Z * targetShapePoints[i].Z;
             }
 
-            Matrix3x3 u, v;
-            Vector3 e;
+            if (!Util.ComputeSvd(p, out float[] e, out float[,] v))
+            {
+                // Svd computation did not converge :( !
+                for (int i = 0; i < NodeCount; i++)
+                {
+                    Moves[i].X = Moves[i].Y = Moves[i].Z = 0f;
+                    Weights[i] = Weight;
+                }
 
-            covariance.SVD(out u, out e, out v);
+                return;
+            }
 
-            Matrix3x3 R = u * v.Transpose();
+            float[,] r = new float[3, 3]; // This is the rotation matrix
+
+            for (int i = 0; i < 3; i++)
+                for (int j = 0; j < 3; j++)
+                    for (int k = 0; k < 3; k++)
+                        r[i, j] += p[i, k] * v[j, k];
 
             float indicator = 1f;
 
-            //if (R.Determinant < 0f && !is2D)
-            //{
-            //    R.V20 *= -1f;
-            //    R.V21 *= -1f;
-            //    R.V22 *= -1f;
-            //    indicator = -1f;
-            //}
+            // Handle the special case where the rotation matrix happens to give a reflected version of target shape 
+            if (Util.Determinant3x3(r) < 0f && !is2D)
+            {
+                r[2, 0] *= -1f;
+                r[2, 1] *= -1f;
+                r[2, 2] *= -1f;
+                indicator = -1f;
+            }
 
+            // TODO: Check the correctness of scaling math below, especially the indicator
             if (AllowScaling)
-                R *= sigmaInversed * (indicator * e.X + e.Y + e.Z);
-
+            {
+                float temp = sigmaInversed * (indicator * e[0] + e[1] + e[2]);;
+                for (int i = 0; i < 3; i++)
+                    for (int j = 0; j < 3; j++)
+                        r[i, j] *= temp;
+            }
 
             //=========================================================================
             // Apply the rotation and translation to obtain the target rest positions,
@@ -158,9 +168,9 @@ namespace DynaShape.Goals
 
             for (int i = 0; i < NodeCount; i++)
             {
-                Moves[i].X = R.V00 * targetShapePoints[i].X + R.V01 * targetShapePoints[i].Y + R.V02 * targetShapePoints[i].Z + center.X - positions[i].X;
-                Moves[i].Y = R.V10 * targetShapePoints[i].X + R.V11 * targetShapePoints[i].Y + R.V12 * targetShapePoints[i].Z + center.Y - positions[i].Y;
-                Moves[i].Z = R.V20 * targetShapePoints[i].X + R.V21 * targetShapePoints[i].Y + R.V22 * targetShapePoints[i].Z + center.Z - positions[i].Z;
+                Moves[i].X = r[0, 0] * targetShapePoints[i].X + r[0, 1] * targetShapePoints[i].Y + r[0, 2] * targetShapePoints[i].Z + center.X - positions[i].X;
+                Moves[i].Y = r[1, 0] * targetShapePoints[i].X + r[1, 1] * targetShapePoints[i].Y + r[1, 2] * targetShapePoints[i].Z + center.Y - positions[i].Y;
+                Moves[i].Z = r[2, 0] * targetShapePoints[i].X + r[2, 1] * targetShapePoints[i].Y + r[2, 2] * targetShapePoints[i].Z + center.Z - positions[i].Z;
                 Weights[i] = Weight;
             }
         }

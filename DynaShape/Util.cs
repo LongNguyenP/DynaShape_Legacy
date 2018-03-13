@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Media.Animation;
 using Autodesk.DesignScript.Runtime;
 using SharpDX;
-using Matrix3x3 = AForge.Math.Matrix3x3;
 using Point = Autodesk.DesignScript.Geometry.Point;
 using Vector = Autodesk.DesignScript.Geometry.Vector;
 using Math = System.Math;
@@ -20,11 +20,11 @@ namespace DynaShape
         public static Triple ToTriple(this Point point) => new Triple(point.X, point.Y, point.Z);
         public static Triple ToTriple(this Vector vector) => new Triple(vector.X, vector.Y, vector.Z);
 
-        public static bool IsAlmostZero(this float number, float tolerance = 1e-6f) => -tolerance < number && number < tolerance;
-        public static bool IsAlmostZero(this double number, double tolerance = 1.0e-6) => -tolerance < number && number < tolerance;
+        public static bool IsAlmostZero(this float number, float tolerance = 1E-10f) => -tolerance < number && number < tolerance;
+        public static bool IsAlmostZero(this double number, double tolerance = 1E-10f) => -tolerance < number && number < tolerance;
 
-        public static bool IsNotAlmostZero(this float number, float tolerance = 1e-6f) => -number < tolerance || tolerance < number;
-        public static bool IsNotAlmostZero(this double number, double tolerance = 1.0e-6) => -number < tolerance || tolerance < number;
+        public static bool IsNotAlmostZero(this float number, float tolerance = 1E-10f) => -number < tolerance || tolerance < number;
+        public static bool IsNotAlmostZero(this double number, double tolerance = 1E-10f) => -number < tolerance || tolerance < number;
 
         public static SharpDX.Color ToSharpDXColor(this DSCore.Color color) 
             => new SharpDX.Color(color.Red * by255, color.Green * by255, color.Blue * by255, color.Alpha * by255);
@@ -32,7 +32,7 @@ namespace DynaShape
         public static Vector3 ToVector3(this Triple triple)
             => new Vector3(triple.X, triple.Z, -triple.Y);
 
-        private static float by255 = 1f / 255f;
+        private static readonly float by255 = 1f / 255f;
 
         public static List<Triple> ToTriples(this IEnumerable<Point> points)
         {
@@ -75,7 +75,7 @@ namespace DynaShape
         /// <param name="lineOrigin">Origin of the best fit line</param>
         /// <param name="lineDirection">Direction of the best fit line</param>
         /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, colinear, or non-colinear</param>
-        /// <returns>0 if the input points are coincidental; 1 if they are already colinear; 2 otherwise</returns>       
+        /// <returns>0 if the input points are coincidental; 1 if they are colinear; 2 otherwise</returns>       
         public static int ComputeBestFitLine(List<Triple> points, out Triple lineOrigin, out Triple lineDirection, float tolerance = 1E-10f)
         {
             Triple centroid = Triple.Zero;
@@ -91,30 +91,50 @@ namespace DynaShape
                 P[i, 2] = points[i].Z - centroid.Z;
             }
 
-            Matrix3x3 covariance = new Matrix3x3();
+            float[,] covariance = new float[3, 3];
 
             for (int k = 0; k < points.Count; k++)
             {
-                covariance.V00 += P[k, 0] * P[k, 0];
-                covariance.V01 += P[k, 0] * P[k, 1];
-                covariance.V02 += P[k, 0] * P[k, 2];
-                covariance.V10 += P[k, 1] * P[k, 0];
-                covariance.V11 += P[k, 1] * P[k, 1];
-                covariance.V12 += P[k, 1] * P[k, 2];
-                covariance.V20 += P[k, 2] * P[k, 0];
-                covariance.V21 += P[k, 2] * P[k, 1];
-                covariance.V22 += P[k, 2] * P[k, 2];
+                covariance[0, 0] += P[k, 0] * P[k, 0];
+                covariance[0, 1] += P[k, 0] * P[k, 1];
+                covariance[0, 2] += P[k, 0] * P[k, 2];
+                covariance[1, 0] += P[k, 1] * P[k, 0];
+                covariance[1, 1] += P[k, 1] * P[k, 1];
+                covariance[1, 2] += P[k, 1] * P[k, 2];
+                covariance[2, 0] += P[k, 2] * P[k, 0];
+                covariance[2, 1] += P[k, 2] * P[k, 1];
+                covariance[2, 2] += P[k, 2] * P[k, 2];
             }
 
-            Matrix3x3 u, v;
-            AForge.Math.Vector3 e;
-            covariance.SVD(out u, out e, out v);
+            ComputeSvd(covariance, out float[] e, out float[,] _);
+            float[,] u = covariance;
 
             lineOrigin = centroid;
 
-            lineDirection = new Triple(u.V00, u.V10, u.V20);
+            int eMaxIndex =
+                e[0] > e[1]
+                    ? e[0] > e[2] ? 0 : 2
+                    : e[1] > e[2] ? 1 : 2;
 
-            return 3;
+            int eMinIndex =
+                e[0] < e[1]
+                    ? e[0] < e[2] ? 0 : 2
+                    : e[1] < e[2] ? 1 : 2;
+
+            int eMidIndex = 3 - eMaxIndex - eMinIndex;
+
+            // Case 0: The input points are coincidental, so we just need to pick an arbitrary line direction
+            if (Math.Abs(e[eMaxIndex]) < tolerance)
+            {
+                lineDirection = Triple.BasisX;
+                return 0;
+            }
+
+            // Case 1: The input points are not coincidental, therefore we pick the dominant eigen vector as the line direction
+            lineDirection = new Triple(u[0, eMaxIndex], u[1, eMaxIndex], u[2, eMaxIndex]);
+            return Math.Abs(e[eMidIndex]) < tolerance
+                ? 1 // The input points are colinear
+                : 2; // The input points are NOT colinear
         }
 
         /// <summary>
@@ -124,7 +144,7 @@ namespace DynaShape
         /// <param name="planeOrigin">Origin of the best fit plane</param>
         /// <param name="planeNormal">Normal of the best fit plane</param>
         /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, colinear, coplanar, or non-coplanar</param>
-        /// <returns>0 if the input points are coincidental; 1 if they are colinear; 2 if they are already coplanar; 3 otherwise</returns>
+        /// <returns>0 if the input points are coincidental; 1 if they are colinear; 2 if they are coplanar; 3 otherwise</returns>
         public static int ComputeBestFitPlane(List<Triple> points, out Triple planeOrigin, out Triple planeNormal, float tolerance = 1E-10f)
         {
             Triple centroid = Triple.Zero;
@@ -140,57 +160,60 @@ namespace DynaShape
                 P[i, 2] = points[i].Z - centroid.Z;
             }
 
-            Matrix3x3 covariance = new Matrix3x3();
+            float[,] covariance = new float[3,3];
 
             for (int k = 0; k < points.Count; k++)
             {
-                covariance.V00 += P[k, 0] * P[k, 0];
-                covariance.V01 += P[k, 0] * P[k, 1];
-                covariance.V02 += P[k, 0] * P[k, 2];
-                covariance.V10 += P[k, 1] * P[k, 0];
-                covariance.V11 += P[k, 1] * P[k, 1];
-                covariance.V12 += P[k, 1] * P[k, 2];
-                covariance.V20 += P[k, 2] * P[k, 0];
-                covariance.V21 += P[k, 2] * P[k, 1];
-                covariance.V22 += P[k, 2] * P[k, 2];
+                covariance[0, 0] += P[k, 0] * P[k, 0];
+                covariance[0, 1] += P[k, 0] * P[k, 1];
+                covariance[0, 2] += P[k, 0] * P[k, 2];
+                covariance[1, 0] += P[k, 1] * P[k, 0];
+                covariance[1, 1] += P[k, 1] * P[k, 1];
+                covariance[1, 2] += P[k, 1] * P[k, 2];
+                covariance[2, 0] += P[k, 2] * P[k, 0];
+                covariance[2, 1] += P[k, 2] * P[k, 1];
+                covariance[2, 2] += P[k, 2] * P[k, 2];
             }
+
+            ComputeSvd(covariance, out float[] e, out float[,] _);
+            float[,] u = covariance;
 
             planeOrigin = centroid;
 
-            Matrix3x3 u, v;
-            AForge.Math.Vector3 e;
+            int eMaxIndex =
+                e[0] > e[1]
+                    ? e[0] > e[2] ? 0 : 2
+                    : e[1] > e[2] ? 1 : 2;
 
-            ComputeSvd(covariance, out u, out e, out v);
+            int eMinIndex =
+                e[0] < e[1]
+                    ? e[0] < e[2] ? 0 : 2
+                    : e[1] < e[2] ? 1 : 2;
+
+            int eMidIndex = 3 - eMaxIndex - eMinIndex;
 
             // Case 0: The input points are coincidental, so we just need to pick an arbitrary normal vector
-            if (Math.Abs(e.Max) < tolerance)
+            if (Math.Abs(e[eMaxIndex]) < tolerance)
             {
                 planeNormal = Triple.BasisZ;
                 return 0;
             }
 
-            // Case 1:The input points are colinear, so we just pick an arbitrary vector perpendicular to the only eigen vector
-            int eMidIndex = 3 - e.MaxIndex - e.MinIndex;
-            float eigenMidValue = eMidIndex == 0 ? e.X : (eMidIndex == 1 ? e.Y : e.Z);
-
-            if (Math.Abs(eigenMidValue) < tolerance)
+            // Case 1: The input points are colinear, so we just pick an arbitrary vector perpendicular to the dominant eigenvector
+            if (Math.Abs(e[eMidIndex]) < tolerance)
             {
-                planeNormal = new Triple(u.V00, u.V10, u.V20).GeneratePerpendicular();
+                planeNormal = new Triple(u[0, eMaxIndex], u[1, eMaxIndex], u[2, eMaxIndex]).GeneratePerpendicular();
                 return 1;
             }
 
-            // Case 2:The input points are neigher coincidental nor colinear, therefore the best fit plane is determined by the two dominant eigenvectors
-            Triple[] eigenvectors =
-            {
-                new Triple(u.V00, u.V10, u.V20),
-                new Triple(u.V01, u.V11, u.V21),
-                new Triple(u.V02, u.V12, u.V22),
-            };
+            // Case 2: The input points are neigher coincidental nor colinear, therefore the best fit plane is determined by the two dominant eigenvectors
+            Triple eMax = new Triple(u[0, eMaxIndex], u[1, eMaxIndex], u[2, eMaxIndex]);
+            Triple eMid = new Triple(u[0, eMidIndex], u[1, eMidIndex], u[2, eMidIndex]);
 
-            planeNormal = eigenvectors[e.MaxIndex].Cross(eigenvectors[eMidIndex]).Normalise();
+            planeNormal = eMax.Cross(eMid).Normalise();
 
-            return Math.Abs(e.Max) < tolerance
-                ? 2  // The input points are already coplanar
+            return Math.Abs(e[eMinIndex]) < tolerance
+                ? 2  // The input points are coplanar
                 : 3; // The input points are NOT coplanar
         }
 
@@ -210,13 +233,15 @@ namespace DynaShape
 
             int planeFittingResult = ComputeBestFitPlane(points, out Triple planeOrigin, out Triple planeNormal, tolerance);
 
-            if (planeFittingResult < 2) // The input points are either coincidental, or colinear
+            // Case 0: The input points are either coincidental or colinear
+            if (planeFittingResult < 2) 
             {
                 circleCenter = circleNormal = new Triple(float.NaN);
                 circleRadius = float.NaN;
                 return false;
             }
 
+            // Case 1: The input points are neither coincidental nor colinear
             Triple planeBasisX = planeNormal.GeneratePerpendicular().Normalise();
             Triple planeBasisY = planeNormal.Cross(planeBasisX);
 
@@ -372,42 +397,7 @@ namespace DynaShape
             return true;
         }
 
-        internal static void ComputeSvd(Matrix3x3 m, out Matrix3x3 u, out AForge.Math.Vector3 e, out Matrix3x3 v)
-        {
-            float[,] a = {
-                {m.V00, m.V01, m.V02},
-                {m.V10, m.V11, m.V12},
-                {m.V20, m.V21, m.V22}};
-
-            ComputeSvd(a, out float[] w, out float[,]  v1);
-            u = new Matrix3x3
-            {
-                V00 = a[0, 0],
-                V01 = a[0, 1],
-                V02 = a[0, 2],
-                V10 = a[1, 0],
-                V11 = a[1, 1],
-                V12 = a[1, 2],
-                V20 = a[2, 0],
-                V21 = a[2, 1],
-                V22 = a[2, 2]
-            };
-            v = new Matrix3x3
-            {
-                V00 = v1[0, 0],
-                V01 = v1[0, 1],
-                V02 = v1[0, 2],
-                V10 = v1[1, 0],
-                V11 = v1[1, 1],
-                V12 = v1[1, 2],
-                V20 = v1[2, 0],
-                V21 = v1[2, 1],
-                V22 = v1[2, 2]
-            };
-            e = new AForge.Math.Vector3(w[0], w[1], w[2]);
-        }
-
-        internal static void ComputeSvd(float[,] a, out float[] w, out float[,] v)
+        internal static bool ComputeSvd(float[,] a, out float[] w, out float[,] v)
         {
             int m = a.GetLength(0); // Row count
             int n = a.GetLength(1); // Column count
@@ -611,7 +601,7 @@ namespace DynaShape
                         break;
                     }
 
-                    if (its == 30) throw new InvalidOperationException("No convergence in 30 svd iterations");
+                    if (its == 30) return false;
 
                     // shift from bottom 2-by-2 minor
                     x = w[l];
@@ -675,8 +665,12 @@ namespace DynaShape
                     rv1[l] = 0f;
                     rv1[k] = f;
                     w[k] = x;
+
+                   
                 }
             }
+
+            return true;
         }
 
         private static float Sign(float a, float b)
@@ -701,6 +695,14 @@ namespace DynaShape
             }
 
             return 0f;
+        }
+
+        internal static float Determinant3x3(float[,] a)
+        {
+            return
+                a[0, 0] * (a[1, 1] * a[2, 2] - a[2, 1] * a[1, 2]) -
+                a[0, 1] * (a[1, 0] * a[2, 2] - a[2, 0] * a[1, 2]) +
+                a[0, 2] * (a[1, 0] * a[2, 1] - a[2, 0] * a[1, 1]);
         }
     }
 }
