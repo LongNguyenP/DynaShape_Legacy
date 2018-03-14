@@ -15,9 +15,6 @@ using DynaShape.GeometryBinders;
 using HelixToolkit.Wpf.SharpDX;
 using HelixToolkit.Wpf.SharpDX.Core;
 using SharpDX;
-using Application = System.Windows.Application;
-using Geometry3D = HelixToolkit.Wpf.SharpDX.Geometry3D;
-using MeshGeometry3D = HelixToolkit.Wpf.SharpDX.MeshGeometry3D;
 using Model3D = HelixToolkit.Wpf.SharpDX.Model3D;
 
 
@@ -77,17 +74,17 @@ namespace DynaShape
                         Color = Color.White,
                     };
 
-                    List<string> info1 = new List<string>();
-                    foo(DynaShapeViewExtension.DynamoWindow.Content, info1, 0);
-
-                    List<string> info2 = new List<string>();
-                    ListContent(DynaShapeViewExtension.DynamoWindow.Content as Grid, 0, info2);
+                    // DEBUG HELPER CODE
+                    //List<string> info1 = new List<string>();
+                    //foo(DynaShapeViewExtension.DynamoWindow.Content, info1, 0);
+                    //List<string> info2 = new List<string>();
+                    //ListContent(DynaShapeViewExtension.DynamoWindow.Content as Grid, 0, info2);
                 },
                 DispatcherPriority.Send);
 
             DynaShapeViewExtension.ViewModel.RequestViewRefresh += RequestViewRefreshHandler;
 
-            DynaShapeViewExtension.DynamoWindow.Closed += (sender, args) => { Dispose(); };
+            DynaShapeViewExtension.DynamoWindow.Closed += (sender, args) => Dispose();
         }
 
         // DEBUG HELPER METHOD
@@ -128,7 +125,6 @@ namespace DynaShape
             lineGeometry.Colors.Add(color);
         }
 
-
         public void DrawPolyline(List<Triple> vertices, Color4 color, bool loop)
         {
             if (loop) vertices.Add(vertices[0]);
@@ -144,12 +140,10 @@ namespace DynaShape
             }
         }
 
-
         public void AddMeshModel(MeshGeometryModel3D meshModel)
         {
             meshModels.Add(meshModel);
         }
-
 
         internal void Render(bool async = false)
         {
@@ -191,7 +185,6 @@ namespace DynaShape
 
             meshModels = new List<MeshGeometryModel3D>();
 
-
             //============================================
             // Render nodes as points
             //============================================
@@ -207,7 +200,6 @@ namespace DynaShape
                 pointGeometry.Indices.Add(i);
             }
 
-
             //==============================================================
             // Render geometries from geometry binders
             //==============================================================
@@ -215,13 +207,11 @@ namespace DynaShape
             foreach (GeometryBinder geometryBinder in solver.GeometryBinders)
                 geometryBinder.CreateDisplayedGeometries(this, solver.Nodes);
 
-
             //============================================================================
             // Render GUI elements
             //============================================================================
 
             RenderGUI();
-
 
             //==============================================================
             // Attach the geometries to Helix render host
@@ -239,7 +229,6 @@ namespace DynaShape
                 if (sceneItems.Contains(pointModel)) sceneItems.Remove(pointModel);
             }
 
-
             if (lineGeometry.Positions.Count >= 2)
             {
                 lineModel.Geometry = lineGeometry;
@@ -252,7 +241,6 @@ namespace DynaShape
                 if (sceneItems.Contains(lineModel)) sceneItems.Remove(lineModel);
             }
 
-
             foreach (MeshGeometryModel3D meshModel in meshModels)
                 if (meshModel.Geometry.Positions.Count >= 3)
                 {
@@ -260,7 +248,6 @@ namespace DynaShape
                     sceneItems.Add(meshModel);
                 }
         }
-
 
         private void RenderGUI()
         {
@@ -309,7 +296,6 @@ namespace DynaShape
                 lineGeometry.Positions.Add(v4.ToVector3());
                 lineGeometry.Positions.Add(v1.ToVector3());
 
-
                 int temp = lineGeometry.Indices.Count;
                 for (int i = 0; i < 12; i++)
                 {
@@ -318,7 +304,6 @@ namespace DynaShape
                 }
             }
         }
-
 
         public void Dispose()
         {
