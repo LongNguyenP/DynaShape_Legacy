@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO.Packaging;
 using Autodesk.DesignScript.Runtime;
-
 
 namespace DynaShape.Goals
 {
@@ -24,12 +22,10 @@ namespace DynaShape.Goals
             SetTargetShapePoints(targetShapePositions);
         }
 
-
         public ShapeMatchingGoal(List<Triple> nodeStartingPositions, bool allowScaling = false, float weight = 1f)
            : this(nodeStartingPositions, nodeStartingPositions, allowScaling, weight)
         {
         }
-
 
         public override void Compute(List<Node> allNodes)
         {
@@ -37,7 +33,6 @@ namespace DynaShape.Goals
             for (int i = 0; i < NodeCount; i++) positions[i] = allNodes[NodeIndices[i]].Position;
             ShapeMatch(positions);
         }
-
 
         public void SetTargetShapePoints(List<Triple> points)
         {
@@ -79,7 +74,7 @@ namespace DynaShape.Goals
 
         private void ShapeMatch(Triple[] positions)
         {
-            // Here we compute the "best" translation, rotation (and optionally scalling) that bring the targetShapePoints as close as possible to the current node positions
+            // Here we compute the "best" translation & rotation (and optionally scalling) that bring the targetShapePoints as close as possible to the current node positions
             // Reference: Umeyama S. 1991, Least-Squares Estimation of Transformation Paramters Between Two Point Patterns
 
             //==========================================================================================
@@ -107,22 +102,22 @@ namespace DynaShape.Goals
             // Compute the rotation matrix that bring the original rest positions to the current positions as close as possible
             //==================================================================================================================
 
-            float[,] p = new float[3, 3];
+            float[,] u = new float[3, 3];
 
             for (int i = 0; i < NodeCount; i++)
             {
-                p[0, 0] += positionsCentered[i].X * targetShapePoints[i].X;
-                p[0, 1] += positionsCentered[i].X * targetShapePoints[i].Y;
-                p[0, 2] += positionsCentered[i].X * targetShapePoints[i].Z;
-                p[1, 0] += positionsCentered[i].Y * targetShapePoints[i].X;
-                p[1, 1] += positionsCentered[i].Y * targetShapePoints[i].Y;
-                p[1, 2] += positionsCentered[i].Y * targetShapePoints[i].Z;
-                p[2, 0] += positionsCentered[i].Z * targetShapePoints[i].X;
-                p[2, 1] += positionsCentered[i].Z * targetShapePoints[i].Y;
-                p[2, 2] += positionsCentered[i].Z * targetShapePoints[i].Z;
+                u[0, 0] += positionsCentered[i].X * targetShapePoints[i].X;
+                u[0, 1] += positionsCentered[i].X * targetShapePoints[i].Y;
+                u[0, 2] += positionsCentered[i].X * targetShapePoints[i].Z;
+                u[1, 0] += positionsCentered[i].Y * targetShapePoints[i].X;
+                u[1, 1] += positionsCentered[i].Y * targetShapePoints[i].Y;
+                u[1, 2] += positionsCentered[i].Y * targetShapePoints[i].Z;
+                u[2, 0] += positionsCentered[i].Z * targetShapePoints[i].X;
+                u[2, 1] += positionsCentered[i].Z * targetShapePoints[i].Y;
+                u[2, 2] += positionsCentered[i].Z * targetShapePoints[i].Z;
             }
 
-            if (!Util.ComputeSvd(p, out float[] e, out float[,] v))
+            if (!Util.ComputeSvd(u, out float[] e, out float[,] v))
             {
                 // Svd computation did not converge :( !
                 for (int i = 0; i < NodeCount; i++)
@@ -130,16 +125,22 @@ namespace DynaShape.Goals
                     Moves[i].X = Moves[i].Y = Moves[i].Z = 0f;
                     Weights[i] = Weight;
                 }
-
                 return;
             }
 
             float[,] r = new float[3, 3]; // This is the rotation matrix
+            
+            r[0, 0] += u[0, 0] * v[0, 0]; r[0, 0] += u[0, 1] * v[0, 1]; r[0, 0] += u[0, 2] * v[0, 2];
+            r[0, 1] += u[0, 0] * v[1, 0]; r[0, 1] += u[0, 1] * v[1, 1]; r[0, 1] += u[0, 2] * v[1, 2];
+            r[0, 2] += u[0, 0] * v[2, 0]; r[0, 2] += u[0, 1] * v[2, 1]; r[0, 2] += u[0, 2] * v[2, 2];
 
-            for (int i = 0; i < 3; i++)
-                for (int j = 0; j < 3; j++)
-                    for (int k = 0; k < 3; k++)
-                        r[i, j] += p[i, k] * v[j, k];
+            r[1, 0] += u[1, 0] * v[0, 0]; r[1, 0] += u[1, 1] * v[0, 1]; r[1, 0] += u[1, 2] * v[0, 2];
+            r[1, 1] += u[1, 0] * v[1, 0]; r[1, 1] += u[1, 1] * v[1, 1]; r[1, 1] += u[1, 2] * v[1, 2];
+            r[1, 2] += u[1, 0] * v[2, 0]; r[1, 2] += u[1, 1] * v[2, 1]; r[1, 2] += u[1, 2] * v[2, 2];
+
+            r[2, 0] += u[2, 0] * v[0, 0]; r[2, 0] += u[2, 1] * v[0, 1]; r[2, 0] += u[2, 2] * v[0, 2];
+            r[2, 1] += u[2, 0] * v[1, 0]; r[2, 1] += u[2, 1] * v[1, 1]; r[2, 1] += u[2, 2] * v[1, 2];
+            r[2, 2] += u[2, 0] * v[2, 0]; r[2, 2] += u[2, 1] * v[2, 1]; r[2, 2] += u[2, 2] * v[2, 2];
 
             float indicator = 1f;
 
@@ -156,9 +157,9 @@ namespace DynaShape.Goals
             if (AllowScaling)
             {
                 float temp = sigmaInversed * (indicator * e[0] + e[1] + e[2]);;
-                for (int i = 0; i < 3; i++)
-                    for (int j = 0; j < 3; j++)
-                        r[i, j] *= temp;
+                r[0, 0] *= temp; r[0, 1] *= temp; r[0, 2] *= temp;
+                r[1, 0] *= temp; r[1, 1] *= temp; r[1, 2] *= temp;
+                r[2, 0] *= temp; r[2, 1] *= temp; r[2, 2] *= temp;
             }
 
             //=========================================================================

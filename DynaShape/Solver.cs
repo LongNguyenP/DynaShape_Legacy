@@ -3,22 +3,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using System.Timers;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
-using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Runtime;
 using Dynamo.Wpf.ViewModels.Watch3D;
 using DynaShape.Goals;
 using DynaShape.GeometryBinders;
-using Microsoft.Win32;
-using ProtoCore.AST.ImperativeAST;
+
 using Point = Autodesk.DesignScript.Geometry.Point;
 using Vector = Autodesk.DesignScript.Geometry.Vector;
-using Dynamo.Graph.Workspaces;
-using Dynamo.Scheduler;
+
 
 namespace DynaShape
 {
@@ -38,14 +33,18 @@ namespace DynaShape
 
         internal DynaShapeDisplay Display;
 
-        private Task backgroundExecutionTask = new Task(() => { });
+        private Task backgroundExecutionTask = null;
 
-        public int IterationCount = -1;
+        public int IterationCount = 0;
 
         public int CurrentIteration { get; private set; }
 
+        private string timeCreated;
+
         public Solver()
         {
+            timeCreated = DateTime.Now.TimeOfDay.ToString();
+
             if (DynaShapeViewExtension.ViewModel == null) throw new Exception("Oh no, DynaShape could not get access to the Helix ViewModel. Sad!");
 
             CurrentIteration = 0;
@@ -95,7 +94,7 @@ namespace DynaShape
                 }
 
                 if (IterationCount > 0) Iterate(IterationCount);
-                else Iterate(35);
+                else Iterate(35f);
 
                 if (EnableFastDisplay) Display.Render();
             }
@@ -104,15 +103,18 @@ namespace DynaShape
 
         public void StartBackgroundExecution()
         {
-            if (backgroundExecutionTask.Status == TaskStatus.Running) return;
+            if (backgroundExecutionTask == null || backgroundExecutionTask.Status == TaskStatus.Running) return;
             ctSource = new CancellationTokenSource();
             backgroundExecutionTask = Task.Factory.StartNew(BackgroundExecutionAction, ctSource.Token);
+            
         }
 
 
         public void StopBackgroundExecution()
         {
+            if (backgroundExecutionTask.Status != TaskStatus.Running) return;
             ctSource?.Cancel();
+            var dsw = DynaShapeViewExtension.DynamoWindow;
             backgroundExecutionTask?.Wait(300);
             Display.DispatcherOperation?.Task.Wait();
         }
@@ -476,12 +478,12 @@ namespace DynaShape
 
             if (HandleNodeIndex != -1)
             {
-                float mouseInteractionWeight = 30f;
-                nodeWeightSums[HandleNodeIndex] += mouseInteractionWeight;
+                float manipulationWeight = 30f;
+                nodeWeightSums[HandleNodeIndex] += manipulationWeight;
 
                 Triple v = Nodes[HandleNodeIndex].Position - DynaShapeViewExtension.MouseRayOrigin;
                 Triple mouseRayPull = v.Dot(DynaShapeViewExtension.MouseRayDirection) * DynaShapeViewExtension.MouseRayDirection - v;
-                nodeMoveSums[HandleNodeIndex] += mouseInteractionWeight * mouseRayPull;
+                nodeMoveSums[HandleNodeIndex] += manipulationWeight * mouseRayPull;
             }
 
             //=============================================================================================
@@ -491,6 +493,7 @@ namespace DynaShape
             if (EnableMomentum)
                 for (int i = 0; i < Nodes.Count; i++)
                 {
+                    if (nodeWeightSums[i] == 0f) continue;
                     Triple move = nodeMoveSums[i] / nodeWeightSums[i];
                     Nodes[i].Position += move;
                     Nodes[i].Velocity += move;
@@ -500,6 +503,7 @@ namespace DynaShape
             else
                 for (int i = 0; i < Nodes.Count; i++)
                 {
+                    if (nodeWeightSums[i] == 0f) continue;
                     Triple move = nodeMoveSums[i] / nodeWeightSums[i];
                     Nodes[i].Position += move;
                     Nodes[i].Velocity = Triple.Zero;

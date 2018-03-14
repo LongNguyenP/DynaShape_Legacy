@@ -90,6 +90,7 @@ namespace DynaShape
             DynaShapeViewExtension.DynamoWindow.Closed += (sender, args) => { Dispose(); };
         }
 
+        // DEBUG HELPER METHOD
         private void foo(object o, List<string> info, int indent)
         {
             if (!(o is Grid))
@@ -104,6 +105,7 @@ namespace DynaShape
                 foo(element, info, indent + 1);
         }
 
+        // DEBUG HELPER METHOD
         private void ListContent(Grid grid, int level, List<string> info)
         {
             foreach (var element in grid.Children)
