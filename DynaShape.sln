@@ -19,8 +19,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Misc", "Misc", "{2765222E-C
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynaShapeTest", "DynaShapeTest\DynaShapeTest.csproj", "{72DDDBDD-00AC-473C-A39D-1FEFF2AE5F71}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -34,10 +32,6 @@ Global
 		{157AD178-EE17-46E9-B6DC-C50EB9DCCA60}.Release|x64.Build.0 = Release|x64
 		{157AD178-EE17-46E9-B6DC-C50EB9DCCA60}.UnitTest|x64.ActiveCfg = UnitTest|x64
 		{157AD178-EE17-46E9-B6DC-C50EB9DCCA60}.UnitTest|x64.Build.0 = UnitTest|x64
-		{72DDDBDD-00AC-473C-A39D-1FEFF2AE5F71}.Debug|x64.ActiveCfg = Debug|x64
-		{72DDDBDD-00AC-473C-A39D-1FEFF2AE5F71}.Release|x64.ActiveCfg = Release|x64
-		{72DDDBDD-00AC-473C-A39D-1FEFF2AE5F71}.UnitTest|x64.ActiveCfg = UnitTest|x64
-		{72DDDBDD-00AC-473C-A39D-1FEFF2AE5F71}.UnitTest|x64.Build.0 = UnitTest|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

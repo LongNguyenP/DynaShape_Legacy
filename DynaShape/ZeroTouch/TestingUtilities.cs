@@ -154,23 +154,5 @@ namespace DynaShape.ZeroTouch
                 {"points", pointsLinear}
             };
         }
-
-        public static Line BestFitLine(List<Point> points)
-        {
-            Util.ComputeBestFitLine(points.ToTriples(), out Triple origin, out Triple direction);
-            return Line.ByStartPointEndPoint((origin - direction * 1f).ToPoint(), (origin + direction * 1f).ToPoint());
-        }
-
-        public static Plane BestFitPlane(List<Point> points)
-        {
-            Util.ComputeBestFitPlane(points.ToTriples(), out Triple origin, out Triple normal);
-            return Plane.ByOriginNormal(origin.ToPoint(), normal.ToVector());
-        }
-
-        public static Circle BestFitCircle(List<Point> points)
-        {
-            Util.ComputeBestFitCircle(points.ToTriples(), out Triple center, out Triple normal, out float radius);
-            return Circle.ByCenterPointRadiusNormal(center.ToPoint(), radius, normal.ToVector());
-        }
     }
 }
