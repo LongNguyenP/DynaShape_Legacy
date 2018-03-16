@@ -128,18 +128,16 @@ namespace DynaShape.ZeroTouch
                     for (int k = 0; k < Z - 1; k++)
                     {
                         var voxelPoints = new List<Triple>()
-                {
-                    points[i + 0, j + 0, k + 0],
-                    points[i + 1, j + 0, k + 0],
-                    points[i + 1, j + 1, k + 0],
-                    points[i + 0, j + 1, k + 0],
-                    points[i + 0, j + 0, k + 1],
-                    points[i + 1, j + 0, k + 1],
-                    points[i + 1, j + 1, k + 1],
-                    points[i + 0, j + 1, k + 1],
-                };
-
-
+                        {
+                            points[i + 0, j + 0, k + 0],
+                            points[i + 1, j + 0, k + 0],
+                            points[i + 1, j + 1, k + 0],
+                            points[i + 0, j + 1, k + 0],
+                            points[i + 0, j + 0, k + 1],
+                            points[i + 1, j + 0, k + 1],
+                            points[i + 1, j + 1, k + 1],
+                            points[i + 0, j + 1, k + 1],
+                        };
                         goals.Add(new ShapeMatchingGoal(voxelPoints, voxelPoints));
                     }
 
