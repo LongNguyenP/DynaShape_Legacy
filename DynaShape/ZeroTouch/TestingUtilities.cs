@@ -37,7 +37,6 @@ namespace DynaShape.ZeroTouch
                         pointsLinear.Add(Point.ByCoordinates(i, j, k + 5f));
                     }
 
-
             List<Goal> anchorGoals = new List<Goal>();
 
             anchorGoals.Add(new AnchorGoal(points[0, 0, Z - 1]));
@@ -47,7 +46,6 @@ namespace DynaShape.ZeroTouch
 
             List<Goal> goals = new List<Goal>();
             goals.AddRange(anchorGoals);
-
 
             List<GeometryBinder> geometryBinders = new List<GeometryBinder>();
 
@@ -77,8 +75,6 @@ namespace DynaShape.ZeroTouch
                     vertices.Add(points[j % 2 == 0 ? i : X - 1 - i, j, Z - 1]);
             geometryBinders.Add(new PolylineBinder(vertices));
 
-
-
             vertices.Clear();
             for (int j = 0; j < Y; j++)
                 for (int k = 0; k < Z; k++)
@@ -103,8 +99,6 @@ namespace DynaShape.ZeroTouch
                     vertices.Add(points[X - 1, k % 2 == 0 ? j : Y - 1 - j, k]);
             geometryBinders.Add(new PolylineBinder(vertices));
 
-
-
             vertices.Clear();
             for (int k = 0; k < Z; k++)
                 for (int i = 0; i < Y; i++)
@@ -128,7 +122,6 @@ namespace DynaShape.ZeroTouch
                 for (int k = 0; k < Z; k++)
                     vertices.Add(points[i, Y - 1, i % 2 == 0 ? k : Z - 1 - k]);
             geometryBinders.Add(new PolylineBinder(vertices));
-
 
             for (int i = 0; i < X - 1; i++)
                 for (int j = 0; j < Y - 1; j++)

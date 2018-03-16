@@ -14,6 +14,7 @@
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <AssemblyVersion>0.5.0.36</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -37,6 +38,10 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>..\bin\DynaShape.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UnitTest|x64'">
+    <OutputPath>bin\x64\UnitTest\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DSCoreNodes">
@@ -100,6 +105,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DynaShapeDisplay.cs" />
+    <Compile Include="FastSvd3x3.cs" />
     <Compile Include="GeometryBinders\TexturedMeshBinder.cs" />
     <Compile Include="Goals\AngleGoal.cs" />
     <Compile Include="Goals\ConstantVolumePressureGoal.cs" />

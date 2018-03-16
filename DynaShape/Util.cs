@@ -62,8 +62,8 @@ namespace DynaShape
             for (int i = 0; i < array.Length; i++) array[i] = value;
         }
 
-        private static float toRadian = (float)Math.PI / 180f;
-        private static float toDegree = 180f / (float)Math.PI;
+        private const float toRadian = (float)Math.PI / 180f;
+        private const float toDegree = 180f / (float)Math.PI;
 
         public static float ToRadian(this float Degree) => Degree * toRadian;
         public static float ToDegree(this float Radian) => Radian * toDegree;
@@ -91,48 +91,47 @@ namespace DynaShape
                 P[i, 2] = points[i].Z - centroid.Z;
             }
 
-            float[,] covariance = new float[3, 3];
+            float c00 = 0f, c01 = 0f, c02 = 0f;
+            float c10 = 0f, c11 = 0f, c12 = 0f;
+            float c20 = 0f, c21 = 0f, c22 = 0f;
 
             for (int k = 0; k < points.Count; k++)
             {
-                covariance[0, 0] += P[k, 0] * P[k, 0];
-                covariance[0, 1] += P[k, 0] * P[k, 1];
-                covariance[0, 2] += P[k, 0] * P[k, 2];
-                covariance[1, 0] += P[k, 1] * P[k, 0];
-                covariance[1, 1] += P[k, 1] * P[k, 1];
-                covariance[1, 2] += P[k, 1] * P[k, 2];
-                covariance[2, 0] += P[k, 2] * P[k, 0];
-                covariance[2, 1] += P[k, 2] * P[k, 1];
-                covariance[2, 2] += P[k, 2] * P[k, 2];
+                c00 += P[k, 0] * P[k, 0];
+                c01 += P[k, 0] * P[k, 1];
+                c02 += P[k, 0] * P[k, 2];
+                c10 += P[k, 1] * P[k, 0];
+                c11 += P[k, 1] * P[k, 1];
+                c12 += P[k, 1] * P[k, 2];
+                c20 += P[k, 2] * P[k, 0];
+                c21 += P[k, 2] * P[k, 1];
+                c22 += P[k, 2] * P[k, 2];
             }
 
-            ComputeSvd(covariance, out float[] e, out float[,] _);
-            float[,] u = covariance;
+            FastSvd3x3.Compute(
+                c00, c01, c02,
+                c10, c11, c12,
+                c20, c21, c22,
+                out float u00, out float u01, out float u02,
+                out float u10, out float u11, out float u12,
+                out float u20, out float u21, out float u22,
+                out float s00, out float s11, out float s22,
+                out float v00, out float v01, out float v02,
+                out float v10, out float v11, out float v12,
+                out float v20, out float v21, out float v22);
 
             lineOrigin = centroid;
 
-            int eMaxIndex =
-                e[0] > e[1]
-                    ? e[0] > e[2] ? 0 : 2
-                    : e[1] > e[2] ? 1 : 2;
-
-            int eMinIndex =
-                e[0] < e[1]
-                    ? e[0] < e[2] ? 0 : 2
-                    : e[1] < e[2] ? 1 : 2;
-
-            int eMidIndex = 3 - eMaxIndex - eMinIndex;
-
             // Case 0: The input points are coincidental, so we just need to pick an arbitrary line direction
-            if (Math.Abs(e[eMaxIndex]) < tolerance)
+            if (s00 < tolerance)
             {
                 lineDirection = Triple.BasisX;
                 return 0;
             }
 
             // Case 1: The input points are not coincidental, therefore we pick the dominant eigen vector as the line direction
-            lineDirection = new Triple(u[0, eMaxIndex], u[1, eMaxIndex], u[2, eMaxIndex]);
-            return Math.Abs(e[eMidIndex]) < tolerance
+            lineDirection = new Triple(u00, u10, u20);
+            return s11 < tolerance
                 ? 1 // The input points are colinear
                 : 2; // The input points are NOT colinear
         }
@@ -160,59 +159,56 @@ namespace DynaShape
                 P[i, 2] = points[i].Z - centroid.Z;
             }
 
-            float[,] covariance = new float[3,3];
+            float c00 = 0f, c01 = 0f, c02 = 0f;
+            float c10 = 0f, c11 = 0f, c12 = 0f;
+            float c20 = 0f, c21 = 0f, c22 = 0f;
 
             for (int k = 0; k < points.Count; k++)
             {
-                covariance[0, 0] += P[k, 0] * P[k, 0];
-                covariance[0, 1] += P[k, 0] * P[k, 1];
-                covariance[0, 2] += P[k, 0] * P[k, 2];
-                covariance[1, 0] += P[k, 1] * P[k, 0];
-                covariance[1, 1] += P[k, 1] * P[k, 1];
-                covariance[1, 2] += P[k, 1] * P[k, 2];
-                covariance[2, 0] += P[k, 2] * P[k, 0];
-                covariance[2, 1] += P[k, 2] * P[k, 1];
-                covariance[2, 2] += P[k, 2] * P[k, 2];
+                c00 += P[k, 0] * P[k, 0];
+                c01 += P[k, 0] * P[k, 1];
+                c02 += P[k, 0] * P[k, 2];
+                c10 += P[k, 1] * P[k, 0];
+                c11 += P[k, 1] * P[k, 1];
+                c12 += P[k, 1] * P[k, 2];
+                c20 += P[k, 2] * P[k, 0];
+                c21 += P[k, 2] * P[k, 1];
+                c22 += P[k, 2] * P[k, 2];
             }
 
-            ComputeSvd(covariance, out float[] e, out float[,] _);
-            float[,] u = covariance;
+            FastSvd3x3.Compute(
+                c00, c01, c02,
+                c10, c11, c12,
+                c20, c21, c22,
+                out float u00, out float u01, out float u02,
+                out float u10, out float u11, out float u12,
+                out float u20, out float u21, out float u22,
+                out float s00, out float s11, out float s22,
+                out float v00, out float v01, out float v02,
+                out float v10, out float v11, out float v12,
+                out float v20, out float v21, out float v22);
 
             planeOrigin = centroid;
 
-            int eMaxIndex =
-                e[0] > e[1]
-                    ? e[0] > e[2] ? 0 : 2
-                    : e[1] > e[2] ? 1 : 2;
-
-            int eMinIndex =
-                e[0] < e[1]
-                    ? e[0] < e[2] ? 0 : 2
-                    : e[1] < e[2] ? 1 : 2;
-
-            int eMidIndex = 3 - eMaxIndex - eMinIndex;
-
+           
             // Case 0: The input points are coincidental, so we just need to pick an arbitrary normal vector
-            if (Math.Abs(e[eMaxIndex]) < tolerance)
+            if (s00 < tolerance)
             {
                 planeNormal = Triple.BasisZ;
                 return 0;
             }
 
             // Case 1: The input points are colinear, so we just pick an arbitrary vector perpendicular to the dominant eigenvector
-            if (Math.Abs(e[eMidIndex]) < tolerance)
+            if (s11 < tolerance)
             {
-                planeNormal = new Triple(u[0, eMaxIndex], u[1, eMaxIndex], u[2, eMaxIndex]).GeneratePerpendicular();
+                planeNormal = new Triple(u00, u10, u20).GeneratePerpendicular();
                 return 1;
             }
 
             // Case 2: The input points are neigher coincidental nor colinear, therefore the best fit plane is determined by the two dominant eigenvectors
-            Triple eMax = new Triple(u[0, eMaxIndex], u[1, eMaxIndex], u[2, eMaxIndex]);
-            Triple eMid = new Triple(u[0, eMidIndex], u[1, eMidIndex], u[2, eMidIndex]);
+            planeNormal = new Triple(u00, u10, u20).Cross(new Triple(u01, u11, u21)).Normalise();
 
-            planeNormal = eMax.Cross(eMid).Normalise();
-
-            return Math.Abs(e[eMinIndex]) < tolerance
+            return s22 < tolerance
                 ? 2  // The input points are coplanar
                 : 3; // The input points are NOT coplanar
         }
@@ -397,317 +393,312 @@ namespace DynaShape
             return true;
         }
 
-        internal static bool ComputeSvd(float[,] a, out float[] w, out float[,] v)
-        {
-            int m = a.GetLength(0); // Row count
-            int n = a.GetLength(1); // Column count
+        //public static bool ComputeSvd(float[,] a, out float[] w, out float[,] v)
+        //{
+        //    int m = a.GetLength(0); // Row count
+        //    int n = a.GetLength(1); // Column count
 
-            if (m < n) throw new ArgumentException("Number of rows in A must be greater or equal to number of columns");
+        //    if (m < n) throw new ArgumentException("Number of rows in A must be greater or equal to number of columns");
 
-            w = new float[n];
-            v = new float[n, n];
+        //    w = new float[n];
+        //    v = new float[n, n];
 
-            int flag, i, its, j, jj, k, l = 0, nm = 0;
-            float anorm, c, f, g, h, s, scale, x, y, z;
+        //    int flag, i, its, j, jj, k, l = 0, nm = 0;
+        //    float anorm, c, f, g, h, s, scale, x, y, z;
 
-            float[] rv1 = new float[n];
+        //    float[] rv1 = new float[n];
 
-            // householder reduction to bidiagonal form
-            g = scale = anorm = 0f;
+        //    // householder reduction to bidiagonal form
+        //    g = scale = anorm = 0f;
 
-            for (i = 0; i < n; i++)
-            {
-                l = i + 1;
-                rv1[i] = scale * g;
-                g = s = scale = 0;
+        //    for (i = 0; i < n; i++)
+        //    {
+        //        l = i + 1;
+        //        rv1[i] = scale * g;
+        //        g = s = scale = 0;
 
-                if (i < m)
-                {
-                    for (k = i; k < m; k++) scale += Math.Abs(a[k, i]);
+        //        if (i < m)
+        //        {
+        //            for (k = i; k < m; k++) scale += Math.Abs(a[k, i]);
 
-                    if (scale != 0f)
-                    {
-                        for (k = i; k < m; k++)
-                        {
-                            a[k, i] /= scale;
-                            s += a[k, i] * a[k, i];
-                        }
+        //            if (scale != 0f)
+        //            {
+        //                for (k = i; k < m; k++)
+        //                {
+        //                    a[k, i] /= scale;
+        //                    s += a[k, i] * a[k, i];
+        //                }
 
-                        f = a[i, i];
-                        g = -Sign((float)Math.Sqrt(s), f);
-                        h = f * g - s;
-                        a[i, i] = f - g;
+        //                f = a[i, i];
+        //                g = -Sign((float)Math.Sqrt(s), f);
+        //                h = f * g - s;
+        //                a[i, i] = f - g;
 
-                        if (i != n - 1)
-                            for (j = l; j < n; j++)
-                            {
-                                for (s = 0f, k = i; k < m; k++) s += a[k, i] * a[k, j];
-                                f = s / h;
-                                for (k = i; k < m; k++) a[k, j] += f * a[k, i];
-                            }
+        //                if (i != n - 1)
+        //                    for (j = l; j < n; j++)
+        //                    {
+        //                        for (s = 0f, k = i; k < m; k++) s += a[k, i] * a[k, j];
+        //                        f = s / h;
+        //                        for (k = i; k < m; k++) a[k, j] += f * a[k, i];
+        //                    }
 
-                        for (k = i; k < m; k++) a[k, i] *= scale;
-                    }
-                }
+        //                for (k = i; k < m; k++) a[k, i] *= scale;
+        //            }
+        //        }
 
-                w[i] = scale * g;
-                g = s = scale = 0f;
+        //        w[i] = scale * g;
+        //        g = s = scale = 0f;
 
-                if ((i < m) && (i != n - 1))
-                {
-                    for (k = l; k < n; k++) scale += Math.Abs(a[i, k]);
+        //        if ((i < m) && (i != n - 1))
+        //        {
+        //            for (k = l; k < n; k++) scale += Math.Abs(a[i, k]);
 
-                    if (scale != 0.0)
-                    {
-                        for (k = l; k < n; k++)
-                        {
-                            a[i, k] /= scale;
-                            s += a[i, k] * a[i, k];
-                        }
+        //            if (scale != 0.0)
+        //            {
+        //                for (k = l; k < n; k++)
+        //                {
+        //                    a[i, k] /= scale;
+        //                    s += a[i, k] * a[i, k];
+        //                }
 
-                        f = a[i, l];
-                        g = -Sign((float)Math.Sqrt(s), f);
-                        h = f * g - s;
-                        a[i, l] = f - g;
+        //                f = a[i, l];
+        //                g = -Sign((float)Math.Sqrt(s), f);
+        //                h = f * g - s;
+        //                a[i, l] = f - g;
 
-                        for (k = l; k < n; k++) rv1[k] = a[i, k] / h;
+        //                for (k = l; k < n; k++) rv1[k] = a[i, k] / h;
 
-                        if (i != m - 1)
-                            for (j = l; j < m; j++)
-                            {
-                                for (s = 0f, k = l; k < n; k++) s += a[j, k] * a[i, k];
-                                for (k = l; k < n; k++) a[j, k] += s * rv1[k];
-                            }
+        //                if (i != m - 1)
+        //                    for (j = l; j < m; j++)
+        //                    {
+        //                        for (s = 0f, k = l; k < n; k++) s += a[j, k] * a[i, k];
+        //                        for (k = l; k < n; k++) a[j, k] += s * rv1[k];
+        //                    }
 
-                        for (k = l; k < n; k++) a[i, k] *= scale;
-                    }
-                }
-                anorm = Math.Max(anorm, (Math.Abs(w[i]) + Math.Abs(rv1[i])));
-            }
+        //                for (k = l; k < n; k++) a[i, k] *= scale;
+        //            }
+        //        }
+        //        anorm = Math.Max(anorm, (Math.Abs(w[i]) + Math.Abs(rv1[i])));
+        //    }
 
-            // accumulation of right-hand transformations
-            for (i = n - 1; i >= 0; i--)
-            {
-                if (i < n - 1)
-                {
-                    if (g != 0.0)
-                    {
-                        for (j = l; j < n; j++) v[j, i] = (a[i, j] / a[i, l]) / g;
-                        for (j = l; j < n; j++)
-                        {
-                            for (s = 0, k = l; k < n; k++) s += a[i, k] * v[k, j];
-                            for (k = l; k < n; k++) v[k, j] += s * v[k, i];
-                        }
-                    }
+        //    // accumulation of right-hand transformations
+        //    for (i = n - 1; i >= 0; i--)
+        //    {
+        //        if (i < n - 1)
+        //        {
+        //            if (g != 0.0)
+        //            {
+        //                for (j = l; j < n; j++) v[j, i] = (a[i, j] / a[i, l]) / g;
+        //                for (j = l; j < n; j++)
+        //                {
+        //                    for (s = 0, k = l; k < n; k++) s += a[i, k] * v[k, j];
+        //                    for (k = l; k < n; k++) v[k, j] += s * v[k, i];
+        //                }
+        //            }
 
-                    for (j = l; j < n; j++) v[i, j] = v[j, i] = 0;
-                }
+        //            for (j = l; j < n; j++) v[i, j] = v[j, i] = 0;
+        //        }
 
-                v[i, i] = 1;
-                g = rv1[i];
-                l = i;
-            }
+        //        v[i, i] = 1;
+        //        g = rv1[i];
+        //        l = i;
+        //    }
 
-            // accumulation of left-hand transformations
-            for (i = n - 1; i >= 0; i--)
-            {
-                l = i + 1;
-                g = w[i];
+        //    // accumulation of left-hand transformations
+        //    for (i = n - 1; i >= 0; i--)
+        //    {
+        //        l = i + 1;
+        //        g = w[i];
 
-                if (i < n - 1)
-                    for (j = l; j < n; j++) a[i, j] = 0f;
+        //        if (i < n - 1)
+        //            for (j = l; j < n; j++) a[i, j] = 0f;
 
-                if (g != 0)
-                {
-                    g = 1f / g;
-                    if (i != n - 1)
-                    {
-                        for (j = l; j < n; j++)
-                        {
-                            for (s = 0, k = l; k < m; k++) s += a[k, i] * a[k, j];
-                            f = (s / a[i, i]) * g;
-                            for (k = i; k < m; k++) a[k, j] += f * a[k, i];
-                        }
-                    }
+        //        if (g != 0)
+        //        {
+        //            g = 1f / g;
+        //            if (i != n - 1)
+        //            {
+        //                for (j = l; j < n; j++)
+        //                {
+        //                    for (s = 0, k = l; k < m; k++) s += a[k, i] * a[k, j];
+        //                    f = (s / a[i, i]) * g;
+        //                    for (k = i; k < m; k++) a[k, j] += f * a[k, i];
+        //                }
+        //            }
 
-                    for (j = i; j < m; j++) a[j, i] *= g;
-                }
-                else
-                    for (j = i; j < m; j++) a[j, i] = 0;
+        //            for (j = i; j < m; j++) a[j, i] *= g;
+        //        }
+        //        else
+        //            for (j = i; j < m; j++) a[j, i] = 0;
                 
-                ++a[i, i];
-            }
+        //        ++a[i, i];
+        //    }
 
-            // diagonalization of the bidiagonal form: Loop over singular values
-            // and over allowed iterations
-            for (k = n - 1; k >= 0; k--)
-            {
-                for (its = 1; its <= 30; its++)
-                {
-                    flag = 1;
+        //    // diagonalization of the bidiagonal form: Loop over singular values
+        //    // and over allowed iterations
+        //    for (k = n - 1; k >= 0; k--)
+        //    {
+        //        for (its = 1; its <= 30; its++)
+        //        {
+        //            flag = 1;
 
-                    for (l = k; l >= 0; l--)
-                    {
-                        // test for splitting
-                        nm = l - 1;
+        //            for (l = k; l >= 0; l--)
+        //            {
+        //                // test for splitting
+        //                nm = l - 1;
 
-                        if (Math.Abs(rv1[l]) + anorm == anorm)
-                        {
-                            flag = 0;
-                            break;
-                        }
+        //                if (Math.Abs(rv1[l]) + anorm == anorm)
+        //                {
+        //                    flag = 0;
+        //                    break;
+        //                }
 
-                        if (Math.Abs(w[nm]) + anorm == anorm) break;
-                    }
+        //                if (Math.Abs(w[nm]) + anorm == anorm) break;
+        //            }
 
-                    if (flag != 0)
-                    {
-                        s = 1f;
-                        for (i = l; i <= k; i++)
-                        {
-                            f = s * rv1[i];
+        //            if (flag != 0)
+        //            {
+        //                s = 1f;
+        //                for (i = l; i <= k; i++)
+        //                {
+        //                    f = s * rv1[i];
 
-                            if (Math.Abs(f) + anorm != anorm)
-                            {
-                                g = w[i];
-                                h = Pythag(f, g);
-                                w[i] = h;
-                                h = 1f / h;
-                                c = g * h;
-                                s = -f * h;
+        //                    if (Math.Abs(f) + anorm != anorm)
+        //                    {
+        //                        g = w[i];
+        //                        h = Pythag(f, g);
+        //                        w[i] = h;
+        //                        h = 1f / h;
+        //                        c = g * h;
+        //                        s = -f * h;
 
-                                for (j = 0; j < m; j++)
-                                {
-                                    y = a[j, nm];
-                                    z = a[j, i];
-                                    a[j, nm] = y * c + z * s;
-                                    a[j, i] = z * c - y * s;
-                                }
-                            }
-                        }
-                    }
+        //                        for (j = 0; j < m; j++)
+        //                        {
+        //                            y = a[j, nm];
+        //                            z = a[j, i];
+        //                            a[j, nm] = y * c + z * s;
+        //                            a[j, i] = z * c - y * s;
+        //                        }
+        //                    }
+        //                }
+        //            }
 
-                    z = w[k];
+        //            z = w[k];
 
-                    if (l == k)
-                    {
-                        // convergence
-                        if (z < 0.0)
-                        {
-                            // singular value is made nonnegative
-                            w[k] = -z;
-                            for (j = 0; j < n; j++) v[j, k] = -v[j, k];
-                        }
-                        break;
-                    }
+        //            if (l == k)
+        //            {
+        //                // convergence
+        //                if (z < 0.0)
+        //                {
+        //                    // singular value is made nonnegative
+        //                    w[k] = -z;
+        //                    for (j = 0; j < n; j++) v[j, k] = -v[j, k];
+        //                }
+        //                break;
+        //            }
 
-                    if (its == 30) return false;
+        //            if (its == 30) return false;
 
-                    // shift from bottom 2-by-2 minor
-                    x = w[l];
-                    nm = k - 1;
-                    y = w[nm];
-                    g = rv1[nm];
-                    h = rv1[k];
-                    f = ((y - z) * (y + z) + (g - h) * (g + h)) / (2f* h * y);
-                    g = Pythag(f, 1f);
-                    f = ((x - z) * (x + z) + h * ((y / (f + Sign(g, f))) - h)) / x;
+        //            // shift from bottom 2-by-2 minor
+        //            x = w[l];
+        //            nm = k - 1;
+        //            y = w[nm];
+        //            g = rv1[nm];
+        //            h = rv1[k];
+        //            f = ((y - z) * (y + z) + (g - h) * (g + h)) / (2f* h * y);
+        //            g = Pythag(f, 1f);
+        //            f = ((x - z) * (x + z) + h * ((y / (f + Sign(g, f))) - h)) / x;
 
-                    // next QR transformation
-                    c = s = 1f;
+        //            // next QR transformation
+        //            c = s = 1f;
 
-                    for (j = l; j <= nm; j++)
-                    {
-                        i = j + 1;
-                        g = rv1[i];
-                        y = w[i];
-                        h = s * g;
-                        g = c * g;
-                        z = Pythag(f, h);
-                        rv1[j] = z;
-                        c = f / z;
-                        s = h / z;
-                        f = x * c + g * s;
-                        g = g * c - x * s;
-                        h = y * s;
-                        y *= c;
+        //            for (j = l; j <= nm; j++)
+        //            {
+        //                i = j + 1;
+        //                g = rv1[i];
+        //                y = w[i];
+        //                h = s * g;
+        //                g = c * g;
+        //                z = Pythag(f, h);
+        //                rv1[j] = z;
+        //                c = f / z;
+        //                s = h / z;
+        //                f = x * c + g * s;
+        //                g = g * c - x * s;
+        //                h = y * s;
+        //                y *= c;
 
-                        for (jj = 0; jj < n; jj++)
-                        {
-                            x = v[jj, j];
-                            z = v[jj, i];
-                            v[jj, j] = x * c + z * s;
-                            v[jj, i] = z * c - x * s;
-                        }
+        //                for (jj = 0; jj < n; jj++)
+        //                {
+        //                    x = v[jj, j];
+        //                    z = v[jj, i];
+        //                    v[jj, j] = x * c + z * s;
+        //                    v[jj, i] = z * c - x * s;
+        //                }
 
-                        z = Pythag(f, h);
-                        w[j] = z;
+        //                z = Pythag(f, h);
+        //                w[j] = z;
 
-                        if (z != 0)
-                        {
-                            z = 1f / z;
-                            c = f * z;
-                            s = h * z;
-                        }
+        //                if (z != 0)
+        //                {
+        //                    z = 1f / z;
+        //                    c = f * z;
+        //                    s = h * z;
+        //                }
 
-                        f = c * g + s * y;
-                        x = c * y - s * g;
+        //                f = c * g + s * y;
+        //                x = c * y - s * g;
 
-                        for (jj = 0; jj < m; jj++)
-                        {
-                            y = a[jj, j];
-                            z = a[jj, i];
-                            a[jj, j] = y * c + z * s;
-                            a[jj, i] = z * c - y * s;
-                        }
-                    }
+        //                for (jj = 0; jj < m; jj++)
+        //                {
+        //                    y = a[jj, j];
+        //                    z = a[jj, i];
+        //                    a[jj, j] = y * c + z * s;
+        //                    a[jj, i] = z * c - y * s;
+        //                }
+        //            }
 
-                    rv1[l] = 0f;
-                    rv1[k] = f;
-                    w[k] = x;
+        //            rv1[l] = 0f;
+        //            rv1[k] = f;
+        //            w[k] = x;
 
                    
-                }
-            }
+        //        }
+        //    }
 
-            return true;
-        }
+        //    return true;
+        //}
 
-        private static float Sign(float a, float b)
-        {
-            return (b >= 0.0) ? Math.Abs(a) : -Math.Abs(a);
-        }
+        //private static float Sign(float a, float b)
+        //{
+        //    return (b >= 0.0) ? Math.Abs(a) : -Math.Abs(a);
+        //}
 
-        private static float Pythag(float a, float b)
-        {
-            float at = Math.Abs(a), bt = Math.Abs(b), ct;
+        //private static float Pythag(float a, float b)
+        //{
+        //    float at = Math.Abs(a), bt = Math.Abs(b), ct;
 
-            if (at > bt)
-            {
-                ct = bt / at;
-                return at * (float)Math.Sqrt(1f + ct * ct);
-            }
+        //    if (at > bt)
+        //    {
+        //        ct = bt / at;
+        //        return at * (float)Math.Sqrt(1f + ct * ct);
+        //    }
 
-            if (bt > 0.0)
-            {
-                ct = at / bt;
-                return bt * (float)Math.Sqrt(1f + ct * ct);
-            }
+        //    if (bt > 0.0)
+        //    {
+        //        ct = at / bt;
+        //        return bt * (float)Math.Sqrt(1f + ct * ct);
+        //    }
 
-            return 0f;
-        }
+        //    return 0f;
+        //}
 
-        internal static float Determinant3x3(float[,] a)
-        {
-            return
-                a[0, 0] * (a[1, 1] * a[2, 2] - a[2, 1] * a[1, 2]) -
-                a[0, 1] * (a[1, 0] * a[2, 2] - a[2, 0] * a[1, 2]) +
-                a[0, 2] * (a[1, 0] * a[2, 1] - a[2, 0] * a[1, 1]);
-        }
-
-        public static string DynaShapeName()
-        {
-            return "DynaShape";
-        }
+        //internal static float Determinant3x3(float[,] a)
+        //{
+        //    return
+        //        a[0, 0] * (a[1, 1] * a[2, 2] - a[2, 1] * a[1, 2]) -
+        //        a[0, 1] * (a[1, 0] * a[2, 2] - a[2, 0] * a[1, 2]) +
+        //        a[0, 2] * (a[1, 0] * a[2, 1] - a[2, 0] * a[1, 1]);
+        //}
     }
 }
