@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Media.Animation;
 using Autodesk.DesignScript.Runtime;
 using SharpDX;
-using Matrix3x3 = AForge.Math.Matrix3x3;
 using Point = Autodesk.DesignScript.Geometry.Point;
 using Vector = Autodesk.DesignScript.Geometry.Vector;
+using Math = System.Math;
 
 
 namespace DynaShape
@@ -14,16 +15,16 @@ namespace DynaShape
     {
         public static Vector ZeroVector => Vector.ByCoordinates(0.0, 0.0, 0.0);
         public static Point Duplicate(this Point point) => Point.ByCoordinates(point.X, point.Y, point.Z);
-        public static Vector Duplicate(this Triple vector) => Vector.ByCoordinates(vector.X, vector.Y, vector.Z);
+        public static Vector Duplicate(this Vector vector) => Vector.ByCoordinates(vector.X, vector.Y, vector.Z);
 
         public static Triple ToTriple(this Point point) => new Triple(point.X, point.Y, point.Z);
         public static Triple ToTriple(this Vector vector) => new Triple(vector.X, vector.Y, vector.Z);
 
-        public static bool IsAlmostZero(this float number, float tolerance = 1e-6f) => -tolerance < number && number < tolerance;
-        public static bool IsAlmostZero(this double number, double tolerance = 1.0e-6) => -tolerance < number && number < tolerance;
+        public static bool IsAlmostZero(this float number, float tolerance = 1E-10f) => -tolerance < number && number < tolerance;
+        public static bool IsAlmostZero(this double number, double tolerance = 1E-10f) => -tolerance < number && number < tolerance;
 
-        public static bool IsNotAlmostZero(this float number, float tolerance = 1e-6f) => -number < tolerance || tolerance < number;
-        public static bool IsNotAlmostZero(this double number, double tolerance = 1.0e-6) => -number < tolerance || tolerance < number;
+        public static bool IsNotAlmostZero(this float number, float tolerance = 1E-10f) => -number < tolerance || tolerance < number;
+        public static bool IsNotAlmostZero(this double number, double tolerance = 1E-10f) => -number < tolerance || tolerance < number;
 
         public static SharpDX.Color ToSharpDXColor(this DSCore.Color color) 
             => new SharpDX.Color(color.Red * by255, color.Green * by255, color.Blue * by255, color.Alpha * by255);
@@ -31,7 +32,7 @@ namespace DynaShape
         public static Vector3 ToVector3(this Triple triple)
             => new Vector3(triple.X, triple.Z, -triple.Y);
 
-        private static float by255 = 1f / 255f;
+        private static readonly float by255 = 1f / 255f;
 
         public static List<Triple> ToTriples(this IEnumerable<Point> points)
         {
@@ -41,7 +42,6 @@ namespace DynaShape
             return triples;
         }
 
-
         public static List<Triple> ToTriples(this IEnumerable<Vector> vectors)
         {
             List<Triple> triples = new List<Triple>();
@@ -50,7 +50,6 @@ namespace DynaShape
             return triples;
         }
 
-
         public static T[] InitializeArray<T>(int length, T value)
         {
             T[] array = new T[length];
@@ -58,14 +57,13 @@ namespace DynaShape
             return array;
         }
 
-
         public static void FillArray<T>(this T[] array, T value)
         {
             for (int i = 0; i < array.Length; i++) array[i] = value;
         }
 
-        private static float toRadian = (float)Math.PI / 180f;
-        private static float toDegree = 180f / (float)Math.PI;
+        private const float toRadian = (float)Math.PI / 180f;
+        private const float toDegree = 180f / (float)Math.PI;
 
         public static float ToRadian(this float Degree) => Degree * toRadian;
         public static float ToDegree(this float Radian) => Radian * toDegree;
@@ -74,45 +72,11 @@ namespace DynaShape
         /// Compute the line that best fit a set of input points (least squared orthogonal distance)
         /// </summary>
         /// <param name="points">The input points</param>
-        /// <param name="lineOrigin">The output line origin</param>
-        /// <param name="lineDirection">The output line direction</param>
-        /// <returns>0 if the input points are identical, 1 if the input points are already colinear, 2 otherwise</returns>
-        //public static int ComputeBestFitLine(List<Triple> points, out Triple lineOrigin, out Triple lineDirection)
-        //{
-        //    Triple centroid = Triple.Zero;
-        //    for (int i = 0; i < points.Count; i++) centroid += points[i];
-        //    centroid /= points.Count;
-
-        //    float[,] P = new float[points.Count, 3];
-
-        //    for (int i = 0; i < points.Count; i++)
-        //    {
-        //        P[i, 0] = points[i].X - centroid.X;
-        //        P[i, 1] = points[i].Y - centroid.Y;
-        //        P[i, 2] = points[i].Z - centroid.Z;
-        //    }
-
-        //    Matrix<float> covariance = Matrix<float>.Build.Dense(3, 3);
-
-        //    for (int i = 0; i < 3; i++)
-        //        for (int j = 0; j < 3; j++)
-        //            for (int k = 0; k < points.Count; k++)
-        //                covariance[i, j] += P[k, i] * P[k, j];
-
-        //    Evd<float> evd = covariance.Evd();
-
-        //    lineOrigin = centroid;
-
-        //    if (evd.Rank == 0) // The input points are idendtical, so we just pick an arbitrary direction for the line
-        //        lineDirection = Triple.BasisX;
-        //    else // Otherwise the direction of the best fit line is the most dominant eigen vector 
-        //        lineDirection = new Triple(evd.EigenVectors[0, 2], evd.EigenVectors[1, 2], evd.EigenVectors[2, 2]);
-
-        //    return evd.Rank > 2 ? 2 : evd.Rank;
-        //}
-
-
-        public static int ComputeBestFitLine(List<Triple> points, out Triple lineOrigin, out Triple lineDirection)
+        /// <param name="lineOrigin">Origin of the best fit line</param>
+        /// <param name="lineDirection">Direction of the best fit line</param>
+        /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, colinear, or non-colinear</param>
+        /// <returns>0 if the input points are coincidental; 1 if they are colinear; 2 otherwise</returns>       
+        public static int ComputeBestFitLine(List<Triple> points, out Triple lineOrigin, out Triple lineDirection, float tolerance = 1E-10f)
         {
             Triple centroid = Triple.Zero;
             for (int i = 0; i < points.Count; i++) centroid += points[i];
@@ -127,83 +91,60 @@ namespace DynaShape
                 P[i, 2] = points[i].Z - centroid.Z;
             }
 
-            Matrix3x3 covariance = new Matrix3x3();
+            float c00 = 0f, c01 = 0f, c02 = 0f;
+            float c10 = 0f, c11 = 0f, c12 = 0f;
+            float c20 = 0f, c21 = 0f, c22 = 0f;
 
             for (int k = 0; k < points.Count; k++)
             {
-                covariance.V00 += P[k, 0] * P[k, 0];
-                covariance.V01 += P[k, 0] * P[k, 1];
-                covariance.V02 += P[k, 0] * P[k, 2];
-                covariance.V10 += P[k, 1] * P[k, 0];
-                covariance.V11 += P[k, 1] * P[k, 1];
-                covariance.V12 += P[k, 1] * P[k, 2];
-                covariance.V20 += P[k, 2] * P[k, 0];
-                covariance.V21 += P[k, 2] * P[k, 1];
-                covariance.V22 += P[k, 2] * P[k, 2];
+                c00 += P[k, 0] * P[k, 0];
+                c01 += P[k, 0] * P[k, 1];
+                c02 += P[k, 0] * P[k, 2];
+                c10 += P[k, 1] * P[k, 0];
+                c11 += P[k, 1] * P[k, 1];
+                c12 += P[k, 1] * P[k, 2];
+                c20 += P[k, 2] * P[k, 0];
+                c21 += P[k, 2] * P[k, 1];
+                c22 += P[k, 2] * P[k, 2];
             }
 
-            Matrix3x3 u, v;
-            AForge.Math.Vector3 e;
-            covariance.SVD(out u, out e, out v);
+            FastSvd3x3.Compute(
+                c00, c01, c02,
+                c10, c11, c12,
+                c20, c21, c22,
+                out float u00, out float u01, out float u02,
+                out float u10, out float u11, out float u12,
+                out float u20, out float u21, out float u22,
+                out float s00, out float s11, out float s22,
+                out float v00, out float v01, out float v02,
+                out float v10, out float v11, out float v12,
+                out float v20, out float v21, out float v22);
 
             lineOrigin = centroid;
 
-            lineDirection = new Triple(u.V00, u.V10, u.V20);
+            // Case 0: The input points are coincidental, so we just need to pick an arbitrary line direction
+            if (s00 < tolerance)
+            {
+                lineDirection = Triple.BasisX;
+                return 0;
+            }
 
-            return 3;
+            // Case 1: The input points are not coincidental, therefore we pick the dominant eigen vector as the line direction
+            lineDirection = new Triple(u00, u10, u20);
+            return s11 < tolerance
+                ? 1 // The input points are colinear
+                : 2; // The input points are NOT colinear
         }
-
-
 
         /// <summary>
         /// Compute the plane that best fit a set of input points (least squared orthogonal distance)
         /// </summary>
         /// <param name="points">The input points</param>
-        /// <param name="planeOrigin">The output plane origin</param>
-        /// <param name="planeNormal">The output plane normal vector</param>
-        /// <returns>0 if the input points are identical, 1 if the input points are colinear, 2 if the input points are coplanar (already on a plane), 3 otherwise</returns>
-        //public static int ComputeBestFitPlane(List<Triple> points, out Triple planeOrigin, out Triple planeNormal)
-        //{
-        //    Triple centroid = Triple.Zero;
-        //    for (int i = 0; i < points.Count; i++) centroid += points[i];
-        //    centroid /= points.Count;
-
-        //    float[,] P = new float[points.Count, 3];
-
-        //    for (int i = 0; i < points.Count; i++)
-        //    {
-        //        P[i, 0] = points[i].X - centroid.X;
-        //        P[i, 1] = points[i].Y - centroid.Y;
-        //        P[i, 2] = points[i].Z - centroid.Z;
-        //    }
-
-        //    Matrix<float> covariance = Matrix<float>.Build.Dense(3, 3);
-
-        //    for (int i = 0; i < 3; i++)
-        //    for (int j = 0; j < 3; j++)
-        //    for (int k = 0; k < points.Count; k++)
-        //        covariance[i, j] += P[k, i] * P[k, j];
-
-        //    Evd<float> evd = covariance.Evd();
-
-        //    planeOrigin = centroid;
-
-        //    if (evd.Rank == 0) // The input points are idendtical, so we just pick an arbitrary normal vector
-        //        planeNormal = Triple.BasisZ;
-        //    else if (evd.Rank == 1
-        //    ) // The input points are colinear, so we just pick an arbitrary vector perpendicular to the only eigen vector
-        //        planeNormal = new Triple(evd.EigenVectors[0, 1], evd.EigenVectors[1, 1], evd.EigenVectors[2, 1])
-        //            .GeneratePerpendicular();
-        //    else // The normal is perpendicular to the two dominant eigen vectors
-        //    {
-        //        Triple e1 = new Triple(evd.EigenVectors[0, 1], evd.EigenVectors[1, 1], evd.EigenVectors[2, 1]);
-        //        Triple e2 = new Triple(evd.EigenVectors[0, 2], evd.EigenVectors[1, 2], evd.EigenVectors[2, 2]);
-        //        planeNormal = e2.Cross(e1).Normalise();
-        //    }
-
-        //    return evd.Rank;
-        //}
-        public static int ComputeBestFitPlane(List<Triple> points, out Triple planeOrigin, out Triple planeNormal)
+        /// <param name="planeOrigin">Origin of the best fit plane</param>
+        /// <param name="planeNormal">Normal of the best fit plane</param>
+        /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, colinear, coplanar, or non-coplanar</param>
+        /// <returns>0 if the input points are coincidental; 1 if they are colinear; 2 if they are coplanar; 3 otherwise</returns>
+        public static int ComputeBestFitPlane(List<Triple> points, out Triple planeOrigin, out Triple planeNormal, float tolerance = 1E-10f)
         {
             Triple centroid = Triple.Zero;
             for (int i = 0; i < points.Count; i++) centroid += points[i];
@@ -218,50 +159,85 @@ namespace DynaShape
                 P[i, 2] = points[i].Z - centroid.Z;
             }
 
-            Matrix3x3 covariance = new Matrix3x3();
+            float c00 = 0f, c01 = 0f, c02 = 0f;
+            float c10 = 0f, c11 = 0f, c12 = 0f;
+            float c20 = 0f, c21 = 0f, c22 = 0f;
 
             for (int k = 0; k < points.Count; k++)
             {
-                covariance.V00 += P[k, 0] * P[k, 0];
-                covariance.V01 += P[k, 0] * P[k, 1];
-                covariance.V02 += P[k, 0] * P[k, 2];
-                covariance.V10 += P[k, 1] * P[k, 0];
-                covariance.V11 += P[k, 1] * P[k, 1];
-                covariance.V12 += P[k, 1] * P[k, 2];
-                covariance.V20 += P[k, 2] * P[k, 0];
-                covariance.V21 += P[k, 2] * P[k, 1];
-                covariance.V22 += P[k, 2] * P[k, 2];
+                c00 += P[k, 0] * P[k, 0];
+                c01 += P[k, 0] * P[k, 1];
+                c02 += P[k, 0] * P[k, 2];
+                c10 += P[k, 1] * P[k, 0];
+                c11 += P[k, 1] * P[k, 1];
+                c12 += P[k, 1] * P[k, 2];
+                c20 += P[k, 2] * P[k, 0];
+                c21 += P[k, 2] * P[k, 1];
+                c22 += P[k, 2] * P[k, 2];
             }
 
-            Matrix3x3 u, v;
-            AForge.Math.Vector3 e;
-            covariance.SVD(out u, out e, out v);
+            FastSvd3x3.Compute(
+                c00, c01, c02,
+                c10, c11, c12,
+                c20, c21, c22,
+                out float u00, out float u01, out float u02,
+                out float u10, out float u11, out float u12,
+                out float u20, out float u21, out float u22,
+                out float s00, out float s11, out float s22,
+                out float v00, out float v01, out float v02,
+                out float v10, out float v11, out float v12,
+                out float v20, out float v21, out float v22);
 
             planeOrigin = centroid;
 
-            Triple e1 = new Triple(u.V00, u.V10, u.V20);
-            Triple e2 = new Triple(u.V01, u.V11, u.V21);
-            planeNormal = e2.Cross(e1).Normalise();
-            
-            return 3;
+           
+            // Case 0: The input points are coincidental, so we just need to pick an arbitrary normal vector
+            if (s00 < tolerance)
+            {
+                planeNormal = Triple.BasisZ;
+                return 0;
+            }
+
+            // Case 1: The input points are colinear, so we just pick an arbitrary vector perpendicular to the dominant eigenvector
+            if (s11 < tolerance)
+            {
+                planeNormal = new Triple(u00, u10, u20).GeneratePerpendicular();
+                return 1;
+            }
+
+            // Case 2: The input points are neigher coincidental nor colinear, therefore the best fit plane is determined by the two dominant eigenvectors
+            planeNormal = new Triple(u00, u10, u20).Cross(new Triple(u01, u11, u21)).Normalise();
+
+            return s22 < tolerance
+                ? 2  // The input points are coplanar
+                : 3; // The input points are NOT coplanar
         }
 
-        public static bool ComputeBestFitCircle(List<Triple> points, out Triple circleCenter, out Triple circleNormal,
-            out float circleRadius)
+        /// <summary>
+        /// Approximate the circle that best fit a set of input points
+        /// </summary>
+        /// <param name="points">The input points</param>
+        /// <param name="circleCenter">Center of the best fit circle</param>
+        /// <param name="circleNormal">Normal of the best fit circle</param>
+        /// <param name="circleRadius">Radius of the best fit circle</param>
+        /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, colinear, or non-colinear</param>
+        /// <returns>False if the input points are coincidental or colinear; True otherwise</returns>
+        public static bool ComputeBestFitCircle(List<Triple> points, out Triple circleCenter, out Triple circleNormal, out float circleRadius, float tolerance = 1E-10f)
         {
-            // Apporach: Project the input points to the best fit plane, then fit a circle through these points using the the analytical approach ...
-            // ... described in the paper "A simple approach for the estimation of circular arc center and its radius" by Thomas S & Chan Y.
+            // The core idea is to project the input points to the best fit plane, then fit a circle through these points via an analytical approach.
+            // Reference: Thomas S & Chan Y: "A simple approach for the estimation of circular arc center and its radius
 
-            Triple planeOrigin, planeNormal;
-            int planeFittingResult = ComputeBestFitPlane(points, out planeOrigin, out planeNormal);
+            int planeFittingResult = ComputeBestFitPlane(points, out Triple planeOrigin, out Triple planeNormal, tolerance);
 
-            if (planeFittingResult < 2) // The points are either all identical, or colinear (i.e. already on the same "circle" of infinite radius)
+            // Case 0: The input points are either coincidental or colinear
+            if (planeFittingResult < 2) 
             {
                 circleCenter = circleNormal = new Triple(float.NaN);
                 circleRadius = float.NaN;
                 return false;
             }
 
+            // Case 1: The input points are neither coincidental nor colinear
             Triple planeBasisX = planeNormal.GeneratePerpendicular().Normalise();
             Triple planeBasisY = planeNormal.Cross(planeBasisX);
 
@@ -307,16 +283,22 @@ namespace DynaShape
             y = (a1 * c2 - a2 * c1) * temp;
 
             circleCenter = planeOrigin + (x * planeBasisX + y * planeBasisY);
-            circleRadius =
-                (float) Math.Sqrt((sumX2 - 2f * sumX * x + n * x * x + sumY2 - 2f * sumY * y + n * y * y) / n);
+            circleRadius = (float) Math.Sqrt((sumX2 - 2f * sumX * x + n * x * x + sumY2 - 2f * sumY * y + n * y * y) / n);
             circleNormal = planeNormal;
             return true;
         }
 
-
-        public static bool ComputeBestFitSphere(List<Triple> points, out Triple sphereCenter, out float sphereRadius)
+        /// <summary>
+        /// Compute the sphere that best fit a set of input points (least squared orthogonal distance)
+        /// </summary>
+        /// <param name="points">The input points</param>
+        /// <param name="sphereCenter">Center of the best fit sphere</param>
+        /// <param name="sphereRadius">Radius of the best fit sphere</param>
+        /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, colinear, coplanar, or non-coplanar</param>
+        /// <returns>False if the input points are coincidental, colinear or coplanar; True otherwise</returns>
+        public static bool ComputeBestFitSphere(List<Triple> points, out Triple sphereCenter, out float sphereRadius, float tolerance = 1E-10f)
         {
-            // Based on "Fast Geometric Fit Algorithm for Sphere Using Exact Solution" by Sumith YD
+            // Reference: Sumith YD: Fast Geometric Fit Algorithm for Sphere Using Exact Solution
 
             float sX = 0f;
             float sY = 0f;
@@ -390,7 +372,7 @@ namespace DynaShape
 
             float delta = a * (f * l - g * k) - e * (b * l - c * k) + j * (b * g - c * f);
 
-            if (Math.Abs(delta) < 1e-10)
+            if (Math.Abs(delta) < tolerance)
             {
                 sphereCenter = new Triple(float.NaN);
                 sphereRadius = float.NaN;
@@ -410,5 +392,313 @@ namespace DynaShape
 
             return true;
         }
+
+        //public static bool ComputeSvd(float[,] a, out float[] w, out float[,] v)
+        //{
+        //    int m = a.GetLength(0); // Row count
+        //    int n = a.GetLength(1); // Column count
+
+        //    if (m < n) throw new ArgumentException("Number of rows in A must be greater or equal to number of columns");
+
+        //    w = new float[n];
+        //    v = new float[n, n];
+
+        //    int flag, i, its, j, jj, k, l = 0, nm = 0;
+        //    float anorm, c, f, g, h, s, scale, x, y, z;
+
+        //    float[] rv1 = new float[n];
+
+        //    // householder reduction to bidiagonal form
+        //    g = scale = anorm = 0f;
+
+        //    for (i = 0; i < n; i++)
+        //    {
+        //        l = i + 1;
+        //        rv1[i] = scale * g;
+        //        g = s = scale = 0;
+
+        //        if (i < m)
+        //        {
+        //            for (k = i; k < m; k++) scale += Math.Abs(a[k, i]);
+
+        //            if (scale != 0f)
+        //            {
+        //                for (k = i; k < m; k++)
+        //                {
+        //                    a[k, i] /= scale;
+        //                    s += a[k, i] * a[k, i];
+        //                }
+
+        //                f = a[i, i];
+        //                g = -Sign((float)Math.Sqrt(s), f);
+        //                h = f * g - s;
+        //                a[i, i] = f - g;
+
+        //                if (i != n - 1)
+        //                    for (j = l; j < n; j++)
+        //                    {
+        //                        for (s = 0f, k = i; k < m; k++) s += a[k, i] * a[k, j];
+        //                        f = s / h;
+        //                        for (k = i; k < m; k++) a[k, j] += f * a[k, i];
+        //                    }
+
+        //                for (k = i; k < m; k++) a[k, i] *= scale;
+        //            }
+        //        }
+
+        //        w[i] = scale * g;
+        //        g = s = scale = 0f;
+
+        //        if ((i < m) && (i != n - 1))
+        //        {
+        //            for (k = l; k < n; k++) scale += Math.Abs(a[i, k]);
+
+        //            if (scale != 0.0)
+        //            {
+        //                for (k = l; k < n; k++)
+        //                {
+        //                    a[i, k] /= scale;
+        //                    s += a[i, k] * a[i, k];
+        //                }
+
+        //                f = a[i, l];
+        //                g = -Sign((float)Math.Sqrt(s), f);
+        //                h = f * g - s;
+        //                a[i, l] = f - g;
+
+        //                for (k = l; k < n; k++) rv1[k] = a[i, k] / h;
+
+        //                if (i != m - 1)
+        //                    for (j = l; j < m; j++)
+        //                    {
+        //                        for (s = 0f, k = l; k < n; k++) s += a[j, k] * a[i, k];
+        //                        for (k = l; k < n; k++) a[j, k] += s * rv1[k];
+        //                    }
+
+        //                for (k = l; k < n; k++) a[i, k] *= scale;
+        //            }
+        //        }
+        //        anorm = Math.Max(anorm, (Math.Abs(w[i]) + Math.Abs(rv1[i])));
+        //    }
+
+        //    // accumulation of right-hand transformations
+        //    for (i = n - 1; i >= 0; i--)
+        //    {
+        //        if (i < n - 1)
+        //        {
+        //            if (g != 0.0)
+        //            {
+        //                for (j = l; j < n; j++) v[j, i] = (a[i, j] / a[i, l]) / g;
+        //                for (j = l; j < n; j++)
+        //                {
+        //                    for (s = 0, k = l; k < n; k++) s += a[i, k] * v[k, j];
+        //                    for (k = l; k < n; k++) v[k, j] += s * v[k, i];
+        //                }
+        //            }
+
+        //            for (j = l; j < n; j++) v[i, j] = v[j, i] = 0;
+        //        }
+
+        //        v[i, i] = 1;
+        //        g = rv1[i];
+        //        l = i;
+        //    }
+
+        //    // accumulation of left-hand transformations
+        //    for (i = n - 1; i >= 0; i--)
+        //    {
+        //        l = i + 1;
+        //        g = w[i];
+
+        //        if (i < n - 1)
+        //            for (j = l; j < n; j++) a[i, j] = 0f;
+
+        //        if (g != 0)
+        //        {
+        //            g = 1f / g;
+        //            if (i != n - 1)
+        //            {
+        //                for (j = l; j < n; j++)
+        //                {
+        //                    for (s = 0, k = l; k < m; k++) s += a[k, i] * a[k, j];
+        //                    f = (s / a[i, i]) * g;
+        //                    for (k = i; k < m; k++) a[k, j] += f * a[k, i];
+        //                }
+        //            }
+
+        //            for (j = i; j < m; j++) a[j, i] *= g;
+        //        }
+        //        else
+        //            for (j = i; j < m; j++) a[j, i] = 0;
+                
+        //        ++a[i, i];
+        //    }
+
+        //    // diagonalization of the bidiagonal form: Loop over singular values
+        //    // and over allowed iterations
+        //    for (k = n - 1; k >= 0; k--)
+        //    {
+        //        for (its = 1; its <= 30; its++)
+        //        {
+        //            flag = 1;
+
+        //            for (l = k; l >= 0; l--)
+        //            {
+        //                // test for splitting
+        //                nm = l - 1;
+
+        //                if (Math.Abs(rv1[l]) + anorm == anorm)
+        //                {
+        //                    flag = 0;
+        //                    break;
+        //                }
+
+        //                if (Math.Abs(w[nm]) + anorm == anorm) break;
+        //            }
+
+        //            if (flag != 0)
+        //            {
+        //                s = 1f;
+        //                for (i = l; i <= k; i++)
+        //                {
+        //                    f = s * rv1[i];
+
+        //                    if (Math.Abs(f) + anorm != anorm)
+        //                    {
+        //                        g = w[i];
+        //                        h = Pythag(f, g);
+        //                        w[i] = h;
+        //                        h = 1f / h;
+        //                        c = g * h;
+        //                        s = -f * h;
+
+        //                        for (j = 0; j < m; j++)
+        //                        {
+        //                            y = a[j, nm];
+        //                            z = a[j, i];
+        //                            a[j, nm] = y * c + z * s;
+        //                            a[j, i] = z * c - y * s;
+        //                        }
+        //                    }
+        //                }
+        //            }
+
+        //            z = w[k];
+
+        //            if (l == k)
+        //            {
+        //                // convergence
+        //                if (z < 0.0)
+        //                {
+        //                    // singular value is made nonnegative
+        //                    w[k] = -z;
+        //                    for (j = 0; j < n; j++) v[j, k] = -v[j, k];
+        //                }
+        //                break;
+        //            }
+
+        //            if (its == 30) return false;
+
+        //            // shift from bottom 2-by-2 minor
+        //            x = w[l];
+        //            nm = k - 1;
+        //            y = w[nm];
+        //            g = rv1[nm];
+        //            h = rv1[k];
+        //            f = ((y - z) * (y + z) + (g - h) * (g + h)) / (2f* h * y);
+        //            g = Pythag(f, 1f);
+        //            f = ((x - z) * (x + z) + h * ((y / (f + Sign(g, f))) - h)) / x;
+
+        //            // next QR transformation
+        //            c = s = 1f;
+
+        //            for (j = l; j <= nm; j++)
+        //            {
+        //                i = j + 1;
+        //                g = rv1[i];
+        //                y = w[i];
+        //                h = s * g;
+        //                g = c * g;
+        //                z = Pythag(f, h);
+        //                rv1[j] = z;
+        //                c = f / z;
+        //                s = h / z;
+        //                f = x * c + g * s;
+        //                g = g * c - x * s;
+        //                h = y * s;
+        //                y *= c;
+
+        //                for (jj = 0; jj < n; jj++)
+        //                {
+        //                    x = v[jj, j];
+        //                    z = v[jj, i];
+        //                    v[jj, j] = x * c + z * s;
+        //                    v[jj, i] = z * c - x * s;
+        //                }
+
+        //                z = Pythag(f, h);
+        //                w[j] = z;
+
+        //                if (z != 0)
+        //                {
+        //                    z = 1f / z;
+        //                    c = f * z;
+        //                    s = h * z;
+        //                }
+
+        //                f = c * g + s * y;
+        //                x = c * y - s * g;
+
+        //                for (jj = 0; jj < m; jj++)
+        //                {
+        //                    y = a[jj, j];
+        //                    z = a[jj, i];
+        //                    a[jj, j] = y * c + z * s;
+        //                    a[jj, i] = z * c - y * s;
+        //                }
+        //            }
+
+        //            rv1[l] = 0f;
+        //            rv1[k] = f;
+        //            w[k] = x;
+
+                   
+        //        }
+        //    }
+
+        //    return true;
+        //}
+
+        //private static float Sign(float a, float b)
+        //{
+        //    return (b >= 0.0) ? Math.Abs(a) : -Math.Abs(a);
+        //}
+
+        //private static float Pythag(float a, float b)
+        //{
+        //    float at = Math.Abs(a), bt = Math.Abs(b), ct;
+
+        //    if (at > bt)
+        //    {
+        //        ct = bt / at;
+        //        return at * (float)Math.Sqrt(1f + ct * ct);
+        //    }
+
+        //    if (bt > 0.0)
+        //    {
+        //        ct = at / bt;
+        //        return bt * (float)Math.Sqrt(1f + ct * ct);
+        //    }
+
+        //    return 0f;
+        //}
+
+        //internal static float Determinant3x3(float[,] a)
+        //{
+        //    return
+        //        a[0, 0] * (a[1, 1] * a[2, 2] - a[2, 1] * a[1, 2]) -
+        //        a[0, 1] * (a[1, 0] * a[2, 2] - a[2, 0] * a[1, 2]) +
+        //        a[0, 2] * (a[1, 0] * a[2, 1] - a[2, 0] * a[1, 1]);
+        //}
     }
 }

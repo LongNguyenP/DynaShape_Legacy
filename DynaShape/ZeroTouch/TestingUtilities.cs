@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -37,7 +38,6 @@ namespace DynaShape.ZeroTouch
                         pointsLinear.Add(Point.ByCoordinates(i, j, k + 5f));
                     }
 
-
             List<Goal> anchorGoals = new List<Goal>();
 
             anchorGoals.Add(new AnchorGoal(points[0, 0, Z - 1]));
@@ -47,7 +47,6 @@ namespace DynaShape.ZeroTouch
 
             List<Goal> goals = new List<Goal>();
             goals.AddRange(anchorGoals);
-
 
             List<GeometryBinder> geometryBinders = new List<GeometryBinder>();
 
@@ -77,8 +76,6 @@ namespace DynaShape.ZeroTouch
                     vertices.Add(points[j % 2 == 0 ? i : X - 1 - i, j, Z - 1]);
             geometryBinders.Add(new PolylineBinder(vertices));
 
-
-
             vertices.Clear();
             for (int j = 0; j < Y; j++)
                 for (int k = 0; k < Z; k++)
@@ -102,8 +99,6 @@ namespace DynaShape.ZeroTouch
                 for (int j = 0; j < Y; j++)
                     vertices.Add(points[X - 1, k % 2 == 0 ? j : Y - 1 - j, k]);
             geometryBinders.Add(new PolylineBinder(vertices));
-
-
 
             vertices.Clear();
             for (int k = 0; k < Z; k++)
@@ -129,24 +124,21 @@ namespace DynaShape.ZeroTouch
                     vertices.Add(points[i, Y - 1, i % 2 == 0 ? k : Z - 1 - k]);
             geometryBinders.Add(new PolylineBinder(vertices));
 
-
             for (int i = 0; i < X - 1; i++)
                 for (int j = 0; j < Y - 1; j++)
                     for (int k = 0; k < Z - 1; k++)
                     {
                         var voxelPoints = new List<Triple>()
-                {
-                    points[i + 0, j + 0, k + 0],
-                    points[i + 1, j + 0, k + 0],
-                    points[i + 1, j + 1, k + 0],
-                    points[i + 0, j + 1, k + 0],
-                    points[i + 0, j + 0, k + 1],
-                    points[i + 1, j + 0, k + 1],
-                    points[i + 1, j + 1, k + 1],
-                    points[i + 0, j + 1, k + 1],
-                };
-
-
+                        {
+                            points[i + 0, j + 0, k + 0],
+                            points[i + 1, j + 0, k + 0],
+                            points[i + 1, j + 1, k + 0],
+                            points[i + 0, j + 1, k + 0],
+                            points[i + 0, j + 0, k + 1],
+                            points[i + 1, j + 0, k + 1],
+                            points[i + 1, j + 1, k + 1],
+                            points[i + 0, j + 1, k + 1],
+                        };
                         goals.Add(new ShapeMatchingGoal(voxelPoints, voxelPoints));
                     }
 
@@ -160,6 +152,16 @@ namespace DynaShape.ZeroTouch
                 {"anchorGoals", anchorGoals},
                 {"points", pointsLinear}
             };
+        }
+
+        public static void Foo()
+        {
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            foreach (Assembly assembly in assemblies)
+            {
+                if (assembly.GetName().Name != "DynaShape") continue;
+                AssemblyName[] assemblyNames = assembly.GetReferencedAssemblies();
+            }
         }
     }
 }

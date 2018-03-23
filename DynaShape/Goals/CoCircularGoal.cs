@@ -24,23 +24,22 @@ namespace DynaShape.Goals
             for (int i = 0; i < NodeCount; i++)
                 points.Add(allNodes[NodeIndices[i]].Position);
 
-            Triple c, n;
-            float r;
-
             // Here we use our own circle fitting function (implemented in the Util class)
-            // .. which runs much faster than calling the Dynamo method Circle.ByBestFitThroughPoints()
+            // .. which runs much faster than calling the DynamoAPI method Circle.ByBestFitThroughPoints()
 
-            if (Util.ComputeBestFitCircle(points, out c, out n, out r))
+            if (Util.ComputeBestFitCircle(points, out Triple c, out Triple n, out float r))
                 for (int i = 0; i < NodeCount; i++)
                 {
                     Triple d = allNodes[NodeIndices[i]].Position - c;
                     Moves[i] = (d - d.Dot(n) * n).Normalise() * r - d;
                     Weights[i] = Weight;
+                    if (float.IsNaN(Moves[i].X))
+                        throw new Exception("Damn!!!");
                 }
             else
             {
                 Moves.FillArray(Triple.Zero);
-                Weights.FillArray(0f);
+                Weights.FillArray(Weight);
             }
         }
     }

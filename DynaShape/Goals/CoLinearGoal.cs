@@ -24,10 +24,9 @@ namespace DynaShape.Goals
                 points.Add(allNodes[NodeIndices[i]].Position);
 
             // Here we use our own line fitting function (implemented in the Util class)
-            // .. which runs much faster than calling the Dynamo method Line.ByBestFitThroughPoints()
+            // .. which runs much faster than calling the DynamoAPI method Line.ByBestFitThroughPoints()
 
-            Triple lineOrigin, lineDirection;
-            Util.ComputeBestFitLine(points, out lineOrigin, out lineDirection);
+            Util.ComputeBestFitLine(points, out Triple lineOrigin, out Triple lineDirection);
 
             for (int i = 0; i < NodeCount; i++)
             {
