@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -151,6 +152,16 @@ namespace DynaShape.ZeroTouch
                 {"anchorGoals", anchorGoals},
                 {"points", pointsLinear}
             };
+        }
+
+        public static void Foo()
+        {
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            foreach (Assembly assembly in assemblies)
+            {
+                if (assembly.GetName().Name != "DynaShape") continue;
+                AssemblyName[] assemblyNames = assembly.GetReferencedAssemblies();
+            }
         }
     }
 }

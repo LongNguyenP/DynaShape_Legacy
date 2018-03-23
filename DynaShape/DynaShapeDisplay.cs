@@ -73,46 +73,12 @@ namespace DynaShape
                         Thickness = 0.5,
                         Color = Color.White,
                     };
-
-                    // DEBUG HELPER CODE
-                    //List<string> info1 = new List<string>();
-                    //foo(DynaShapeViewExtension.DynamoWindow.Content, info1, 0);
-                    //List<string> info2 = new List<string>();
-                    //ListContent(DynaShapeViewExtension.DynamoWindow.Content as Grid, 0, info2);
                 },
                 DispatcherPriority.Send);
 
             DynaShapeViewExtension.ViewModel.RequestViewRefresh += RequestViewRefreshHandler;
 
             DynaShapeViewExtension.DynamoWindow.Closed += (sender, args) => Dispose();
-        }
-
-        // DEBUG HELPER METHOD
-        private void foo(object o, List<string> info, int indent)
-        {
-            if (!(o is Grid))
-            {
-                string pad = "";
-                for (int i = 0; i < indent; i++) pad += "  ";
-                info.Add(pad + o.GetType());
-                return;
-            }
-
-            foreach (object element in (o as Grid).Children)
-                foo(element, info, indent + 1);
-        }
-
-        // DEBUG HELPER METHOD
-        private void ListContent(Grid grid, int level, List<string> info)
-        {
-            foreach (var element in grid.Children)
-            {
-                string indent = "";
-                for (int i = 0; i < level; i++) indent += "   ";
-                info.Add(indent + element.GetType() + " == " + element);
-                if (element is Grid)
-                    ListContent(element as Grid, level + 1, info);
-            }
         }
 
         public void DrawLine(Triple start, Triple end, Color4 color)
@@ -150,7 +116,9 @@ namespace DynaShape
             if (async)
             {
                 if (DispatcherOperation != null && DispatcherOperation.Status == DispatcherOperationStatus.Completed)
-                    DispatcherOperation = DynaShapeViewExtension.DynamoWindow.Dispatcher.InvokeAsync(RenderAction, DispatcherPriority.Render);
+                    DispatcherOperation =
+                        DynaShapeViewExtension.DynamoWindow.Dispatcher.InvokeAsync(
+                            RenderAction, DispatcherPriority.Render);
             }
             else
                 DynaShapeViewExtension.DynamoWindow.Dispatcher.Invoke(RenderAction, DispatcherPriority.Render);
@@ -191,10 +159,11 @@ namespace DynaShape
 
             for (int i = 0; i < solver.Nodes.Count; i++)
             {
-                pointGeometry.Positions.Add(new Vector3(
-                    solver.Nodes[i].Position.X,
-                    solver.Nodes[i].Position.Z,
-                    -solver.Nodes[i].Position.Y));
+                pointGeometry.Positions.Add(
+                    new Vector3(
+                        solver.Nodes[i].Position.X,
+                        solver.Nodes[i].Position.Z,
+                        -solver.Nodes[i].Position.Y));
 
                 pointGeometry.Colors.Add(DefaultPointColor);
                 pointGeometry.Indices.Add(i);
@@ -260,13 +229,14 @@ namespace DynaShape
                 CameraData camera = DynaShapeViewExtension.CameraData;
 
                 Triple camOrigin = new Triple(camera.EyePosition.X, -camera.EyePosition.Z, camera.EyePosition.Y);
-                Triple camZ = new Triple(camera.LookDirection.X, -camera.LookDirection.Z, camera.LookDirection.Y).Normalise();
+                Triple camZ = new Triple(camera.LookDirection.X, -camera.LookDirection.Z, camera.LookDirection.Y)
+                   .Normalise();
                 Triple camY = new Triple(camera.UpDirection.X, -camera.UpDirection.Z, camera.UpDirection.Y).Normalise();
                 Triple camX = camZ.Cross(camY);
 
                 int nodeIndex = solver.HandleNodeIndex != -1 ? solver.HandleNodeIndex : solver.NearestNodeIndex;
                 Triple v = solver.Nodes[nodeIndex].Position - camOrigin;
-                float screenDistance = (float)camera.NearPlaneDistance + 0.1f;
+                float screenDistance = (float) camera.NearPlaneDistance + 0.1f;
                 v = camOrigin + v * screenDistance / v.Dot(camZ);
 
                 float markerSize = 0.025f * screenDistance;
@@ -338,7 +308,8 @@ namespace DynaShape
             if (pointGeometry.Positions.Count >= 1 && !sceneItems.Contains(pointModel)) sceneItems.Add(pointModel);
             if (lineGeometry.Positions.Count >= 2 && !sceneItems.Contains(lineModel)) sceneItems.Add(lineModel);
             foreach (MeshGeometryModel3D meshModel in meshModels)
-                if (meshModel.Geometry.Positions.Count >= 3 && !sceneItems.Contains(meshModel)) sceneItems.Add(meshModel);
+                if (meshModel.Geometry.Positions.Count >= 3 && !sceneItems.Contains(meshModel))
+                    sceneItems.Add(meshModel);
         }
     }
 }

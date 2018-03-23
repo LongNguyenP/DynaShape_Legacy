@@ -33,17 +33,17 @@ namespace DynaShape
 
         internal DynaShapeDisplay Display;
 
-        private Task backgroundExecutionTask = null;
+        private Task backgroundExecutionTask;
 
         public int IterationCount = 0;
 
         public int CurrentIteration { get; private set; }
 
-        private string timeCreated;
+        public readonly DateTime TimeCreated;
 
         public Solver()
         {
-            timeCreated = DateTime.Now.TimeOfDay.ToString();
+            TimeCreated = DateTime.Now;
 
             if (DynaShapeViewExtension.ViewModel == null) throw new Exception("Oh no, DynaShape could not get access to the Helix ViewModel. Sad!");
 
@@ -59,26 +59,6 @@ namespace DynaShape
 
         CancellationTokenSource ctSource;
 
-        //private void BackgroundExecutionAction()
-        //{
-        //    while (!ctSource.Token.IsCancellationRequested)
-        //    {
-        //        // Even when the workspace is closed, the background task still runs
-        //        // Therefore we need to check for this case and terminate the while loop, so that the task can completed
-        //        if (!DynaShapeViewExtension.Parameters.CurrentWorkspaceModel.Nodes.Any())
-        //        {
-        //            Dispose();
-        //            break;
-        //        }
-
-        //        if (IterationCount > 0) Iterate(IterationCount);
-        //        else Iterate(25.0);
-
-        //        if (EnableFastDisplay) Display.Render();
-
-        //    }
-        //}
-
         private void BackgroundExecutionAction()
         {
             while (!ctSource.Token.IsCancellationRequested)
@@ -92,9 +72,10 @@ namespace DynaShape
                 }
 
                 if (IterationCount > 0) Iterate(IterationCount);
-                else Iterate(25f);
+                else Iterate(25.0);
 
                 if (EnableFastDisplay) Display.Render();
+
             }
         }
 
@@ -112,7 +93,6 @@ namespace DynaShape
             backgroundExecutionTask?.Wait(300);
             Display.DispatcherOperation?.Task.Wait();
         }
-
 
         public void AddGoals(IEnumerable<Goal> goals, double nodeMergeThreshold = 0.001)
         {
@@ -278,17 +258,15 @@ namespace DynaShape
             // Apply momentum
             //=================================================================================
 
-            foreach (Node node in Nodes)
-                node.Position += node.Velocity;
+            foreach (Node node in Nodes) node.Position += node.Velocity;
 
             for (int k = 0; k < 50; k++)
             {
                 //=================================================================================
-                // Process each goal indepently, in parallel
+                // Process each goal independently, in parallel
                 //=================================================================================
 
                 Parallel.ForEach(Goals, goal => goal.Compute(Nodes));
-
 
                 //=================================================================================
                 // Compute the total move vector that acts on each node
@@ -302,7 +280,7 @@ namespace DynaShape
                     Goal goal = Goals[j];
                     for (int i = 0; i < goal.NodeCount; i++)
                     {
-                        nodeMoveSums[goal.NodeIndices[i]] += goal.Moves[i] * goal.Weight;
+                        nodeMoveSums  [goal.NodeIndices[i]] += goal.Moves[i] * goal.Weight;
                         nodeWeightSums[goal.NodeIndices[i]] += goal.Weight;
                     }
                 }
@@ -317,7 +295,7 @@ namespace DynaShape
                     nodeWeightSums[HandleNodeIndex] += mouseInteractionWeight;
 
                     Triple v = Nodes[HandleNodeIndex].Position - DynaShapeViewExtension.MouseRayOrigin;
-                    Triple mouseRayPull = v.Dot(DynaShapeViewExtension.MouseRayDirection) *
+                    Triple mouseRayPull = DynaShapeViewExtension.MouseRayDirection.Dot(v) *
                                           DynaShapeViewExtension.MouseRayDirection - v;
                     nodeMoveSums[HandleNodeIndex] += mouseInteractionWeight * mouseRayPull;
                 }
@@ -346,13 +324,11 @@ namespace DynaShape
                 foreach (Node node in Nodes)
                     node.Position += node.Velocity;
 
-
             //=================================================================================
             // Process each goal indepently, in parallel
             //=================================================================================
 
             Parallel.ForEach(Goals, goal => goal.Compute(Nodes));
-
 
             //=================================================================================
             // Compute the total move vector that acts on each node
@@ -384,7 +360,6 @@ namespace DynaShape
                 Triple mouseRayPull = v.Dot(DynaShapeViewExtension.MouseRayDirection) * DynaShapeViewExtension.MouseRayDirection - v;
                 nodeMoveSums[HandleNodeIndex] += mouseInteractionWeight * mouseRayPull;
             }
-
 
             //=============================================================================================
             // Move the nodes to their new positions
@@ -546,22 +521,19 @@ namespace DynaShape
         {
             CameraData cameraData = DynaShapeViewExtension.CameraData;
 
-            Triple camZ = new Triple(
-                cameraData.LookDirection.X,
-                -cameraData.LookDirection.Z,
-                cameraData.LookDirection.Y).Normalise();
+            Triple camZ = new Triple( cameraData.LookDirection.X,
+                                     -cameraData.LookDirection.Z,
+                                      cameraData.LookDirection.Y).Normalise();
 
-            Triple camY = new Triple(
-                cameraData.UpDirection.X,
-                -cameraData.UpDirection.Z,
-                cameraData.UpDirection.Y).Normalise();
+            Triple camY = new Triple( cameraData.UpDirection.X,
+                                     -cameraData.UpDirection.Z,
+                                      cameraData.UpDirection.Y).Normalise();
 
             Triple camX = camY.Cross(camZ).Normalise();
 
-            Triple mousePosition2D = new Triple(
-                DynaShapeViewExtension.MouseRayDirection.Dot(camX),
-                DynaShapeViewExtension.MouseRayDirection.Dot(camY),
-                DynaShapeViewExtension.MouseRayDirection.Dot(camZ));
+            Triple mousePosition2D = new Triple(DynaShapeViewExtension.MouseRayDirection.Dot(camX),
+                                                DynaShapeViewExtension.MouseRayDirection.Dot(camY),
+                                                DynaShapeViewExtension.MouseRayDirection.Dot(camZ));
 
             mousePosition2D /= mousePosition2D.Z;
 

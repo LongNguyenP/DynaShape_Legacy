@@ -104,7 +104,6 @@ namespace DynaShape.ZeroTouch
         /// <param name="A"></param>
         /// <param name="B"></param>
         /// <param name="C"></param>
-        /// <param name="targetAngle"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static AngleGoal AngleGoal_Create(
@@ -124,8 +123,8 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
-        /// <param name="anchorGoal"></param>
-        /// <param name="anchor"></param>
+        /// <param name="angleGoal"></param>
+        /// <param name="targetAngle"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static AngleGoal AngleGoal_Change(
@@ -502,6 +501,7 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
+        /// <param name="windGoal"></param>
         /// <param name="windVector"></param>
         /// <param name="weight"></param>
         /// <returns></returns>

@@ -15,7 +15,7 @@ namespace DynaShape
         private const float Gamma = 5.828427124f; // FOUR_GAMMA_SQUARED = sqrt(8)+3;
         private const float Cstar = 0.923879532f; // cos(pi/8)
         private const float Sstar = 0.3826834323f; // sin(p/8)
-        private const float Epsilon = 1E-10f;
+        private const float Epsilon = 1e-10f;
 
         public static void Compute(
             // input A
@@ -34,51 +34,54 @@ namespace DynaShape
             out float v20, out float v21, out float v22)
         {
             // normal equations matrix
-            MultAtB(
-                a00, a01, a02,
-                a10, a11, a12,
-                a20, a21, a22,
-                a00, a01, a02,
-                a10, a11, a12,
-                a20, a21, a22,
-                out float ata00, out float ata01, out float ata02,
-                out float ata10, out float ata11, out float ata12,
-                out float ata20, out float ata21, out float ata22);
+            MultAtB(a00, a01, a02,
+                    a10, a11, a12,
+                    a20, a21, a22,
+                    a00, a01, a02,
+                    a10, a11, a12,
+                    a20, a21, a22,
+                    out float ata00, out float ata01, out float ata02,
+                    out float ata10, out float ata11, out float ata12,
+                    out float ata20, out float ata21, out float ata22);
 
-            JacobiEigenAnalysis(ref ata00, ref ata10, ref ata11, ref ata20, ref ata21, ref ata22, out float[] qV);
-            QuatToMatrix(qV, out v00, out v01, out v02, out v10, out v11, out v12, out v20, out v21, out v22);
+            JacobiEigenAnalysis(ref ata00, 
+                                ref ata10, ref ata11, 
+                                ref ata20, ref ata21, ref ata22, 
+                                out float x, out float y, out float z, out float w);
+            
+            QuatToMatrix(x, y, z, w, 
+                         out v00, out v01, out v02, 
+                         out v10, out v11, out v12, 
+                         out v20, out v21, out v22);
 
-            MultAB(
-                a00, a01, a02,
-                a10, a11, a12,
-                a20, a21, a22,
-                v00, v01, v02,
-                v10, v11, v12,
-                v20, v21, v22,
-                out float b00, out float b01, out float b02,
-                out float b10, out float b11, out float b12,
-                out float b20, out float b21, out float b22);
+            MultAB(a00, a01, a02,
+                   a10, a11, a12,
+                   a20, a21, a22,
+                   v00, v01, v02,
+                   v10, v11, v12,
+                   v20, v21, v22,
+                   out float b00, out float b01, out float b02,
+                   out float b10, out float b11, out float b12,
+                   out float b20, out float b21, out float b22);
 
             // sort singular values and find V
-            SortSingularValues(
-                ref b00, ref b01, ref b02,
-                ref b10, ref b11, ref b12,
-                ref b20, ref b21, ref b22,
-                ref v00, ref v01, ref v02,
-                ref v10, ref v11, ref v12,
-                ref v20, ref v21, ref v22);
+            SortSingularValues(ref b00, ref b01, ref b02,
+                               ref b10, ref b11, ref b12,
+                               ref b20, ref b21, ref b22,
+                               ref v00, ref v01, ref v02,
+                               ref v10, ref v11, ref v12,
+                               ref v20, ref v21, ref v22);
 
             // QR decomposition
-            QRDecomposition(
-                b00, b01, b02,
-                b10, b11, b12,
-                b20, b21, b22,
-                out u00, out u01, out u02,
-                out u10, out u11, out u12,
-                out u20, out u21, out u22,
-                out s00, out float s01, out float s02,
-                out float s10, out s11, out float s12,
-                out float s20, out float s21, out s22);
+            QRDecomposition(b00, b01, b02,
+                            b10, b11, b12,
+                            b20, b21, b22,
+                            out u00, out u01, out u02,
+                            out u10, out u11, out u12,
+                            out u20, out u21, out u22,
+                            out       s00, out float s01, out float s02,
+                            out float s10, out       s11, out float s12,
+                            out float s20, out float s21, out       s22);
         }
 
         private static float InvSqrt(float a) => (float)(1.0 / Math.Sqrt(a));
@@ -148,15 +151,11 @@ namespace DynaShape
 
 
         private static void QuatToMatrix(
-            float[] qV,
+            float x, float y, float z, float w,
             out float m00, out float m01, out float m02,
             out float m10, out float m11, out float m12,
             out float m20, out float m21, out float m22)
         {
-            float x = qV[0];
-            float y = qV[1];
-            float z = qV[2];
-            float w = qV[3];
             float qxx = x * x;
             float qyy = y * y;
             float qzz = z * z;
@@ -167,13 +166,13 @@ namespace DynaShape
             float qwy = w * y;
             float qwz = w * z;
             m00 = 1f - 2f * (qyy + qzz);
-            m01 = 2f * (qxy - qwz);
-            m02 = 2f * (qxz + qwy);
-            m10 = 2f * (qxy + qwz);
+            m01 =      2f * (qxy - qwz);
+            m02 =      2f * (qxz + qwy);
+            m10 =      2f * (qxy + qwz);
             m11 = 1f - 2f * (qxx + qzz);
-            m12 = 2f * (qyz - qwx);
-            m20 = 2f * (qxz - qwy);
-            m21 = 2f * (qyz + qwx);
+            m12 =      2f * (qyz - qwx);
+            m20 =      2f * (qxz - qwy);
+            m21 =      2f * (qyz + qwx);
             m22 = 1f - 2f * (qxx + qyy);
         }
 
@@ -212,10 +211,10 @@ namespace DynaShape
 
             // perform conjugation S = Q'*S*Q
             // Q already implicitly solved from a, b
-            s00 = a * (a * _s00 + b * _s10) + b * (a * _s10 + b * _s11);
-            s10 = a * (-b * _s00 + a * _s10) + b * (-b * _s10 + a * _s11);
+            s00 =  a * ( a * _s00 + b * _s10) + b * ( a * _s10 + b * _s11);
+            s10 =  a * (-b * _s00 + a * _s10) + b * (-b * _s10 + a * _s11);
             s11 = -b * (-b * _s00 + a * _s10) + a * (-b * _s10 + a * _s11);
-            s20 = a * _s20 + b * _s21;
+            s20 =  a * _s20 + b * _s21;
             s21 = -b * _s20 + a * _s21;
             s22 = _s22;
 
@@ -249,21 +248,19 @@ namespace DynaShape
             s20 = _s20;
             s21 = _s21;
             s22 = _s22;
-
         }
 
-        private static float NormSquared(float x, float y, float z)
-            => x * x + y * y + z * z;
+        private static float NormSquared(float x, float y, float z) => x * x + y * y + z * z;
 
         // finds transformation that diagonalizes a symmetric matrix
         private static void JacobiEigenAnalysis(
             ref float s00,
             ref float s10, ref float s11,
             ref float s20, ref float s21, ref float s22,
-            out float[] qV)
+            out float q0, out float q1, out float q2, out float q3)
         {
             // follow same indexing convention as GLM
-            qV = new[] { 0f, 0f, 0f, 1f };
+            float[] qV = {0f, 0f, 0f, 1f};
 
             for (int i = 0; i < 4; i++)
             {
@@ -273,6 +270,11 @@ namespace DynaShape
                 JacobiConjugation(1, 2, 0, ref s00, ref s10, ref s11, ref s20, ref s21, ref s22, qV); // p,q = 1,2
                 JacobiConjugation(2, 0, 1, ref s00, ref s10, ref s11, ref s20, ref s21, ref s22, qV); // p,q = 0,2
             }
+
+            q0 = qV[0];
+            q1 = qV[1];
+            q2 = qV[2];
+            q3 = qV[3];
         }
 
         private static void SortSingularValues(
@@ -344,45 +346,45 @@ namespace DynaShape
         {
             // first givens rotation (ch,0,0,sh)
             QRGivensQuaternion(b00, b10, out float ch1, out float sh1);
-            float a = 1 - 2 * sh1 * sh1;
-            float c = 2 * ch1 * sh1;
+            float a = 1f - 2f * sh1 * sh1;
+            float c = 2f * ch1 * sh1;
             // apply B = Q' * B
-            r00 = a * b00 + c * b10;
-            r01 = a * b01 + c * b11;
-            r02 = a * b02 + c * b12;
+            r00 =  a * b00 + c * b10;
+            r01 =  a * b01 + c * b11;
+            r02 =  a * b02 + c * b12;
             r10 = -c * b00 + a * b10;
             r11 = -c * b01 + a * b11;
             r12 = -c * b02 + a * b12;
-            r20 = b20;
-            r21 = b21;
-            r22 = b22;
+            r20 =  b20;
+            r21 =  b21;
+            r22 =  b22;
 
             // second givens rotation (ch,0,-sh,0)
             QRGivensQuaternion(r00, r20, out float ch2, out float sh2);
-            a = 1 - 2 * sh2 * sh2;
-            c = 2 * ch2 * sh2;
+            a = 1f - 2f * sh2 * sh2;
+            c = 2f * ch2 * sh2;
             // apply B = Q' * B;
-            b00 = a * r00 + c * r20;
-            b01 = a * r01 + c * r21;
-            b02 = a * r02 + c * r22;
-            b10 = r10;
-            b11 = r11;
-            b12 = r12;
+            b00 =  a * r00 + c * r20;
+            b01 =  a * r01 + c * r21;
+            b02 =  a * r02 + c * r22;
+            b10 =  r10;
+            b11 =  r11;
+            b12 =  r12;
             b20 = -c * r00 + a * r20;
             b21 = -c * r01 + a * r21;
             b22 = -c * r02 + a * r22;
 
             // third givens rotation (ch,sh,0,0)
             QRGivensQuaternion(b11, b21, out float ch3, out float sh3);
-            a = 1 - 2 * sh3 * sh3;
-            c = 2 * ch3 * sh3;
+            a = 1f - 2f * sh3 * sh3;
+            c = 2f * ch3 * sh3;
             // R is now set to desired value
-            r00 = b00;
-            r01 = b01;
-            r02 = b02;
-            r10 = a * b10 + c * b20;
-            r11 = a * b11 + c * b21;
-            r12 = a * b12 + c * b22;
+            r00 =  b00;
+            r01 =  b01;
+            r02 =  b02;
+            r10 =  a * b10 + c * b20;
+            r11 =  a * b11 + c * b21;
+            r12 =  a * b12 + c * b22;
             r20 = -c * b10 + a * b20;
             r21 = -c * b11 + a * b21;
             r22 = -c * b12 + a * b22;
@@ -395,17 +397,17 @@ namespace DynaShape
             float sh11 = sh2 * sh2;
             float sh21 = sh3 * sh3;
 
-            q00 = (-1 + 2 * sh01) * (-1 + 2 * sh11);
-            q01 = 4 * ch2 * ch3 * (-1 + 2 * sh01) * sh2 * sh3 + 2 * ch1 * sh1 * (-1 + 2 * sh21);
-            q02 = 4 * ch1 * ch3 * sh1 * sh3 - 2 * ch2 * (-1 + 2 * sh01) * sh2 * (-1 + 2 * sh21);
+            q00 = (-1f + 2f * sh01) * (-1f + 2f * sh11);
+            q01 = 4f * ch2 * ch3 * (-1f + 2f * sh01) * sh2 * sh3 + 2f * ch1 * sh1 * (-1f + 2f * sh21);
+            q02 = 4f * ch1 * ch3 * sh1 * sh3 - 2f * ch2 * (-1f + 2f * sh01) * sh2 * (-1f + 2f * sh21);
 
-            q10 = 2 * ch1 * sh1 * (1 - 2 * sh11);
-            q11 = -8 * ch1 * ch2 * ch3 * sh1 * sh2 * sh3 + (-1 + 2 * sh01) * (-1 + 2 * sh21);
-            q12 = -2 * ch3 * sh3 + 4 * sh1 * (ch3 * sh1 * sh3 + ch1 * ch2 * sh2 * (-1 + 2 * sh21));
+            q10 = 2f * ch1 * sh1 * (1f - 2f * sh11);
+            q11 = -8f * ch1 * ch2 * ch3 * sh1 * sh2 * sh3 + (-1f + 2f * sh01) * (-1f + 2f * sh21);
+            q12 = -2f * ch3 * sh3 + 4f * sh1 * (ch3 * sh1 * sh3 + ch1 * ch2 * sh2 * (-1f + 2f * sh21));
 
-            q20 = 2 * ch2 * sh2;
-            q21 = 2 * ch3 * (1 - 2 * sh11) * sh3;
-            q22 = (-1 + 2 * sh11) * (-1 + 2 * sh21);
+            q20 = 2f * ch2 * sh2;
+            q21 = 2f * ch3 * (1f - 2f * sh11) * sh3;
+            q22 = (-1f + 2f * sh11) * (-1f + 2f * sh21);
         }
     }
 }

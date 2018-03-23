@@ -42,7 +42,7 @@ namespace DynaShape.Goals
 
             targetShapePoints = new Triple[NodeCount];
             for (int i = 0; i < NodeCount; i++)
-                targetShapePoints[i] = new Triple(points[i].X - center.X, points[i].Y - center.Y, points[i].Z - center.Z);
+                targetShapePoints[i] = points[i] - center;
 
             float sigma = 0f;
             for (int i = 0; i < NodeCount; i++)
@@ -83,30 +83,25 @@ namespace DynaShape.Goals
             // Here we compute the "best" translation & rotation (and optionally scalling) that bring the targetShapePoints as close as possible to the current node positions
             // Reference: Umeyama S. 1991, Least-Squares Estimation of Transformation Paramters Between Two Point Patterns
 
-            //==========================================================================================
+            //=====================================================
             // Compute the center of the current node positions
-            //==========================================================================================
+            //=====================================================
 
             Triple center = Triple.Zero;
             for (int i = 0; i < NodeCount; i++) center += positions[i];
             center /= NodeCount;
 
-            //==========================================================================================
+            //=====================================================================
             // Mean Centering
             // i.e. Substract the current center from the current positions ...
-            //==========================================================================================
+            //=====================================================================
 
             Triple[] positionsCentered = new Triple[NodeCount];
+            for (int i = 0; i < NodeCount; i++) positionsCentered[i] = positions[i] - center;
 
-            for (int i = 0; i < NodeCount; i++)
-                positionsCentered[i] = new Triple(
-                   positions[i].X - center.X,
-                   positions[i].Y - center.Y,
-                   positions[i].Z - center.Z);
-
-            //==================================================================================================================
+            //=====================================================================================================================
             // Compute the rotation matrix that bring the original rest positions to the current positions as close as possible
-            //==================================================================================================================
+            //=====================================================================================================================
 
             float a00 = 0f, a01 = 0f, a02 = 0f;
             float a10 = 0f, a11 = 0f, a12 = 0f;
@@ -148,35 +143,30 @@ namespace DynaShape.Goals
             float r21 = u20 * v10 + u21 * v11 + u22 * v12;
             float r22 = u20 * v20 + u21 * v21 + u22 * v22;
              
-            float determinant =
-                r00 * (r11 * r22 - r21 * r12) -
-                r01 * (r10 * r22 - r20 * r12) +
-                r02 * (r10 * r21 - r20 * r11);
-
-            float indicator = 1f;
+            float determinant = r00 * (r11 * r22 - r21 * r12) -
+                                r01 * (r10 * r22 - r20 * r12) +
+                                r02 * (r10 * r21 - r20 * r11);
 
             //Handle the special case where the rotation matrix happens to give a reflected version of target shape
             if (determinant < 0f && !is2D)
             {
-                r20 *= -1f;
-                r21 *= -1f;
-                r22 *= -1f;
-                indicator = -1f;
+                r20 = -r20;
+                r21 = -r21;
+                r22 = -r22;
             }
 
             // TODO: Check the correctness of scaling math below, especially the indicator
             if (AllowScaling)
             {
-                float temp = sigmaInversed * (indicator * s00 + s11 + s22); ;
+                float temp = sigmaInversed * ((determinant > 0 ? s00 : -s00) + s11 + s22); ;
                 r00 *= temp; r01 *= temp; r02 *= temp;
                 r10 *= temp; r11 *= temp; r12 *= temp;
                 r20 *= temp; r21 *= temp; r22 *= temp;
             }
 
-            //=========================================================================
-            // Apply the rotation and translation to obtain the target rest positions,
-            // And find the move vectors
-            //=========================================================================
+            //=================================================================================================
+            // Apply the rotation and translation to obtain the target positions that the nodes will move to
+            //=================================================================================================
 
             for (int i = 0; i < NodeCount; i++)
             {

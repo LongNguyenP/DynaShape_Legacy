@@ -24,7 +24,7 @@ namespace DynaShape.Goals
             {
                 currentVolumeInversed = 1f / (float)mesh.Volume;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw new Exception("The input mesh is not valid (It must be a closed mesh so that its volume is computable)");
             }
