@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [0.5.0.0] - 2018-03-24
+### Added
+- [Experimental] Display meshes with textures
 ### Changed
 - No longer use AForge.Math and other external libraries for linear algebra. SVD Computation is now done inside the class FastSvd3x3
 
