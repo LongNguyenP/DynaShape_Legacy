@@ -1,4 +1,4 @@
-﻿<img src="https://discourse-cdn-sjc1.com/business/uploads/dynamobim/original/3X/8/c/8cb1f156ee18209847ec7807f4dfc5e2145ba45d.png" width = "900">
+﻿<img src="https://forum.dynamobim.com/uploads/dynamobim/original/3X/7/4/74bf86e06c2827782a60f4fa54ce1dbd8136fc2a.png" width = "900">
 
 ## How to build, package and install
 
