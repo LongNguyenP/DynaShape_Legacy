@@ -79,11 +79,14 @@ namespace DynaShape.ZeroTouch
             }
 
             return enableFastDisplay
-               ? null
+               ? new Dictionary<string, object> {
+                   { "nodePositions", null },
+                   { "goalOutputs", null },
+                   { "geometries", null } }
                : new Dictionary<string, object> {
                    { "nodePositions", solver.GetStructuredNodePositionsAsPoints() },
                    { "goalOutputs", solver.GetGoalOutputs() },
-                   { "geometries", solver.GetGeometries()} };
+                   { "geometries", solver.GetGeometries() } };
         }
 
 

@@ -196,57 +196,57 @@ namespace DynaShape.ZeroTouch
             return lines;
         }
 
-        public static List<List<Point>> GetVerticesOfAllPairOfTriangles(Mesh mesh)
-        {
-            List<int> faceVertexIndices = mesh.VertexIndicesByTri();
-            int vertexCount = (int)mesh.VertexCount;
-            Dictionary<int, List<int>> edgeFaceTopology = new Dictionary<int, List<int>>();
+        //public static List<List<Point>> GetVerticesOfAllPairOfTriangles(Mesh mesh)
+        //{
+        //    List<int> faceVertexIndices = mesh.VertexIndicesByTri();
+        //    int vertexCount = (int)mesh.VertexCount;
+        //    Dictionary<int, List<int>> edgeFaceTopology = new Dictionary<int, List<int>>();
 
-            for (int i = 0; i < mesh.TriangleCount; i++)
-            {
-                int A = faceVertexIndices[i * 3];
-                int B = faceVertexIndices[i * 3 + 1];
-                int C = faceVertexIndices[i * 3 + 2];
+        //    for (int i = 0; i < mesh.TriangleCount; i++)
+        //    {
+        //        int A = faceVertexIndices[i * 3];
+        //        int B = faceVertexIndices[i * 3 + 1];
+        //        int C = faceVertexIndices[i * 3 + 2];
 
-                InsertEdgeFaceTopology(edgeFaceTopology, i, A, B, vertexCount);
-                InsertEdgeFaceTopology(edgeFaceTopology, i, B, C, vertexCount);
-                InsertEdgeFaceTopology(edgeFaceTopology, i, C, A, vertexCount);
-            }
+        //        InsertEdgeFaceTopology(edgeFaceTopology, i, A, B, vertexCount);
+        //        InsertEdgeFaceTopology(edgeFaceTopology, i, B, C, vertexCount);
+        //        InsertEdgeFaceTopology(edgeFaceTopology, i, C, A, vertexCount);
+        //    }
 
-            List<List<Point>> facePairVertices = new List<List<Point>>();
+        //    List<List<Point>> facePairVertices = new List<List<Point>>();
 
-            foreach (List<int> connectedFaces in edgeFaceTopology.Values)
-            {
-                if (connectedFaces.Count < 2) continue;
+        //    foreach (List<int> connectedFaces in edgeFaceTopology.Values)
+        //    {
+        //        if (connectedFaces.Count < 2) continue;
 
-                HashSet<int> hashSet = new HashSet<int>();
-                hashSet.Add(faceVertexIndices[connectedFaces[0] * 3]);
-                hashSet.Add(faceVertexIndices[connectedFaces[0] * 3 + 1]);
-                hashSet.Add(faceVertexIndices[connectedFaces[0] * 3 + 2]);
-                hashSet.Add(faceVertexIndices[connectedFaces[1] * 3]);
-                hashSet.Add(faceVertexIndices[connectedFaces[1] * 3 + 1]);
-                hashSet.Add(faceVertexIndices[connectedFaces[1] * 3 + 2]);
+        //        HashSet<int> hashSet = new HashSet<int>();
+        //        hashSet.Add(faceVertexIndices[connectedFaces[0] * 3]);
+        //        hashSet.Add(faceVertexIndices[connectedFaces[0] * 3 + 1]);
+        //        hashSet.Add(faceVertexIndices[connectedFaces[0] * 3 + 2]);
+        //        hashSet.Add(faceVertexIndices[connectedFaces[1] * 3]);
+        //        hashSet.Add(faceVertexIndices[connectedFaces[1] * 3 + 1]);
+        //        hashSet.Add(faceVertexIndices[connectedFaces[1] * 3 + 2]);
 
-                List<Point> vertices = new List<Point>();
+        //        List<Point> vertices = new List<Point>();
 
-                foreach (int i in hashSet)
-                    vertices.Add(mesh.Vertices()[i]);
+        //        foreach (int i in hashSet)
+        //            vertices.Add(mesh.Vertices()[i]);
 
-                facePairVertices.Add(vertices);
-            }
+        //        facePairVertices.Add(vertices);
+        //    }
 
-            return facePairVertices;
-        }
+        //    return facePairVertices;
+        //}
 
-        private static void InsertEdgeFaceTopology(Dictionary<int, List<int>> dict, int faceIndex, int start, int end, int vertexCount)
-        {
-            int i = start < end
-                ? start * vertexCount + end
-                : end * vertexCount + start;
+        //private static void InsertEdgeFaceTopology(Dictionary<int, List<int>> dict, int faceIndex, int start, int end, int vertexCount)
+        //{
+        //    int i = start < end
+        //        ? start * vertexCount + end
+        //        : end * vertexCount + start;
 
-            if (!dict.ContainsKey(i)) dict.Add(i, new List<int>());
+        //    if (!dict.ContainsKey(i)) dict.Add(i, new List<int>());
 
-            dict[i].Add(faceIndex);
-        }
+        //    dict[i].Add(faceIndex);
+        //}
     }
 }

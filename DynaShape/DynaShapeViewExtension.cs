@@ -15,7 +15,7 @@ using HelixToolkit.Wpf.SharpDX;
 namespace DynaShape
 {
     [IsVisibleInDynamoLibrary(false)]
-    public class DynaShapeViewExtension : IViewExtension
+    internal class DynaShapeViewExtension : IViewExtension
     {
         public static ViewLoadedParams Parameters;
         public static Window DynamoWindow;
