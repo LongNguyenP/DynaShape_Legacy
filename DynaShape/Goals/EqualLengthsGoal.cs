@@ -13,7 +13,7 @@ namespace DynaShape.Goals
             Weight = weight;
             if (pointPairs.Count % 2 != 0) throw new Exception("Equal-Length Goal: Node count must be even");
             StartingPositions = pointPairs.ToArray();
-            Moves = new Triple[StartingPositions.Length];        
+            Moves = new Triple[StartingPositions.Length];
             Weights = new float[StartingPositions.Length];
         }
 

@@ -24,11 +24,9 @@ namespace DynaShape.Goals
                 points.Add(allNodes[NodeIndices[i]].Position);
 
             // Here we use our own sphere fitting function (implemented in the Util class)
-            // .. which runs much faster than calling the Dynamo method Sphere.ByBestFit
+            // .. which runs much faster than calling the DynamoAPI method Sphere.ByBestFit()
 
-            Triple sphereCenter;
-            float sphereRadius;
-            Util.ComputeBestFitSphere(points, out sphereCenter, out sphereRadius);
+            Util.ComputeBestFitSphere(points, out Triple sphereCenter, out float sphereRadius);
 
             for (int i = 0; i < NodeCount; i++)
             {

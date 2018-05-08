@@ -3,10 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Runtime;
+using HelixToolkit.Wpf.SharpDX.Core;
+using SharpDX;
 using Mesh = Autodesk.Dynamo.MeshToolkit.Mesh;
+using Point = Autodesk.DesignScript.Geometry.Point;
 
 namespace DynaShape.ZeroTouch
 {
+    [IsVisibleInDynamoLibrary(false)]
+    public class TextureCoordinateSet
+    {
+        public Vector2Collection Content;
+
+        public TextureCoordinateSet(Vector2Collection content)
+        {
+            Content = content;
+        }
+    }
+
     /// <summary>
     /// </summary>
     public static class Utilities
@@ -21,7 +35,7 @@ namespace DynaShape.ZeroTouch
         /// <param name="divY">The mesh face division in the Y dimension</param>
         /// <param name="alternatingDiagons">Alternating the diagonal direction of the triangular faces</param>
         /// <returns></returns>
-        [MultiReturn("mesh", "quadFaceVertexIndices")]
+        [MultiReturn("mesh", "quadFaceVertexIndices", "textureCoordinates")]
         public static Dictionary<string, object> PlaneMesh(
             [DefaultArgument("CoordinateSystem.ByOriginVectors(Point.Origin(), Vector.XAxis(), Vector.YAxis())")] CoordinateSystem cs,
             [DefaultArgument("20.0")]double lengthX,
@@ -30,18 +44,24 @@ namespace DynaShape.ZeroTouch
             [DefaultArgument("20")]int divY,
             [DefaultArgument("true")]bool alternatingDiagons)
         {
+            if (divX < 1 || divY < 0) throw new Exception("divX and divY must be larger than 0");
+
             List<Point> vertices = new List<Point>((divX + 1) * (divY + 1));
+            Vector2Collection textureCoordinates = new Vector2Collection();
 
             for (int j = 0; j <= divY; j++)
                 for (int i = 0; i <= divX; i++)
+                { 
                     vertices.Add(
                         Point.ByCartesianCoordinates(
                             cs,
                             ((double)i / divX - 0.5f) * lengthX,
                             ((double)j / divY - 0.5f) * lengthY));
 
-            List<int> indices = new List<int>();
+                    textureCoordinates.Add(new Vector2((float)i / (float)(divX), 1f - (float)j / (float)(divY)));
+                }
 
+            List<int> indices = new List<int>();
             List<List<int>> quadFaceVertexIndices = new List<List<int>>();
 
             for (int j = 0; j < divY; j++)
@@ -90,6 +110,7 @@ namespace DynaShape.ZeroTouch
             {
                 { "mesh", Mesh.ByVerticesAndIndices(vertices, indices) },
                 { "quadFaceVertexIndices", quadFaceVertexIndices },
+                { "textureCoordinates", new TextureCoordinateSet(textureCoordinates) },
             };
         }
 
@@ -111,6 +132,8 @@ namespace DynaShape.ZeroTouch
             [DefaultArgument("20")] int divX,
             [DefaultArgument("20")] int divY)
         {
+            if (divX < 1 || divY < 0) throw new Exception("divX and divY must be larger than 0");
+
             List<Point> all = new List<Point>((divX + 1) * (divY + 1));
             for (int j = 0; j <= divY; j++)
                 for (int i = 0; i <= divX; i++)
@@ -173,57 +196,57 @@ namespace DynaShape.ZeroTouch
             return lines;
         }
 
-        public static List<List<Point>> GetVerticesOfAllPairOfTriangles(Mesh mesh)
-        {
-            List<int> faceVertexIndices = mesh.VertexIndicesByTri();
-            int vertexCount = (int)mesh.VertexCount;
-            Dictionary<int, List<int>> edgeFaceTopology = new Dictionary<int, List<int>>();
+        //public static List<List<Point>> GetVerticesOfAllPairOfTriangles(Mesh mesh)
+        //{
+        //    List<int> faceVertexIndices = mesh.VertexIndicesByTri();
+        //    int vertexCount = (int)mesh.VertexCount;
+        //    Dictionary<int, List<int>> edgeFaceTopology = new Dictionary<int, List<int>>();
 
-            for (int i = 0; i < mesh.TriangleCount; i++)
-            {
-                int A = faceVertexIndices[i * 3];
-                int B = faceVertexIndices[i * 3 + 1];
-                int C = faceVertexIndices[i * 3 + 2];
+        //    for (int i = 0; i < mesh.TriangleCount; i++)
+        //    {
+        //        int A = faceVertexIndices[i * 3];
+        //        int B = faceVertexIndices[i * 3 + 1];
+        //        int C = faceVertexIndices[i * 3 + 2];
 
-                InsertEdgeFaceTopology(edgeFaceTopology, i, A, B, vertexCount);
-                InsertEdgeFaceTopology(edgeFaceTopology, i, B, C, vertexCount);
-                InsertEdgeFaceTopology(edgeFaceTopology, i, C, A, vertexCount);
-            }
+        //        InsertEdgeFaceTopology(edgeFaceTopology, i, A, B, vertexCount);
+        //        InsertEdgeFaceTopology(edgeFaceTopology, i, B, C, vertexCount);
+        //        InsertEdgeFaceTopology(edgeFaceTopology, i, C, A, vertexCount);
+        //    }
 
-            List<List<Point>> facePairVertices = new List<List<Point>>();
+        //    List<List<Point>> facePairVertices = new List<List<Point>>();
 
-            foreach (List<int> connectedFaces in edgeFaceTopology.Values)
-            {
-                if (connectedFaces.Count < 2) continue;
+        //    foreach (List<int> connectedFaces in edgeFaceTopology.Values)
+        //    {
+        //        if (connectedFaces.Count < 2) continue;
 
-                HashSet<int> hashSet = new HashSet<int>();
-                hashSet.Add(faceVertexIndices[connectedFaces[0] * 3]);
-                hashSet.Add(faceVertexIndices[connectedFaces[0] * 3 + 1]);
-                hashSet.Add(faceVertexIndices[connectedFaces[0] * 3 + 2]);
-                hashSet.Add(faceVertexIndices[connectedFaces[1] * 3]);
-                hashSet.Add(faceVertexIndices[connectedFaces[1] * 3 + 1]);
-                hashSet.Add(faceVertexIndices[connectedFaces[1] * 3 + 2]);
+        //        HashSet<int> hashSet = new HashSet<int>();
+        //        hashSet.Add(faceVertexIndices[connectedFaces[0] * 3]);
+        //        hashSet.Add(faceVertexIndices[connectedFaces[0] * 3 + 1]);
+        //        hashSet.Add(faceVertexIndices[connectedFaces[0] * 3 + 2]);
+        //        hashSet.Add(faceVertexIndices[connectedFaces[1] * 3]);
+        //        hashSet.Add(faceVertexIndices[connectedFaces[1] * 3 + 1]);
+        //        hashSet.Add(faceVertexIndices[connectedFaces[1] * 3 + 2]);
 
-                List<Point> vertices = new List<Point>();
+        //        List<Point> vertices = new List<Point>();
 
-                foreach (int i in hashSet)
-                    vertices.Add(mesh.Vertices()[i]);
+        //        foreach (int i in hashSet)
+        //            vertices.Add(mesh.Vertices()[i]);
 
-                facePairVertices.Add(vertices);
-            }
+        //        facePairVertices.Add(vertices);
+        //    }
 
-            return facePairVertices;
-        }
+        //    return facePairVertices;
+        //}
 
-        private static void InsertEdgeFaceTopology(Dictionary<int, List<int>> dict, int faceIndex, int start, int end, int vertexCount)
-        {
-            int i = start < end
-                ? start * vertexCount + end
-                : end * vertexCount + start;
+        //private static void InsertEdgeFaceTopology(Dictionary<int, List<int>> dict, int faceIndex, int start, int end, int vertexCount)
+        //{
+        //    int i = start < end
+        //        ? start * vertexCount + end
+        //        : end * vertexCount + start;
 
-            if (!dict.ContainsKey(i)) dict.Add(i, new List<int>());
+        //    if (!dict.ContainsKey(i)) dict.Add(i, new List<int>());
 
-            dict[i].Add(faceIndex);
-        }
+        //    dict[i].Add(faceIndex);
+        //}
     }
 }

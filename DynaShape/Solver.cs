@@ -3,22 +3,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using System.Timers;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
-using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Runtime;
 using Dynamo.Wpf.ViewModels.Watch3D;
 using DynaShape.Goals;
 using DynaShape.GeometryBinders;
-using Microsoft.Win32;
-using ProtoCore.AST.ImperativeAST;
+
 using Point = Autodesk.DesignScript.Geometry.Point;
 using Vector = Autodesk.DesignScript.Geometry.Vector;
-using Dynamo.Graph.Workspaces;
-using Dynamo.Scheduler;
+
 
 namespace DynaShape
 {
@@ -29,25 +24,27 @@ namespace DynaShape
         public bool EnableMomentum = true;
         public bool EnableFastDisplay = true;
 
-        public int Mode = 0;
-
         public List<Node> Nodes = new List<Node>();
         public List<Goal> Goals = new List<Goal>();
         public List<GeometryBinder> GeometryBinders = new List<GeometryBinder>();
-
+        
         internal int HandleNodeIndex = -1;
         internal int NearestNodeIndex = -1;
 
         internal DynaShapeDisplay Display;
 
-        private Task backgroundExecutionTask = new Task(() => { });
+        private Task backgroundExecutionTask;
 
-        public int IterationCount = -1;
+        public int IterationCount = 0;
 
         public int CurrentIteration { get; private set; }
 
+        public readonly DateTime TimeCreated;
+
         public Solver()
         {
+            TimeCreated = DateTime.Now;
+
             if (DynaShapeViewExtension.ViewModel == null) throw new Exception("Oh no, DynaShape could not get access to the Helix ViewModel. Sad!");
 
             CurrentIteration = 0;
@@ -60,29 +57,7 @@ namespace DynaShape
             DynaShapeViewExtension.ViewModel.CanNavigateBackgroundPropertyChanged += ViewportCanNavigateBackgroundPropertyChangedHandler;
         }
 
-
         CancellationTokenSource ctSource;
-
-        //private void BackgroundExecutionAction()
-        //{
-        //    while (!ctSource.Token.IsCancellationRequested)
-        //    {
-        //        // Even when the workspace is closed, the background task still runs
-        //        // Therefore we need to check for this case and terminate the while loop, so that the task can completed
-        //        if (!DynaShapeViewExtension.Parameters.CurrentWorkspaceModel.Nodes.Any())
-        //        {
-        //            Dispose();
-        //            break;
-        //        }
-
-        //        if (IterationCount > 0) Iterate(IterationCount);
-        //        else Iterate(25.0);
-
-        //        if (EnableFastDisplay) Display.Render();
-
-        //    }
-        //}
-
 
         private void BackgroundExecutionAction()
         {
@@ -96,34 +71,28 @@ namespace DynaShape
                     break;
                 }
 
-
-                if (Mode == 0)
-                    if (IterationCount > 0) Iterate(IterationCount);
-                    else Iterate(25.0);
-                else
-                    if (IterationCount > 0) Iterate(IterationCount);
-                    else Iterate2(25.0);
-
+                if (IterationCount > 0) Iterate(IterationCount);
+                else Iterate(25.0);
 
                 if (EnableFastDisplay) Display.Render();
+
             }
         }
 
         public void StartBackgroundExecution()
         {
-            if (backgroundExecutionTask.Status == TaskStatus.Running) return;
+            if (backgroundExecutionTask != null && backgroundExecutionTask.Status == TaskStatus.Running) return;
             ctSource = new CancellationTokenSource();
-            backgroundExecutionTask = Task.Factory.StartNew(BackgroundExecutionAction, ctSource.Token);
+            backgroundExecutionTask = Task.Factory.StartNew(BackgroundExecutionAction, ctSource.Token);  
         }
-
 
         public void StopBackgroundExecution()
         {
+            if (backgroundExecutionTask == null) return;
             ctSource?.Cancel();
             backgroundExecutionTask?.Wait(300);
             Display.DispatcherOperation?.Task.Wait();
         }
-
 
         public void AddGoals(IEnumerable<Goal> goals, double nodeMergeThreshold = 0.001)
         {
@@ -131,13 +100,11 @@ namespace DynaShape
                 AddGoal(goal, nodeMergeThreshold);
         }
 
-
         public void AddGeometryBinders(IEnumerable<GeometryBinder> geometryBinders, double nodeMergeThreshold = 0.001)
         {
             foreach (GeometryBinder geometryBinder in geometryBinders)
                 AddGeometryBinder(geometryBinder, nodeMergeThreshold);
         }
-
 
         public void AddGoal(Goal goal, double nodeMergeThreshold = 0.001)
         {
@@ -168,7 +135,6 @@ namespace DynaShape
             }
         }
 
-
         public void AddGeometryBinder(GeometryBinder geometryBinder, double nodeMergeThreshold = 0.001)
         {
             GeometryBinders.Add(geometryBinder);
@@ -198,7 +164,6 @@ namespace DynaShape
             }
         }
 
-
         public List<Triple> GetNodePositions()
         {
             List<Triple> nodePositions = new List<Triple>(Nodes.Count);
@@ -207,7 +172,6 @@ namespace DynaShape
             return nodePositions;
         }
 
-
         public List<Point> GetNodePositionsAsPoints()
         {
             List<Point> nodePositions = new List<Point>(Nodes.Count);
@@ -215,7 +179,6 @@ namespace DynaShape
                 nodePositions.Add(Nodes[i].Position.ToPoint());
             return nodePositions;
         }
-
 
         public List<List<Triple>> GetStructuredNodePositions()
         {
@@ -230,7 +193,6 @@ namespace DynaShape
             return nodePositions;
         }
 
-
         public List<List<Point>> GetStructuredNodePositionsAsPoints()
         {
             List<List<Point>> nodePositions = new List<List<Point>>(Goals.Count);
@@ -244,7 +206,6 @@ namespace DynaShape
             return nodePositions;
         }
 
-
         public List<Triple> GetNodeVelocities()
         {
             List<Triple> nodeVelocities = new List<Triple>(Nodes.Count);
@@ -252,7 +213,6 @@ namespace DynaShape
                 nodeVelocities.Add(Nodes[i].Velocity);
             return nodeVelocities;
         }
-
 
         public List<Vector> GetNodeVelocitiesAsVectors()
         {
@@ -262,7 +222,6 @@ namespace DynaShape
             return nodeVelocities;
         }
 
-
         public List<List<object>> GetGeometries()
         {
             List<List<object>> geometries = new List<List<object>>(GeometryBinders.Count);
@@ -270,7 +229,6 @@ namespace DynaShape
                 geometries.Add(GeometryBinders[i].CreateGeometryObjects(Nodes));
             return geometries;
         }
-
 
         public List<List<object>> GetGoalOutputs()
         {
@@ -280,7 +238,6 @@ namespace DynaShape
             return goalOutputs;
         }
 
-
         public void Clear()
         {
             Nodes.Clear();
@@ -288,12 +245,10 @@ namespace DynaShape
             GeometryBinders.Clear();
         }
 
-
         public void Reset()
         {
             foreach (Node node in Nodes) node.Reset();
         }
-
 
         public void Iterate3()
         {
@@ -303,20 +258,15 @@ namespace DynaShape
             // Apply momentum
             //=================================================================================
 
-
-            foreach (Node node in Nodes)
-                node.Position += node.Velocity;
+            foreach (Node node in Nodes) node.Position += node.Velocity;
 
             for (int k = 0; k < 50; k++)
             {
-
-
                 //=================================================================================
-                // Process each goal indepently, in parallel
+                // Process each goal independently, in parallel
                 //=================================================================================
 
                 Parallel.ForEach(Goals, goal => goal.Compute(Nodes));
-
 
                 //=================================================================================
                 // Compute the total move vector that acts on each node
@@ -330,7 +280,7 @@ namespace DynaShape
                     Goal goal = Goals[j];
                     for (int i = 0; i < goal.NodeCount; i++)
                     {
-                        nodeMoveSums[goal.NodeIndices[i]] += goal.Moves[i] * goal.Weight;
+                        nodeMoveSums  [goal.NodeIndices[i]] += goal.Moves[i] * goal.Weight;
                         nodeWeightSums[goal.NodeIndices[i]] += goal.Weight;
                     }
                 }
@@ -345,7 +295,7 @@ namespace DynaShape
                     nodeWeightSums[HandleNodeIndex] += mouseInteractionWeight;
 
                     Triple v = Nodes[HandleNodeIndex].Position - DynaShapeViewExtension.MouseRayOrigin;
-                    Triple mouseRayPull = v.Dot(DynaShapeViewExtension.MouseRayDirection) *
+                    Triple mouseRayPull = DynaShapeViewExtension.MouseRayDirection.Dot(v) *
                                           DynaShapeViewExtension.MouseRayDirection - v;
                     nodeMoveSums[HandleNodeIndex] += mouseInteractionWeight * mouseRayPull;
                 }
@@ -362,7 +312,6 @@ namespace DynaShape
             }
         }
 
-
         public void Iterate2()
         {
             CurrentIteration++;
@@ -375,13 +324,11 @@ namespace DynaShape
                 foreach (Node node in Nodes)
                     node.Position += node.Velocity;
 
-
             //=================================================================================
             // Process each goal indepently, in parallel
             //=================================================================================
 
             Parallel.ForEach(Goals, goal => goal.Compute(Nodes));
-
 
             //=================================================================================
             // Compute the total move vector that acts on each node
@@ -413,7 +360,6 @@ namespace DynaShape
                 Triple mouseRayPull = v.Dot(DynaShapeViewExtension.MouseRayDirection) * DynaShapeViewExtension.MouseRayDirection - v;
                 nodeMoveSums[HandleNodeIndex] += mouseInteractionWeight * mouseRayPull;
             }
-
 
             //=============================================================================================
             // Move the nodes to their new positions
@@ -436,14 +382,12 @@ namespace DynaShape
                 }
         }
 
-
         public void Iterate2(double miliseconds)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
             while (stopwatch.Elapsed.TotalMilliseconds < miliseconds)
                 Iterate2();
         }
-
 
         public void Iterate()
         {
@@ -457,13 +401,11 @@ namespace DynaShape
                 foreach (Node node in Nodes)
                     node.Position += node.Velocity;
 
-
             //=================================================================================
             // Process each goal indepently, in parallel
             //=================================================================================
 
             Parallel.ForEach(Goals, goal => goal.Compute(Nodes));
-
 
             //=================================================================================
             // Compute the total move vector that acts on each node
@@ -488,14 +430,13 @@ namespace DynaShape
 
             if (HandleNodeIndex != -1)
             {
-                float mouseInteractionWeight = 30f;
-                nodeWeightSums[HandleNodeIndex] += mouseInteractionWeight;
+                float manipulationWeight = 30f;
+                nodeWeightSums[HandleNodeIndex] += manipulationWeight;
 
                 Triple v = Nodes[HandleNodeIndex].Position - DynaShapeViewExtension.MouseRayOrigin;
                 Triple mouseRayPull = v.Dot(DynaShapeViewExtension.MouseRayDirection) * DynaShapeViewExtension.MouseRayDirection - v;
-                nodeMoveSums[HandleNodeIndex] += mouseInteractionWeight * mouseRayPull;
+                nodeMoveSums[HandleNodeIndex] += manipulationWeight * mouseRayPull;
             }
-
 
             //=============================================================================================
             // Move the nodes to their new positions
@@ -504,27 +445,27 @@ namespace DynaShape
             if (EnableMomentum)
                 for (int i = 0; i < Nodes.Count; i++)
                 {
+                    if (nodeWeightSums[i] == 0f) continue;
                     Triple move = nodeMoveSums[i] / nodeWeightSums[i];
                     Nodes[i].Position += move;
                     Nodes[i].Velocity += move;
                     if (Nodes[i].Velocity.Dot(move) < 0.0)
-                        Nodes[i].Velocity *= 0.99f;
+                        Nodes[i].Velocity *= 0.95f;
                 }
             else
                 for (int i = 0; i < Nodes.Count; i++)
                 {
+                    if (nodeWeightSums[i] == 0f) continue;
                     Triple move = nodeMoveSums[i] / nodeWeightSums[i];
                     Nodes[i].Position += move;
                     Nodes[i].Velocity = Triple.Zero;
                 }
         }
 
-
         public void Iterate(int iterationCount)
         {
             for (int i = 0; i < iterationCount; i++) Iterate();
         }
-
 
         public void Iterate(double miliseconds)
         {
@@ -532,7 +473,6 @@ namespace DynaShape
             while (stopwatch.Elapsed.TotalMilliseconds < miliseconds)
                 Iterate();
         }
-
 
         public void Execute(int maxIterationCount, double keThreshold)
         {
@@ -542,7 +482,6 @@ namespace DynaShape
                 if (GetKineticEnergy() < keThreshold) break;
             }
         }
-
 
         public double GetKineticEnergy()
         {
@@ -554,12 +493,10 @@ namespace DynaShape
             return ke;
         }
 
-
         private void ViewportCameraChangedHandler(object sender, RoutedEventArgs args)
         {
             NearestNodeIndex = -1;
         }
-
 
         private void ViewportMouseDownHandler(object sender, MouseButtonEventArgs args)
         {
@@ -567,13 +504,11 @@ namespace DynaShape
                 HandleNodeIndex = FindNearestNodeIndex();
         }
 
-
         private void ViewportMouseUpHandler(object sender, MouseButtonEventArgs args)
         {
             HandleNodeIndex = -1;
             NearestNodeIndex = -1;
         }
-
 
         private void ViewportMouseMoveHandler(object sender, MouseEventArgs args)
         {
@@ -582,27 +517,23 @@ namespace DynaShape
             NearestNodeIndex = FindNearestNodeIndex();
         }
 
-
         internal int FindNearestNodeIndex(float range = 0.03f)
         {
             CameraData cameraData = DynaShapeViewExtension.CameraData;
 
-            Triple camZ = new Triple(
-                cameraData.LookDirection.X,
-                -cameraData.LookDirection.Z,
-                cameraData.LookDirection.Y).Normalise();
+            Triple camZ = new Triple( cameraData.LookDirection.X,
+                                     -cameraData.LookDirection.Z,
+                                      cameraData.LookDirection.Y).Normalise();
 
-            Triple camY = new Triple(
-                cameraData.UpDirection.X,
-                -cameraData.UpDirection.Z,
-                cameraData.UpDirection.Y).Normalise();
+            Triple camY = new Triple( cameraData.UpDirection.X,
+                                     -cameraData.UpDirection.Z,
+                                      cameraData.UpDirection.Y).Normalise();
 
             Triple camX = camY.Cross(camZ).Normalise();
 
-            Triple mousePosition2D = new Triple(
-                DynaShapeViewExtension.MouseRayDirection.Dot(camX),
-                DynaShapeViewExtension.MouseRayDirection.Dot(camY),
-                DynaShapeViewExtension.MouseRayDirection.Dot(camZ));
+            Triple mousePosition2D = new Triple(DynaShapeViewExtension.MouseRayDirection.Dot(camX),
+                                                DynaShapeViewExtension.MouseRayDirection.Dot(camY),
+                                                DynaShapeViewExtension.MouseRayDirection.Dot(camZ));
 
             mousePosition2D /= mousePosition2D.Z;
 
@@ -628,13 +559,11 @@ namespace DynaShape
             return nearestNodeIndex;
         }
 
-
         private void ViewportCanNavigateBackgroundPropertyChangedHandler(bool canNavigate)
         {
             HandleNodeIndex = -1;
             NearestNodeIndex = -1;
         }
-
 
         public void Dispose()
         {

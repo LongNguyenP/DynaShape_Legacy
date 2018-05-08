@@ -15,9 +15,6 @@ using DynaShape.GeometryBinders;
 using HelixToolkit.Wpf.SharpDX;
 using HelixToolkit.Wpf.SharpDX.Core;
 using SharpDX;
-using Application = System.Windows.Application;
-using Geometry3D = HelixToolkit.Wpf.SharpDX.Geometry3D;
-using MeshGeometry3D = HelixToolkit.Wpf.SharpDX.MeshGeometry3D;
 using Model3D = HelixToolkit.Wpf.SharpDX.Model3D;
 
 
@@ -76,47 +73,12 @@ namespace DynaShape
                         Thickness = 0.5,
                         Color = Color.White,
                     };
-
-                    List<string> info1 = new List<string>();
-                    foo(DynaShapeViewExtension.DynamoWindow.Content, info1, 0);
-
-                    List<string> info2 = new List<string>();
-                    ListContent(DynaShapeViewExtension.DynamoWindow.Content as Grid, 0, info2);
                 },
                 DispatcherPriority.Send);
 
             DynaShapeViewExtension.ViewModel.RequestViewRefresh += RequestViewRefreshHandler;
 
-            DynaShapeViewExtension.DynamoWindow.Closed += (sender, args) =>
-            {
-                Dispose();
-            };
-        }
-
-        private void foo(object o, List<string> info, int indent)
-        {
-            if (!(o is Grid))
-            {
-                string pad = "";
-                for (int i = 0; i < indent; i++) pad += "  ";
-                info.Add(pad + o.GetType());
-                return;
-            }
-
-            foreach (object element in (o as Grid).Children)
-                foo(element, info, indent + 1);
-        }
-
-        private void ListContent(Grid grid, int level, List<string> info)
-        {
-            foreach (var element in grid.Children)
-            {
-                string indent = "";
-                for (int i = 0; i < level; i++) indent += "   ";
-                info.Add(indent + element.GetType() + " == " + element);
-                if (element is Grid)
-                    ListContent(element as Grid, level + 1, info);
-            }
+            DynaShapeViewExtension.DynamoWindow.Closed += (sender, args) => Dispose();
         }
 
         public void DrawLine(Triple start, Triple end, Color4 color)
@@ -128,7 +90,6 @@ namespace DynaShape
             lineGeometry.Colors.Add(color);
             lineGeometry.Colors.Add(color);
         }
-
 
         public void DrawPolyline(List<Triple> vertices, Color4 color, bool loop)
         {
@@ -145,19 +106,19 @@ namespace DynaShape
             }
         }
 
-
         public void AddMeshModel(MeshGeometryModel3D meshModel)
         {
             meshModels.Add(meshModel);
         }
-
 
         internal void Render(bool async = false)
         {
             if (async)
             {
                 if (DispatcherOperation != null && DispatcherOperation.Status == DispatcherOperationStatus.Completed)
-                    DispatcherOperation = DynaShapeViewExtension.DynamoWindow.Dispatcher.InvokeAsync(RenderAction, DispatcherPriority.Render);
+                    DispatcherOperation =
+                        DynaShapeViewExtension.DynamoWindow.Dispatcher.InvokeAsync(
+                            RenderAction, DispatcherPriority.Render);
             }
             else
                 DynaShapeViewExtension.DynamoWindow.Dispatcher.Invoke(RenderAction, DispatcherPriority.Render);
@@ -192,22 +153,21 @@ namespace DynaShape
 
             meshModels = new List<MeshGeometryModel3D>();
 
-
             //============================================
             // Render nodes as points
             //============================================
 
             for (int i = 0; i < solver.Nodes.Count; i++)
             {
-                pointGeometry.Positions.Add(new Vector3(
-                    solver.Nodes[i].Position.X,
-                    solver.Nodes[i].Position.Z,
-                    -solver.Nodes[i].Position.Y));
+                pointGeometry.Positions.Add(
+                    new Vector3(
+                        solver.Nodes[i].Position.X,
+                        solver.Nodes[i].Position.Z,
+                        -solver.Nodes[i].Position.Y));
 
-                pointGeometry.Colors.Add(new Color4(0.8f, 0.2f, 0.2f, 1f));
+                pointGeometry.Colors.Add(DefaultPointColor);
                 pointGeometry.Indices.Add(i);
             }
-
 
             //==============================================================
             // Render geometries from geometry binders
@@ -216,13 +176,11 @@ namespace DynaShape
             foreach (GeometryBinder geometryBinder in solver.GeometryBinders)
                 geometryBinder.CreateDisplayedGeometries(this, solver.Nodes);
 
-
             //============================================================================
             // Render GUI elements
             //============================================================================
 
             RenderGUI();
-
 
             //==============================================================
             // Attach the geometries to Helix render host
@@ -240,7 +198,6 @@ namespace DynaShape
                 if (sceneItems.Contains(pointModel)) sceneItems.Remove(pointModel);
             }
 
-
             if (lineGeometry.Positions.Count >= 2)
             {
                 lineModel.Geometry = lineGeometry;
@@ -253,7 +210,6 @@ namespace DynaShape
                 if (sceneItems.Contains(lineModel)) sceneItems.Remove(lineModel);
             }
 
-
             foreach (MeshGeometryModel3D meshModel in meshModels)
                 if (meshModel.Geometry.Positions.Count >= 3)
                 {
@@ -261,7 +217,6 @@ namespace DynaShape
                     sceneItems.Add(meshModel);
                 }
         }
-
 
         private void RenderGUI()
         {
@@ -274,13 +229,14 @@ namespace DynaShape
                 CameraData camera = DynaShapeViewExtension.CameraData;
 
                 Triple camOrigin = new Triple(camera.EyePosition.X, -camera.EyePosition.Z, camera.EyePosition.Y);
-                Triple camZ = new Triple(camera.LookDirection.X, -camera.LookDirection.Z, camera.LookDirection.Y).Normalise();
+                Triple camZ = new Triple(camera.LookDirection.X, -camera.LookDirection.Z, camera.LookDirection.Y)
+                   .Normalise();
                 Triple camY = new Triple(camera.UpDirection.X, -camera.UpDirection.Z, camera.UpDirection.Y).Normalise();
                 Triple camX = camZ.Cross(camY);
 
                 int nodeIndex = solver.HandleNodeIndex != -1 ? solver.HandleNodeIndex : solver.NearestNodeIndex;
                 Triple v = solver.Nodes[nodeIndex].Position - camOrigin;
-                float screenDistance = (float)camera.NearPlaneDistance + 0.1f;
+                float screenDistance = (float) camera.NearPlaneDistance + 0.1f;
                 v = camOrigin + v * screenDistance / v.Dot(camZ);
 
                 float markerSize = 0.025f * screenDistance;
@@ -310,7 +266,6 @@ namespace DynaShape
                 lineGeometry.Positions.Add(v4.ToVector3());
                 lineGeometry.Positions.Add(v1.ToVector3());
 
-
                 int temp = lineGeometry.Indices.Count;
                 for (int i = 0; i < 12; i++)
                 {
@@ -319,7 +274,6 @@ namespace DynaShape
                 }
             }
         }
-
 
         public void Dispose()
         {
@@ -354,7 +308,8 @@ namespace DynaShape
             if (pointGeometry.Positions.Count >= 1 && !sceneItems.Contains(pointModel)) sceneItems.Add(pointModel);
             if (lineGeometry.Positions.Count >= 2 && !sceneItems.Contains(lineModel)) sceneItems.Add(lineModel);
             foreach (MeshGeometryModel3D meshModel in meshModels)
-                if (meshModel.Geometry.Positions.Count >= 3 && !sceneItems.Contains(meshModel)) sceneItems.Add(meshModel);
+                if (meshModel.Geometry.Positions.Count >= 3 && !sceneItems.Contains(meshModel))
+                    sceneItems.Add(meshModel);
         }
     }
 }

@@ -49,7 +49,6 @@ namespace DynaShape.ZeroTouch
            [DefaultArgument("true")] bool enableMomentum,
            [DefaultArgument("true")] bool enableFastDisplay,
            [DefaultArgument("false")] bool enableManipulation)
-           //int mode = 0)
         {
 
             Stopwatch stopwatch = new Stopwatch();
@@ -70,8 +69,6 @@ namespace DynaShape.ZeroTouch
                 solver.EnableMomentum = enableMomentum;
                 solver.EnableFastDisplay = enableFastDisplay;
                 solver.IterationCount = iterations;
-                solver.Mode = 0;
-
 
                 if (execute) solver.StartBackgroundExecution();
                 else
@@ -82,11 +79,14 @@ namespace DynaShape.ZeroTouch
             }
 
             return enableFastDisplay
-               ? null
+               ? new Dictionary<string, object> {
+                   { "nodePositions", null },
+                   { "goalOutputs", null },
+                   { "geometries", null } }
                : new Dictionary<string, object> {
                    { "nodePositions", solver.GetStructuredNodePositionsAsPoints() },
                    { "goalOutputs", solver.GetGoalOutputs() },
-                   { "geometries", solver.GetGeometries()} };
+                   { "geometries", solver.GetGeometries() } };
         }
 
 
@@ -121,6 +121,7 @@ namespace DynaShape.ZeroTouch
             solver.Clear();
             solver.AddGoals(goals);
             solver.AddGeometryBinders(geometryBinders);
+            solver.EnableMomentum = enableMomentum;
             solver.Execute(iterations, threshold);
 
             TimeSpan computationTime = stopwatch.Elapsed;
