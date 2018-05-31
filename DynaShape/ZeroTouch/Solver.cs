@@ -84,7 +84,7 @@ namespace DynaShape.ZeroTouch
                    { "goalOutputs", null },
                    { "geometries", null } }
                : new Dictionary<string, object> {
-                   { "nodePositions", solver.GetStructuredNodePositionsAsPoints() },
+                   { "nodePositions", solver.GetNodePositionsAsPoints() },
                    { "goalOutputs", solver.GetGoalOutputs() },
                    { "geometries", solver.GetGeometries() } };
         }
@@ -113,7 +113,12 @@ namespace DynaShape.ZeroTouch
            [DefaultArgument("true")] bool execute,
            [DefaultArgument("true")] bool enableMomentum)
         {
-            if (!execute) return null;
+            if (!execute)
+                return new Dictionary<string, object> {
+                    { "nodePositions", null },
+                    { "goalOutputs", null },
+                    { "geometries", null },
+                    { "stats", null}};
 
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -128,7 +133,7 @@ namespace DynaShape.ZeroTouch
             stopwatch.Restart();
 
             return new Dictionary<string, object> {
-                { "nodePositions", solver.GetStructuredNodePositionsAsPoints() },
+                { "nodePositions", solver.GetNodePositionsAsPoints() },
                 { "goalOutputs", solver.GetGoalOutputs() },
                 { "geometries", solver.GetGeometries() },
                 { "stats", String.Concat(
