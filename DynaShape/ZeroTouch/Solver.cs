@@ -20,8 +20,7 @@ namespace DynaShape.ZeroTouch
         /// Create a DynaShape solver, which will be input into the Solver.Execute node
         /// </summary>
         /// <returns></returns>
-        public static DynaShape.Solver Create()
-           => new DynaShape.Solver();
+        public static DynaShape.Solver Create() => new DynaShape.Solver();
 
 
         /// <summary>
@@ -105,7 +104,6 @@ namespace DynaShape.ZeroTouch
         [MultiReturn("nodePositions", "goalOutputs", "geometries", "stats")]
         [CanUpdatePeriodically(true)]
         public static Dictionary<string, object> ExecuteSilently(
-           DynaShape.Solver solver,
            List<Goal> goals,
            [DefaultArgument("null")] List<GeometryBinder> geometryBinders,
            [DefaultArgument("10000")] int iterations,
@@ -123,9 +121,9 @@ namespace DynaShape.ZeroTouch
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            solver.Clear();
+            DynaShape.Solver solver = new DynaShape.Solver();
             solver.AddGoals(goals);
-            solver.AddGeometryBinders(geometryBinders);
+            if (geometryBinders != null) solver.AddGeometryBinders(geometryBinders);
             solver.EnableMomentum = enableMomentum;
             solver.Execute(iterations, threshold);
 
