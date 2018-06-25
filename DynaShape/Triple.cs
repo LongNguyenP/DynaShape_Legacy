@@ -80,10 +80,12 @@ namespace DynaShape
         public static Triple operator -(Triple a) => new Triple(-a.X, -a.Y, -a.Z);
         public static Triple operator *(Triple a, Triple b) => new Triple(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
         public static Triple operator *(Triple a, float b) => new Triple(a.X * b, a.Y * b, a.Z * b);
+        public static Triple operator *(Triple a, double b) => new Triple(a.X * (float)b, a.Y * (float)b, a.Z * (float)b);
         public static Triple operator *(float b, Triple a) => new Triple(a.X * b, a.Y * b, a.Z * b);
+        public static Triple operator *(double b, Triple a) => new Triple(a.X * (float)b, a.Y * (float)b, a.Z * (float)b);
         public static Triple operator /(Triple a, Triple b) => new Triple(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
         public static Triple operator /(Triple a, float b) => new Triple(a.X / b, a.Y / b, a.Z / b);
-
+        public static Triple operator /(Triple a, double b) => new Triple(a.X / (float)b, a.Y / (float)b, a.Z / (float)b);
 
         public float Dot(Triple t) => X * t.X + Y * t.Y + Z * t.Z;
         public Triple Cross(Triple t) => new Triple(Y * t.Z - Z * t.Y, Z * t.X - X * t.Z, X * t.Y - Y * t.X);
