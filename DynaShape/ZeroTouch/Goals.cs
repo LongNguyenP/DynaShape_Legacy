@@ -1004,6 +1004,44 @@ namespace DynaShape.ZeroTouch
 
 
         //==================================================================
+        // OnSurface
+        //==================================================================
+
+        /// <summary>
+        /// Force a set of nodes to lie on the specified surface.
+        /// </summary>
+        /// <param name="startPositions"></param>
+        /// <param name="targetSurface"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static OnSurfaceGoal OnSurfaceGoal_Create(
+            List<Point> startPositions,
+            Surface targetSurface,
+            [DefaultArgument("1.0")] double weight)
+        {
+            return new OnSurfaceGoal(startPositions.ToTriples(), targetSurface, (float)weight);
+        }
+
+
+        /// <summary>
+        /// Adjust the goal's parameters while the solver is running.
+        /// </summary>
+        /// <param name="onSurfaceGoal"></param>
+        /// <param name="targetSurface"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static OnSurfaceGoal OnSurfaceGoal_Change(
+            OnSurfaceGoal onSurfaceGoal,
+            [DefaultArgument("null")] Surface targetSurface,
+            double weight)
+        {
+            if (targetSurface != null) onSurfaceGoal.TargetSurface = targetSurface;
+            if (weight >= 0.0) onSurfaceGoal.Weight = (float)weight;
+            return onSurfaceGoal;
+        }
+
+
+        //==================================================================
         // ParallelLines
         //==================================================================
 
