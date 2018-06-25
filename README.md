@@ -6,12 +6,12 @@
 Clone the source from GitHub and open in Visual Studio
 
 #### Step 2: Deal with reference files
-After open the source in Visual Studio, you may notice that some reference dll files are missing. Most of these can be found in the the Dynamo Core main folder on your computer (e.g. *C:\Program Files\Dynamo\Dynamo Core\1.x*), except *MeshToolkit.dll*. To get this file you need to first install the MeshToolkit package using the Dynamo Package Manager, you can then find the *MeshToolkit.dll* typically at *%AppData\Dynamo\Dynamo Core\1.x\packages\MeshToolkit\bin*
+After open the source in Visual Studio, you may notice that some reference dll files are missing. Most of these can be found in the Dynamo Core main folder on your computer (e.g. *C:\Program Files\Dynamo\Dynamo Core\1.x*), except *MeshToolkit.dll*. To get this file you need to first install the MeshToolkit package using the Dynamo Package Manager, you can then find the *MeshToolkit.dll* typically at *%AppData\Dynamo\Dynamo Core\1.x\packages\MeshToolkit\bin*
 
 #### Step 3: Build and package
 Build the solution and you will get *DynaShape.dll* (along with *DynaShape.xml*) in the build output folder.
 
-We can now assemble the DynaShape package folder according to the following structure:
+You can now assemble the DynaShape package folder according to the following structure:
 
 <pre>
 _DynaShape
@@ -35,7 +35,7 @@ Once the package has been installed, you can start playing with these [Dynamo sa
 
 
 ## Contact Info
-* Email: long.nguyen.p@outlook.com
+* Email: longnguyen.connect@gmail.com
 * Twitter: [@LongNguyenP](https://twitter.com/LongNguyenP?lang=en)
 * LinkedIn: https://www.linkedin.com/in/longnguyenp/
 
