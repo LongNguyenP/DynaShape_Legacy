@@ -311,11 +311,11 @@ namespace DynaShape.ZeroTouch
         //}
 
 
-        [MultiReturn("shapeMatchingGoals", "lengthGoals", "meshBinders", "lineBinders")]
+        [MultiReturn("shapeMatchingGoals", "mergeGoals", "meshBinders", "lineBinders")]
         public static Dictionary<string, object> AuxeticRotatingTriangles(int xCount = 5, int yCount = 5, double thickness = 0.0)
         {
             List<Goal> shapeMatchingGoals = new List<Goal>();
-            List<Goal> lengthGoals = new List<Goal>();
+            List<Goal> mergeGoals = new List<Goal>();
             List<GeometryBinder> meshBinders = new List<GeometryBinder>();
             List<GeometryBinder> lineBinders = new List<GeometryBinder>();
 
@@ -385,7 +385,7 @@ namespace DynaShape.ZeroTouch
                 lineBinders.Add(new LineBinder(v[1], v[2]));
                 lineBinders.Add(new LineBinder(v[2], v[0]));
 
-                lengthGoals.Add(new MergeGoal(v, 0.1f));
+                mergeGoals.Add(new MergeGoal(v, 0.1f));
             }
 
             for (int j = 0; j <= yCount; j++)
@@ -405,7 +405,7 @@ namespace DynaShape.ZeroTouch
                 lineBinders.Add(new LineBinder(v[1], v[2]));
                 lineBinders.Add(new LineBinder(v[2], v[0]));
 
-                lengthGoals.Add(new MergeGoal(v, 0.1f));
+                mergeGoals.Add(new MergeGoal(v, 0.1f));
             }
 
 
@@ -413,7 +413,7 @@ namespace DynaShape.ZeroTouch
             return new Dictionary<string, object>
             {
                 {"shapeMatchingGoals", shapeMatchingGoals},
-                {"lengthGoals", lengthGoals},
+                {"mergeGoals", mergeGoals},
                 {"meshBinders", meshBinders},
                 {"lineBinders", lineBinders},
             };

@@ -12,5 +12,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
 [assembly: Guid("157ad178-ee17-46e9-b6dc-c50eb9dcca60")]
+<<<<<<< Updated upstream
 [assembly: AssemblyVersion("0.5.0.189")]
+=======
+[assembly: AssemblyVersion("0.5.0.197")]
+>>>>>>> Stashed changes
 [assembly: NeutralResourcesLanguage("en")]
