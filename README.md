@@ -1,5 +1,11 @@
 ﻿<img src="https://forum.dynamobim.com/uploads/dynamobim/original/3X/7/4/74bf86e06c2827782a60f4fa54ce1dbd8136fc2a.png" width = "900">
 
+###
+
+##### If you want to use DynaShape in Dynamo directly, visit the [DynaShape Thread]() on Dynamo forum for how-to-install and other information.
+
+##### The information below is intended for those who are interested in working with DynaShape's source code.
+
 ## How to build, package and install
 
 #### Step 1: Clone source
