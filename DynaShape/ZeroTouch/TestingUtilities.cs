@@ -429,67 +429,67 @@ namespace DynaShape.ZeroTouch
         //    List<int> indices = new List<int>();
 
         //    for (int i = 0; i < xCount; i++)
-        //        for (int j = 0; j < yCount; j++)
-        //        {
+        //    for (int j = 0; j < yCount; j++)
+        //    {
+        //        goals.Add(
+        //            ProcessQuad(
+        //                new Triple(i, j * (2 - 2 * offset), 0),
+        //                new Triple(i, j * (2 - 2 * offset) + 1, 0),
+        //                new Triple(i, j * (2 - 2 * offset) + 1, thickness),
+        //                new Triple(i, j * (2 - 2 * offset), thickness),
+        //                vertices, indices));
+
+        //        goals.Add(
+        //            ProcessQuad(
+        //                new Triple(i, j * (2 - 2 * offset), 0),
+        //                new Triple(i + 0.5, j * (2 - 2 * offset) + offset, 0),
+        //                new Triple(i + 0.5, j * (2 - 2 * offset) + offset, thickness),
+        //                new Triple(i, j * (2 - 2 * offset), thickness),
+        //                vertices, indices));
+
+        //        goals.Add(
+        //            ProcessQuad(
+        //                new Triple(i + 0.5, j * (2 - 2 * offset) + offset, 0),
+        //                new Triple(i + 1.0, j * (2 - 2 * offset), 0),
+        //                new Triple(i + 1.0, j * (2 - 2 * offset), thickness),
+        //                new Triple(i + 0.5, j * (2 - 2 * offset) + offset, thickness),
+        //                vertices, indices));
+
+        //        goals.Add(
+        //            ProcessQuad(
+        //                new Triple(i, j * (2 - 2 * offset) + 1, 0),
+        //                new Triple(i + 0.5, j * (2 - 2 * offset) + 1 -  offset, 0),
+        //                new Triple(i + 0.5, j * (2 - 2 * offset) + 1 - offset, thickness),
+        //                new Triple(i, j * (2 - 2 * offset) + 1, thickness),
+        //                vertices, indices));
+
+        //        goals.Add(
+        //            ProcessQuad(
+        //                new Triple(i + 0.5, j * (2 - 2 * offset) + 1 - offset, 0),
+        //                new Triple(i + 1.0, j * (2 - 2 * offset) + 1, 0),
+        //                new Triple(i + 1.0, j * (2 - 2 * offset) + 1, thickness),
+        //                new Triple(i + 0.5, j * (2 - 2 * offset) + 1 - offset, thickness),
+        //                vertices, indices));
+
+        //        if (i == xCount - 1)
         //            goals.Add(
         //                ProcessQuad(
-        //                    new Triple(i, j * (2 - 2 * offset), 0),
-        //                    new Triple(i, j * (2 - 2 * offset) + 1, 0),
-        //                    new Triple(i, j * (2 - 2 * offset) + 1, thickness),
-        //                    new Triple(i, j * (2 - 2 * offset), thickness),
+        //                    new Triple(xCount, j * (2 - 2 * offset), 0),
+        //                    new Triple(xCount, j * (2 - 2 * offset) + 1, 0),
+        //                    new Triple(xCount, j * (2 - 2 * offset) + 1, thickness),
+        //                    new Triple(xCount, j * (2 - 2 * offset), thickness),
         //                    vertices, indices));
 
+        //        if (j < yCount - 1)
         //            goals.Add(
         //                ProcessQuad(
-        //                    new Triple(i, j * (2 - 2 * offset), 0),
-        //                    new Triple(i + 0.5, j * (2 - 2 * offset) + offset, 0),
-        //                    new Triple(i + 0.5, j * (2 - 2 * offset) + offset, thickness),
-        //                    new Triple(i, j * (2 - 2 * offset), thickness),
-        //                    vertices, indices));
-
-        //            goals.Add(
-        //                ProcessQuad(
-        //                    new Triple(i + 0.5, j * (2 - 2 * offset) + offset, 0),
-        //                    new Triple(i + 1.0, j * (2 - 2 * offset), 0),
-        //                    new Triple(i + 1.0, j * (2 - 2 * offset), thickness),
-        //                    new Triple(i + 0.5, j * (2 - 2 * offset) + offset, thickness),
-        //                    vertices, indices));
-
-        //            goals.Add(
-        //                ProcessQuad(
-        //                    new Triple(i, j * (2 - 2 * offset) + 1, 0),
         //                    new Triple(i + 0.5, j * (2 - 2 * offset) + 1 - offset, 0),
-        //                    new Triple(i + 0.5, j * (2 - 2 * offset) + 1 - offset, thickness),
-        //                    new Triple(i, j * (2 - 2 * offset) + 1, thickness),
-        //                    vertices, indices));
-
-        //            goals.Add(
-        //                ProcessQuad(
-        //                    new Triple(i + 0.5, j * (2 - 2 * offset) + 1 - offset, 0),
-        //                    new Triple(i + 1.0, j * (2 - 2 * offset) + 1, 0),
-        //                    new Triple(i + 1.0, j * (2 - 2 * offset) + 1, thickness),
+        //                    new Triple(i + 0.5, (j + 1) * (2 - 2 * offset) + offset, 0),
+        //                    new Triple(i + 0.5, (j + 1) * (2 - 2 * offset) + offset, thickness),
         //                    new Triple(i + 0.5, j * (2 - 2 * offset) + 1 - offset, thickness),
         //                    vertices, indices));
-
-        //            if (i == xCount - 1)
-        //                goals.Add(
-        //                    ProcessQuad(
-        //                        new Triple(xCount, j * (2 - 2 * offset), 0),
-        //                        new Triple(xCount, j * (2 - 2 * offset) + 1, 0),
-        //                        new Triple(xCount, j * (2 - 2 * offset) + 1, thickness),
-        //                        new Triple(xCount, j * (2 - 2 * offset), thickness),
-        //                        vertices, indices));
-
-        //            if (j < yCount - 1)
-        //                goals.Add(
-        //                    ProcessQuad(
-        //                        new Triple(i + 0.5, j * (2 - 2 * offset) + 1 - offset, 0),
-        //                        new Triple(i + 0.5, (j + 1) * (2 - 2 * offset) + offset, 0),
-        //                        new Triple(i + 0.5, (j + 1) * (2 - 2 * offset) + offset, thickness),
-        //                        new Triple(i + 0.5, j * (2 - 2 * offset) + 1 - offset, thickness),
-        //                        vertices, indices));
         //        }
-
+                 
         //    geometryBinders.Add(new MeshBinder(Mesh.ByVerticesAndIndices(vertices, indices), new Color(.3f, .6f, .8f, 1f)));
 
         //    return new Dictionary<string, object>
