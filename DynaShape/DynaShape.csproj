@@ -162,6 +162,6 @@ Copy "$(TargetDir)\DynaShape.xml" "%25AppData%25\Dynamo\Dynamo Revit\2.0\package
 echo Copying files to DynaShapeInstaller project
 Copy "$(TargetDir)\DynaShape.dll" "$(SolutionDir)\..\DynaShapeInstaller_VS\DynaShapeSetup\Resources"
 Copy "$(TargetDir)\DynaShape.xml" "$(SolutionDir)\..\DynaShapeInstaller_VS\DynaShapeSetup\Resources"
-Copy "$(SolutionDir)\ManifestFiles\pkg.json" "$(SolutionDir)\..\DynaShapeInstaller_VS\DynaShapeSetup\Resources"</PostBuildEvent>
+Copy "$(SolutionDir)\ManifestFiles\pkg.txt" "$(SolutionDir)\..\DynaShapeInstaller_VS\DynaShapeSetup\Resources"</PostBuildEvent>
   </PropertyGroup>
 </Project>
