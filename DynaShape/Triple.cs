@@ -115,7 +115,7 @@ namespace DynaShape
 
         public Triple TryGeneratePerpendicular()
         {
-            if (X == 0f && Y == 0f && Z == 0f) throw new Exception("Cannot genernate perpendicular vector for a zero vector");
+            if (X == 0f && Y == 0f && Z == 0f) throw new Exception("Cannot generate a perpendicular vector for a zero vector");
             return
                 Math.Abs(X) < Math.Abs(Y)
                     ? Math.Abs(X) < Math.Abs(Z)
