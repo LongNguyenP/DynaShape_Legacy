@@ -18,26 +18,26 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\bin\</OutputPath>
+    <OutputPath>..\bin\_DynaShape\bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>..\bin\DynaShape.xml</DocumentationFile>
+    <DocumentationFile>..\bin\_DynaShape\bin\\DynaShape.xml</DocumentationFile>
     <WarningsAsErrors>
     </WarningsAsErrors>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>..\bin\</OutputPath>
+    <OutputPath>..\bin\_DynaShape\bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>..\bin\DynaShape.xml</DocumentationFile>
+    <DocumentationFile>..\bin\_DynaShape\bin\DynaShape.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UnitTest|x64'">
@@ -147,17 +147,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>echo Copying files to Dynamo Core packages directory
-Copy "$(TargetDir)\DynaShape.dll" "%25AppData%25\Dynamo\Dynamo Core\2.0\packages\_DynaShape\bin"
-Copy "$(TargetDir)\DynaShape.xml" "%25AppData%25\Dynamo\Dynamo Core\2.0\packages\_DynaShape\bin"
-
-echo Copying files to Dynamo Revit packages directory
-Copy "$(TargetDir)\DynaShape.dll" "%25AppData%25\Dynamo\Dynamo Revit\2.0\packages\_DynaShape\bin"
-Copy "$(TargetDir)\DynaShape.xml" "%25AppData%25\Dynamo\Dynamo Revit\2.0\packages\_DynaShape\bin"
-
-echo Copying files to DynaShapeInstaller project
-Copy "$(TargetDir)\DynaShape.dll" "$(SolutionDir)\..\DynaShapeInstaller_VS\DynaShapeSetup\Resources"
-Copy "$(TargetDir)\DynaShape.xml" "$(SolutionDir)\..\DynaShapeInstaller_VS\DynaShapeSetup\Resources"
-Copy "$(SolutionDir)\ManifestFiles\pkg.txt" "$(SolutionDir)\..\DynaShapeInstaller_VS\DynaShapeSetup\Resources"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>
