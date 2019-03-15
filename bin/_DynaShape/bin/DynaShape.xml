@@ -4,7 +4,7 @@
         <name>DynaShape</name>
     </assembly>
     <members>
-        <member name="M:DynaShape.ZeroTouch.Goals.Goal_ChangeWeight(DynaShape.Goals.Goal,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.Goal_ChangeWeight(DynaShape.Goals.Goal,System.Single)">
             <summary>
             Change the weight value of a goal (of any kind)
             </summary>
@@ -12,7 +12,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.AnchorGoal_Create(Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Point,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.AnchorGoal_Create(Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Point,System.Single)">
             <summary>
             Keep a node an the specified anchor point.
             By default the weight for this goal set very high to ensure the node really "sticks" to the anchor
@@ -22,7 +22,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.AnchorGoal_Change(DynaShape.Goals.AnchorGoal,Autodesk.DesignScript.Geometry.Point,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.AnchorGoal_Change(DynaShape.Goals.AnchorGoal,Autodesk.DesignScript.Geometry.Point,System.Single)">
             <summary>
             Adjust the goal's parameters while the solver is running.
             </summary>
@@ -31,7 +31,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.AngleGoal_Create(Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Point,System.Double,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.AngleGoal_Create(Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Point,System.Single,System.Single)">
             <summary>
             Keep the angle formed by three nodes at a target value
             </summary>
@@ -42,7 +42,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.AngleGoal_Create(Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Point,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.AngleGoal_Create(Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Point,System.Single)">
             <summary>
             Maintain the angle formed by three nodes
             </summary>
@@ -52,7 +52,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.AngleGoal_Change(DynaShape.Goals.AngleGoal,System.Single,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.AngleGoal_Change(DynaShape.Goals.AngleGoal,System.Single,System.Single)">
             <summary>
             Adjust the goal's parameters while the solver is running.
             </summary>
@@ -61,7 +61,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.CoCircularGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.CoCircularGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Single)">
             <summary>
             Force a set of nodes to lie on a common circular arc
             </summary>
@@ -69,7 +69,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.CoCircularGoal_Change(DynaShape.Goals.CoCircularGoal,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.CoCircularGoal_Change(DynaShape.Goals.CoCircularGoal,System.Single)">
             <summary>
             Adjust the goal's parameters while the solver is running.
             </summary>
@@ -77,7 +77,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.CoLinearGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.CoLinearGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Single)">
             <summary>
             Force a set of nodes to lie on a common line.
             The line position and orientation are computed based on the current node positions.
@@ -87,7 +87,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.CoLinearGoal_Change(DynaShape.Goals.CoLinearGoal,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.CoLinearGoal_Change(DynaShape.Goals.CoLinearGoal,System.Single)">
             <summary>
             Adjust the goal's parameters while the solver is running.
             </summary>
@@ -95,7 +95,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.ConstantGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},Autodesk.DesignScript.Geometry.Vector,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.ConstantGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},Autodesk.DesignScript.Geometry.Vector,System.Single)">
             <summary>
             Apply a constant directional offset to the specified nodes. 
             For example, this is useful to simulate gravity
@@ -105,7 +105,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.ConstantGoal_Change(DynaShape.Goals.ConstantGoal,Autodesk.DesignScript.Geometry.Vector,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.ConstantGoal_Change(DynaShape.Goals.ConstantGoal,Autodesk.DesignScript.Geometry.Vector,System.Single)">
             <summary>
             Adjust the goal's parameters while the solver is running.
             </summary>
@@ -114,7 +114,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.ConstantPressureGoal_Create(Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Point,System.Double,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.ConstantPressureGoal_Create(Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Point,System.Single,System.Single)">
             <summary>
             Applying a force perpendicular to a triangular surface, with magnitude proportional to the surface area.
             </summary>
@@ -125,7 +125,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.ConstantPressureGoal_Create(Autodesk.Dynamo.MeshToolkit.Mesh,System.Double,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.ConstantPressureGoal_Create(Autodesk.Dynamo.MeshToolkit.Mesh,System.Single,System.Single)">
             <summary>
             Applying forces perpendicular to each triangular face of a mesh, with magnitude proportional to the surface area of the triangle
             </summary>
@@ -134,7 +134,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.ConstantPressureGoal_Change(DynaShape.Goals.ConstantPressureGoal,System.Double,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.ConstantPressureGoal_Change(DynaShape.Goals.ConstantPressureGoal,System.Single,System.Single)">
             <summary>
             Adjust the goal's parameters while the solver is running.
             </summary>
@@ -143,7 +143,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.ConstantVolumePressureGoal_Create(Autodesk.Dynamo.MeshToolkit.Mesh,System.Double,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.ConstantVolumePressureGoal_Create(Autodesk.Dynamo.MeshToolkit.Mesh,System.Single,System.Single)">
             <summary>
             Simulate pressure trapped inside a closed volume. The pressure decreases as the volume expands (Boyle's law)
             </summary>
@@ -152,7 +152,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.ConstantVolumePressureGoal_Change(DynaShape.Goals.ConstantVolumePressureGoal,System.Double,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.ConstantVolumePressureGoal_Change(DynaShape.Goals.ConstantVolumePressureGoal,System.Single,System.Single)">
             <summary>
             Adjust the goal's parameters while the solver is running.
             </summary>
@@ -161,7 +161,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.CoPlanarGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.CoPlanarGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Single)">
             <summary>
             Force a set of nodes to lie on a common plane.
             The plane position and orientation are computed based on the current node positions.
@@ -171,7 +171,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.CoPlanarGoal_Change(DynaShape.Goals.CoPlanarGoal,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.CoPlanarGoal_Change(DynaShape.Goals.CoPlanarGoal,System.Single)">
             <summary>
             Adjust the goal's parameters while the solver is running.
             </summary>
@@ -179,7 +179,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.CoSphericalGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.CoSphericalGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Single)">
             <summary>
             Force a set of nodes to lie on a common spherical surface.
             The sphere position and radius are computed based the current node positions
@@ -188,7 +188,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.CoSphericalGoal_Change(DynaShape.Goals.CoSphericalGoal,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.CoSphericalGoal_Change(DynaShape.Goals.CoSphericalGoal,System.Single)">
             <summary>
             Adjust the goal's parameters while the solver is running.
             </summary>
@@ -196,7 +196,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.DirectionalWindGoal_Create(Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Vector,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.DirectionalWindGoal_Create(Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Vector,System.Single)">
             <summary>
             Simulate wind by applying a constant force on the three vertices of a triangle,
             scaled by the cosine of the angle between the wind vector and the triangle's normal.
@@ -210,7 +210,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.DirectionalWindGoal_Create(Autodesk.Dynamo.MeshToolkit.Mesh,Autodesk.DesignScript.Geometry.Vector,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.DirectionalWindGoal_Create(Autodesk.Dynamo.MeshToolkit.Mesh,Autodesk.DesignScript.Geometry.Vector,System.Single)">
             <summary>
             Simulate wind blowing along a specified direction, by applying a force on the three vertices of a triangle,
             The force magnitude is addtionally scaled by the cosine of the angle between the wind vector and the triangle's normal.
@@ -222,7 +222,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.DirectionalWindGoal_Change(DynaShape.Goals.DirectionalWindGoal,Autodesk.DesignScript.Geometry.Vector,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.DirectionalWindGoal_Change(DynaShape.Goals.DirectionalWindGoal,Autodesk.DesignScript.Geometry.Vector,System.Single)">
             <summary>
             Adjust the goal's parameters while the solver is running.
             </summary>
@@ -231,7 +231,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.DirectionGoal_Create(Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Vector,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.DirectionGoal_Create(Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Vector,System.Single)">
             <summary>
             Force the line connecting two nodes to be parallel to the specified direction.
             </summary>
@@ -241,7 +241,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.DirectionGoal_Change(DynaShape.Goals.DirectionGoal,Autodesk.DesignScript.Geometry.Vector,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.DirectionGoal_Change(DynaShape.Goals.DirectionGoal,Autodesk.DesignScript.Geometry.Vector,System.Single)">
             <summary>
             Adjust the goal's parameters while the solver is running.
             </summary>
@@ -250,7 +250,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.EqualLengthsGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.EqualLengthsGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Single)">
             <summary>
             Force a sequence of nodes to maintain equal distances.
             </summary>
@@ -258,7 +258,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.EqualLengthsGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.EqualLengthsGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Single)">
             <summary>
             Force a set of line segments to maintain equal lengths.
             </summary>
@@ -267,7 +267,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.EqualLengthsGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Line},System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.EqualLengthsGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Line},System.Single)">
             <summary>
             Force a set of line segments to maintain equal lengths.
             </summary>
@@ -275,7 +275,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.EqualLengthsGoal_Change(DynaShape.Goals.EqualLengthsGoal,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.EqualLengthsGoal_Change(DynaShape.Goals.EqualLengthsGoal,System.Single)">
             <summary>
             Adjust the goal's parameters while the solver is running.
             </summary>
@@ -283,7 +283,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.FloorGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Double,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.FloorGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Single,System.Single)">
             <summary>
             Force a set of nodes to stay above a horizontal floor plane.
             </summary>
@@ -292,7 +292,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.FloorGoal_Change(DynaShape.Goals.FloorGoal,System.Double,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.FloorGoal_Change(DynaShape.Goals.FloorGoal,System.Single,System.Single)">
             <summary>
             Adjust the goal's parameters while the solver is running.
             </summary>
@@ -301,7 +301,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.LengthGoal_Create(Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Point,System.Double,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.LengthGoal_Create(Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Point,System.Single,System.Single)">
             <summary>
             Force a pair of nodes to maintain the specified distance/length
             </summary>
@@ -311,7 +311,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.LengthGoal_Create(Autodesk.DesignScript.Geometry.Line,System.Double,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.LengthGoal_Create(Autodesk.DesignScript.Geometry.Line,System.Single,System.Single)">
             <summary>
             Maintain the specified distance between two nodes located at the start and end of the given line
             </summary>
@@ -320,7 +320,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.LengthGoal_Change(DynaShape.Goals.LengthGoal,System.Double,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.LengthGoal_Change(DynaShape.Goals.LengthGoal,System.Single,System.Single)">
             <summary>
             Adjust the goal's parameters while the solver is running.
             </summary>
@@ -329,7 +329,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.MergeGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.MergeGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Single)">
             <summary>
             Pull a set of nodes to their center of mass. 
             This is useful to force the nodes to have coincident positions.
@@ -339,7 +339,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.MergeGoal_Change(DynaShape.Goals.MergeGoal,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.MergeGoal_Change(DynaShape.Goals.MergeGoal,System.Single)">
             <summary>
             Adjust the goal's parameters while the solver is running.
             </summary>
@@ -347,7 +347,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.OnCurveGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},Autodesk.DesignScript.Geometry.Curve,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.OnCurveGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},Autodesk.DesignScript.Geometry.Curve,System.Single)">
             <summary>
             Force a set of nodes to lie on the specified curve.
             </summary>
@@ -356,7 +356,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.OnCurveGoal_Change(DynaShape.Goals.OnCurveGoal,Autodesk.DesignScript.Geometry.Curve,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.OnCurveGoal_Change(DynaShape.Goals.OnCurveGoal,Autodesk.DesignScript.Geometry.Curve,System.Single)">
             <summary>
             Adjust the goal's parameters while the solver is running.
             </summary>
@@ -365,7 +365,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.OnLineGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Vector,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.OnLineGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Vector,System.Single)">
             <summary>
             Force a set of nodes to lie on the specified line.
             This is different from othe CoLinear goal, where the target line is computed based on the current node positions rather than being defined and fixed in advance.
@@ -376,7 +376,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.OnLineGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},Autodesk.DesignScript.Geometry.Line,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.OnLineGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},Autodesk.DesignScript.Geometry.Line,System.Single)">
             <summary>
             Force a set of nodes to lie on the specified line.
             This is different from othe CoLinear goal, where the target line is computed based on the current node positions rather than being defined and fixed in advance.
@@ -386,7 +386,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.OnLineGoal_Change(DynaShape.Goals.OnLineGoal,Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Vector,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.OnLineGoal_Change(DynaShape.Goals.OnLineGoal,Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Vector,System.Single)">
             <summary>
             Adjust the goal's parameters while the solver is running.
             </summary>
@@ -396,7 +396,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.OnLineGoal_Change(DynaShape.Goals.OnLineGoal,Autodesk.DesignScript.Geometry.Line,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.OnLineGoal_Change(DynaShape.Goals.OnLineGoal,Autodesk.DesignScript.Geometry.Line,System.Single)">
             <summary>
             Adjust the goal's parameters while the solver is running.
             </summary>
@@ -405,7 +405,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.OnPlaneGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Vector,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.OnPlaneGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Vector,System.Single)">
             <summary>
             Force a set of nodes to lie on the specified plane.
             This is different from othe CoPlanar goal, where the target plane is computed based on the current node positions rather than being defined and fixed in advance.
@@ -416,7 +416,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.OnPlaneGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},Autodesk.DesignScript.Geometry.Plane,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.OnPlaneGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},Autodesk.DesignScript.Geometry.Plane,System.Single)">
             <summary>
             Force a set of nodes to lie on the specified plane.
             This is different from othe CoPlanar goal, where the target plane is computed based on the current node positions rather than being defined and fixed in advance.
@@ -426,7 +426,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.OnPlaneGoal_Change(DynaShape.Goals.OnPlaneGoal,Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Vector,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.OnPlaneGoal_Change(DynaShape.Goals.OnPlaneGoal,Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Vector,System.Single)">
             <summary>
             Adjust the goal's parameters while the solver is running.
             </summary>
@@ -436,7 +436,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.OnPlaneGoal_Change(DynaShape.Goals.OnPlaneGoal,Autodesk.DesignScript.Geometry.Plane,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.OnPlaneGoal_Change(DynaShape.Goals.OnPlaneGoal,Autodesk.DesignScript.Geometry.Plane,System.Single)">
             <summary>
             Adjust the goal's parameters while the solver is running.
             </summary>
@@ -445,7 +445,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.OnSurfaceGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},Autodesk.DesignScript.Geometry.Surface,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.OnSurfaceGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},Autodesk.DesignScript.Geometry.Surface,System.Single)">
             <summary>
             Force a set of nodes to lie on the specified surface.
             </summary>
@@ -454,7 +454,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.OnSurfaceGoal_Change(DynaShape.Goals.OnSurfaceGoal,Autodesk.DesignScript.Geometry.Surface,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.OnSurfaceGoal_Change(DynaShape.Goals.OnSurfaceGoal,Autodesk.DesignScript.Geometry.Surface,System.Single)">
             <summary>
             Adjust the goal's parameters while the solver is running.
             </summary>
@@ -463,7 +463,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.ParallelLinesGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.ParallelLinesGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Single)">
             <summary>
             Force a set of lines to be parallel.
             </summary>
@@ -471,7 +471,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.ParallelLinesGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Line},System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.ParallelLinesGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Line},System.Single)">
             <summary>
             Force a set of lines to be parallel.
             </summary>
@@ -479,7 +479,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.ParallelLinesGoal_Change(DynaShape.Goals.ParallelLinesGoal,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.ParallelLinesGoal_Change(DynaShape.Goals.ParallelLinesGoal,System.Single)">
             <summary>
             Adjust the goal's parameters while the solver is running.
             </summary>
@@ -487,7 +487,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.ShapeMatchingGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Boolean,System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.ShapeMatchingGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Boolean,System.Single)">
             <summary>
             Move a set of nodes to positions that resemble a target shape.
             The target shape is defined by a sequence of points, in the same order as how the nodes are specified.
@@ -498,7 +498,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.ShapeMatchingGoal_Change(DynaShape.Goals.ShapeMatchingGoal,System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Nullable{System.Boolean},System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.ShapeMatchingGoal_Change(DynaShape.Goals.ShapeMatchingGoal,System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Nullable{System.Boolean},System.Single)">
             <summary>
             Adjust the goal's parameters while the solver is running.
             </summary>
@@ -519,7 +519,7 @@
             <param name="weight"></param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Goals.SphereCollisionGoal_Change(DynaShape.Goals.SphereCollisionGoal,System.Collections.Generic.List{System.Single},System.Double)">
+        <member name="M:DynaShape.ZeroTouch.Goals.SphereCollisionGoal_Change(DynaShape.Goals.SphereCollisionGoal,System.Collections.Generic.List{System.Single},System.Single)">
             <summary>
             Adjust the goal's parameters while the solver is running.
             </summary>
