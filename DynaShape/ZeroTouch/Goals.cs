@@ -1142,6 +1142,44 @@ namespace DynaShape.ZeroTouch
         }
 
 
-        
+        //==================================================================
+        // SphereCollision
+        //==================================================================
+
+        /// <summary>
+        /// Move a set of nodes to positions that resemble a target shape.
+        /// The target shape is defined by a sequence of points, in the same order as how the nodes are specified.
+        /// </summary>
+        /// <param name="startPositions"></param>
+        /// <param name="targetShapePoints"></param>
+        /// <param name="allowScaling"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static SphereCollisionGoal SphereCollisionGoal_Create(
+            List<Point> startPositions,
+            List<float> radii,
+            [DefaultArgument("1.0")] float weight)
+        {
+            return new SphereCollisionGoal(startPositions.ToTriples(), radii, weight);
+        }
+
+
+        /// <summary>
+        /// Adjust the goal's parameters while the solver is running.
+        /// </summary>
+        /// <param name="shapeMatchingGoal"></param>
+        /// <param name="targetShapePoints"></param>
+        /// <param name="allowScaling"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static SphereCollisionGoal SphereCollisionGoal_Change(
+            SphereCollisionGoal sphereCollisionGoal,
+            [DefaultArgument("null")] List<float> radii,
+            [DefaultArgument("-1.0")] double weight)
+        {
+            if (radii != null) sphereCollisionGoal.Radii = radii.ToArray();
+            if (weight >= 0.0) sphereCollisionGoal.Weight = (float)weight;
+            return sphereCollisionGoal;
+        }
     }
 }

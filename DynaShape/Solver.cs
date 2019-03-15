@@ -312,7 +312,7 @@ namespace DynaShape
                     Triple move = nodeMoveSums[i] / nodeWeightSums[i];
                     Nodes[i].Position += move;
                     Nodes[i].Velocity += move;
-                    if (Nodes[i].Velocity.Dot(move) < 0.0)
+                    if (Nodes[i].Velocity.Dot(move) <= 0.0)
                         Nodes[i].Velocity *= 0.95f;
                 }
             else
