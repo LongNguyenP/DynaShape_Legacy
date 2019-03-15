@@ -20,9 +20,9 @@ namespace DynaShape.ZeroTouch
         /// <param name="goal"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
-        public static Goal Goal_ChangeWeight(Goal goal, float weight)
+        public static Goal Goal_ChangeWeight(Goal goal, double weight)
         {
-            goal.Weight = weight;
+            goal.Weight = (float)weight;
             return goal;
         }
 
@@ -42,12 +42,12 @@ namespace DynaShape.ZeroTouch
         public static AnchorGoal AnchorGoal_Create(
             Point startPosition,
             [DefaultArgument("null")] Point anchor,
-            [DefaultArgument("1000.0")] float weight)
+            [DefaultArgument("1000.0")] double weight)
         {
             return new AnchorGoal(
                 startPosition.ToTriple(),
                 anchor?.ToTriple() ?? startPosition.ToTriple(),
-                weight);
+                (float)weight);
         }
 
 
@@ -61,10 +61,10 @@ namespace DynaShape.ZeroTouch
         public static AnchorGoal AnchorGoal_Change(
             AnchorGoal anchorGoal,
             [DefaultArgument("null")] Point anchor,
-            [DefaultArgument("-1.0")] float weight)
+            [DefaultArgument("-1.0")] double weight)
         {
             if (anchor != null) anchorGoal.Anchor = anchor.ToTriple();
-            if (weight >= 0.0) anchorGoal.Weight = weight;
+            if (weight >= 0.0) anchorGoal.Weight = (float)weight;
             return anchorGoal;
         }
 
@@ -86,15 +86,15 @@ namespace DynaShape.ZeroTouch
             Point A,
             Point B,
             Point C,
-            [DefaultArgument("0.0")] float targetAngle,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("0.0")] double targetAngle,
+            [DefaultArgument("1.0")] double weight)
         {
             return new AngleGoal(
                 A.ToTriple(),
                 B.ToTriple(),
                 C.ToTriple(),
-                targetAngle.ToRadian(),
-                weight);
+                ((float)targetAngle).ToRadian(),
+                (float)weight);
         }
 
 
@@ -110,13 +110,13 @@ namespace DynaShape.ZeroTouch
             Point A,
             Point B,
             Point C,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("1.0")] double weight)
         {
             return new AngleGoal(
                 A.ToTriple(),
                 B.ToTriple(),
                 C.ToTriple(),
-                weight);
+                (float)weight);
         }
 
 
@@ -130,10 +130,10 @@ namespace DynaShape.ZeroTouch
         public static AngleGoal AngleGoal_Change(
             AngleGoal angleGoal,
             float targetAngle,
-            [DefaultArgument("-1.0")] float weight)
+            [DefaultArgument("-1.0")] double weight)
         {
             angleGoal.TargetAngle = targetAngle.ToRadian();
-            if (weight >= 0.0) angleGoal.Weight = weight;
+            if (weight >= 0.0) angleGoal.Weight = (float)weight;
             return angleGoal;
         }
 
@@ -150,9 +150,9 @@ namespace DynaShape.ZeroTouch
         /// <returns></returns>
         public static CoCircularGoal CoCircularGoal_Create(
             List<Point> startPositions,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("1.0")] double weight)
         {
-            return new CoCircularGoal(startPositions.ToTriples(), weight);
+            return new CoCircularGoal(startPositions.ToTriples(), (float)weight);
         }
 
 
@@ -164,9 +164,9 @@ namespace DynaShape.ZeroTouch
         /// <returns></returns>
         public static CoCircularGoal CoCircularGoal_Change(
             CoCircularGoal cyclicPolygonGoal,
-            [DefaultArgument("-1.0")] float weight)
+            [DefaultArgument("-1.0")] double weight)
         {
-            if (weight >= 0.0) cyclicPolygonGoal.Weight = weight;
+            if (weight >= 0.0) cyclicPolygonGoal.Weight = (float)weight;
             return cyclicPolygonGoal;
         }
 
@@ -185,9 +185,9 @@ namespace DynaShape.ZeroTouch
         /// <returns></returns>
         public static CoLinearGoal CoLinearGoal_Create(
             List<Point> startPositions,
-            [DefaultArgument("1000.0")] float weight)
+            [DefaultArgument("1000.0")] double weight)
         {
-            return new CoLinearGoal(startPositions.ToTriples(), weight);
+            return new CoLinearGoal(startPositions.ToTriples(), (float)weight);
         }
 
 
@@ -199,9 +199,9 @@ namespace DynaShape.ZeroTouch
         /// <returns></returns>
         public static CoLinearGoal CoLinearGoal_Change(
             CoLinearGoal coLinearGoal,
-            [DefaultArgument("-1.0")] float weight)
+            [DefaultArgument("-1.0")] double weight)
         {
-            if (weight >= 0.0) coLinearGoal.Weight = weight;
+            if (weight >= 0.0) coLinearGoal.Weight = (float)weight;
             return coLinearGoal;
         }
 
@@ -221,9 +221,9 @@ namespace DynaShape.ZeroTouch
         public static ConstantGoal ConstantGoal_Create(
             List<Point> startPositions,
             [DefaultArgument("Vector.ByCoordinates(0, 0, -0.1)")] Vector constant,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("1.0")] double weight)
         {
-            return new ConstantGoal(startPositions.ToTriples(), constant.ToTriple(), weight);
+            return new ConstantGoal(startPositions.ToTriples(), constant.ToTriple(), (float)weight);
         }
 
         /// <summary>
@@ -236,10 +236,10 @@ namespace DynaShape.ZeroTouch
         public static ConstantGoal ConstantGoal_Change(
             ConstantGoal constantGoal,
             [DefaultArgument("null")] Vector constant,
-            [DefaultArgument("-1.0")] float weight)
+            [DefaultArgument("-1.0")] double weight)
         {
             if (constant != null) constantGoal.Move = constant.ToTriple();
-            if (weight >= 0.0) constantGoal.Weight = weight;
+            if (weight >= 0.0) constantGoal.Weight = (float)weight;
             return constantGoal;
         }
 
@@ -262,10 +262,10 @@ namespace DynaShape.ZeroTouch
             Point startPosition1,
             Point startPosition2,
             Point startPosition3,
-            [DefaultArgument("0.1")] float pressure,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("0.1")]double pressure,
+            [DefaultArgument("1.0")] double weight)
         {
-            return new ConstantPressureGoal(startPosition1.ToTriple(), startPosition2.ToTriple(), startPosition3.ToTriple(), pressure, weight);
+            return new ConstantPressureGoal(startPosition1.ToTriple(), startPosition2.ToTriple(), startPosition3.ToTriple(), (float)pressure, (float)weight);
         }
 
 
@@ -278,8 +278,8 @@ namespace DynaShape.ZeroTouch
         /// <returns></returns>
         public static List<ConstantPressureGoal> ConstantPressureGoal_Create(
             Mesh mesh,
-            [DefaultArgument("0.1")] float pressure,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("0.1")]double pressure,
+            [DefaultArgument("1.0")] double weight)
         {
             List<ConstantPressureGoal> pressureGoals = new List<ConstantPressureGoal>();
 
@@ -295,8 +295,8 @@ namespace DynaShape.ZeroTouch
                         new Triple(vertices[j + 0], vertices[j + 1], vertices[j + 2]),
                         new Triple(vertices[j + 3], vertices[j + 4], vertices[j + 5]),
                         new Triple(vertices[j + 6], vertices[j + 7], vertices[j + 8]),
-                        pressure,
-                        weight));
+                        (float)pressure,
+                        (float)weight));
             }
 
             return pressureGoals;
@@ -312,11 +312,11 @@ namespace DynaShape.ZeroTouch
         /// <returns></returns>
         public static ConstantPressureGoal ConstantPressureGoal_Change(
             ConstantPressureGoal constantPressureGoal,
-            [DefaultArgument("-1.0")] float pressure,
-            [DefaultArgument("-1.0")] float weight)
+            [DefaultArgument("-1.0")] double pressure,
+            [DefaultArgument("-1.0")] double weight)
         {
-            if (pressure >= 0.0) constantPressureGoal.Pressure = pressure;
-            if (weight >= 0.0) constantPressureGoal.Weight = weight;
+            if (pressure >= 0.0) constantPressureGoal.Pressure = (float)pressure;
+            if (weight >= 0.0) constantPressureGoal.Weight = (float)weight;
             return constantPressureGoal;
         }
 
@@ -334,10 +334,10 @@ namespace DynaShape.ZeroTouch
         /// <returns></returns>
         public static ConstantVolumePressureGoal ConstantVolumePressureGoal_Create(
             Mesh mesh,
-            [DefaultArgument("0.0")] float volumePressureConstant,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("0.0")] double volumePressureConstant,
+            [DefaultArgument("1.0")] double weight)
         {
-            return new ConstantVolumePressureGoal(mesh, volumePressureConstant, weight);
+            return new ConstantVolumePressureGoal(mesh, (float)volumePressureConstant, (float) weight);
         }
 
 
@@ -350,11 +350,11 @@ namespace DynaShape.ZeroTouch
         /// <returns></returns>
         public static ConstantVolumePressureGoal ConstantVolumePressureGoal_Change(
             ConstantVolumePressureGoal constantVolumePressureGoal,
-            [DefaultArgument("-1.0")] float volumePressureConstant,
-            [DefaultArgument("-1.0")] float weight)
+            [DefaultArgument("-1.0")] double volumePressureConstant,
+            [DefaultArgument("-1.0")] double weight)
         {
-            if (volumePressureConstant >= 0.0) constantVolumePressureGoal.VolumePressureConstant = volumePressureConstant;
-            if (weight >= 0.0) constantVolumePressureGoal.Weight = weight;
+            if (volumePressureConstant >= 0.0) constantVolumePressureGoal.VolumePressureConstant = (float)volumePressureConstant;
+            if (weight >= 0.0) constantVolumePressureGoal.Weight = (float)weight;
             return constantVolumePressureGoal;
         }
 
@@ -374,9 +374,9 @@ namespace DynaShape.ZeroTouch
         /// <returns></returns>
         public static CoPlanarGoal CoPlanarGoal_Create(
             List<Point> startPositions,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("1.0")] double weight)
         {
-            return new CoPlanarGoal(startPositions.ToTriples(), weight);
+            return new CoPlanarGoal(startPositions.ToTriples(), (float)weight);
         }
 
 
@@ -388,9 +388,9 @@ namespace DynaShape.ZeroTouch
         /// <returns></returns>
         public static CoPlanarGoal CoPlanarGoal_Change(
             CoPlanarGoal coPlanarGoal,
-            [DefaultArgument("-1.0")] float weight)
+            [DefaultArgument("-1.0")] double weight)
         {
-            if (weight >= 0.0) coPlanarGoal.Weight = weight;
+            if (weight >= 0.0) coPlanarGoal.Weight = (float)weight;
             return coPlanarGoal;
         }
 
@@ -408,9 +408,9 @@ namespace DynaShape.ZeroTouch
         /// <returns></returns>
         public static CoSphericalGoal CoSphericalGoal_Create(
             List<Point> startPositions,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("1.0")] double weight)
         {
-            return new CoSphericalGoal(startPositions.ToTriples(), weight);
+            return new CoSphericalGoal(startPositions.ToTriples(), (float)weight);
         }
 
 
@@ -422,9 +422,9 @@ namespace DynaShape.ZeroTouch
         /// <returns></returns>
         public static CoSphericalGoal CoSphericalGoal_Change(
             CoSphericalGoal coSphericalGoal,
-            [DefaultArgument("-1.0")] float weight)
+            [DefaultArgument("-1.0")] double weight)
         {
-            if (weight >= 0.0) coSphericalGoal.Weight = weight;
+            if (weight >= 0.0) coSphericalGoal.Weight = (float)weight;
             return coSphericalGoal;
         }
 
@@ -450,14 +450,14 @@ namespace DynaShape.ZeroTouch
             Point startPosition2,
             Point startPosition3,
             [DefaultArgument("Vector.ByCoordinates(1.0, 0, 0)")] Vector windVector,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("1.0")] double weight)
         {
             return new DirectionalWindGoal(
                 startPosition1.ToTriple(),
                 startPosition2.ToTriple(),
                 startPosition3.ToTriple(),
                 windVector.ToTriple(),
-                weight);
+                (float)weight);
         }
 
 
@@ -474,7 +474,7 @@ namespace DynaShape.ZeroTouch
         public static List<DirectionalWindGoal> DirectionalWindGoal_Create(
             Mesh mesh,
             [DefaultArgument("Vector.ByCoordinates(1.0, 0, 0)")] Vector windVector,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("1.0")] double weight)
         {
             List<DirectionalWindGoal> windGoals = new List<DirectionalWindGoal>();
 
@@ -491,7 +491,7 @@ namespace DynaShape.ZeroTouch
                         new Triple(vertices[j + 3], vertices[j + 4], vertices[j + 5]),
                         new Triple(vertices[j + 6], vertices[j + 7], vertices[j + 8]),
                         windVector.ToTriple(),
-                        weight));
+                        (float)weight));
             }
 
             return windGoals;
@@ -508,10 +508,10 @@ namespace DynaShape.ZeroTouch
         public static DirectionalWindGoal DirectionalWindGoal_Change(
             DirectionalWindGoal windGoal,
             [DefaultArgument("null")] Vector windVector,
-            [DefaultArgument("-1.0")] float weight)
+            [DefaultArgument("-1.0")] double weight)
         {
             if (windVector != null) windGoal.WindVector = windVector.ToTriple();
-            if (weight >= 0.0) windGoal.Weight = weight;
+            if (weight >= 0.0) windGoal.Weight = (float)weight;
             return windGoal;
         }
 
@@ -532,13 +532,13 @@ namespace DynaShape.ZeroTouch
             Point startPosition1,
             Point startPosition2,
             [DefaultArgument("null")] Vector targetDirection,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("1.0")] double weight)
         {
             return new DirectionGoal(
                 startPosition1.ToTriple(),
                 startPosition2.ToTriple(),
                 targetDirection?.ToTriple() ?? (startPosition2.ToTriple() - startPosition1.ToTriple()).Normalise(),
-                weight);
+                (float)weight);
         }
 
 
@@ -552,10 +552,10 @@ namespace DynaShape.ZeroTouch
         public static DirectionGoal DirectionGoal_Change(
             DirectionGoal directionGoal,
             [DefaultArgument("null")] Vector targetDirection,
-            [DefaultArgument("-1.0")] float weight)
+            [DefaultArgument("-1.0")] double weight)
         {
             if (targetDirection != null) directionGoal.TargetDirection = targetDirection.ToTriple();
-            if (weight >= 0.0) directionGoal.Weight = weight;
+            if (weight >= 0.0) directionGoal.Weight = (float)weight;
             return directionGoal;
         }
 
@@ -572,7 +572,7 @@ namespace DynaShape.ZeroTouch
         /// <returns></returns>
         public static EqualLengthsGoal EqualLengthsGoal_Create(
             List<Point> startPositions,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("1.0")] double weight)
         {
             List<Triple> triples = new List<Triple> { startPositions[0].ToTriple() };
 
@@ -584,7 +584,7 @@ namespace DynaShape.ZeroTouch
 
             triples.Add(startPositions[startPositions.Count - 1].ToTriple());
 
-            return new EqualLengthsGoal(triples, weight);
+            return new EqualLengthsGoal(triples, (float)weight);
         }
 
 
@@ -598,7 +598,7 @@ namespace DynaShape.ZeroTouch
         public static EqualLengthsGoal EqualLengthsGoal_Create(
             List<Point> lineStarts,
             List<Point> lineEnds,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("1.0")] double weight)
         {
             List<Triple> triples = new List<Triple>();
 
@@ -610,7 +610,7 @@ namespace DynaShape.ZeroTouch
                 triples.Add(lineEnds[i].ToTriple());
             }
 
-            return new EqualLengthsGoal(triples, weight);
+            return new EqualLengthsGoal(triples, (float)weight);
         }
 
 
@@ -622,7 +622,7 @@ namespace DynaShape.ZeroTouch
         /// <returns></returns>
         public static EqualLengthsGoal EqualLengthsGoal_Create(
             List<Line> lines,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("1.0")] double weight)
         {
             List<Triple> startPositions = new List<Triple>();
             foreach (Line line in lines)
@@ -630,7 +630,7 @@ namespace DynaShape.ZeroTouch
                 startPositions.Add(line.StartPoint.ToTriple());
                 startPositions.Add(line.EndPoint.ToTriple());
             }
-            return new EqualLengthsGoal(startPositions, weight);
+            return new EqualLengthsGoal(startPositions, (float)weight);
         }
 
 
@@ -642,9 +642,9 @@ namespace DynaShape.ZeroTouch
         /// <returns></returns>
         public static EqualLengthsGoal EqualLengthsGoal_Change(
             EqualLengthsGoal equalLengthsGoal,
-            [DefaultArgument("-1.0")] float weight)
+            [DefaultArgument("-1.0")] double weight)
         {
-            if (weight >= 1.0) equalLengthsGoal.Weight = weight;
+            if (weight >= 1.0) equalLengthsGoal.Weight = (float)weight;
             return equalLengthsGoal;
         }
 
@@ -662,10 +662,10 @@ namespace DynaShape.ZeroTouch
         /// <returns></returns>
         public static FloorGoal FloorGoal_Create(
             List<Point> startPositions,
-            [DefaultArgument("0.0")] float floorHeight,
-            [DefaultArgument("1000.0")] float weight)
+            [DefaultArgument("0.0")] double floorHeight,
+            [DefaultArgument("1000.0")] double weight)
         {
-            return new FloorGoal(startPositions.ToTriples(), floorHeight, weight);
+            return new FloorGoal(startPositions.ToTriples(), (float)floorHeight, (float)weight);
         }
 
 
@@ -678,11 +678,11 @@ namespace DynaShape.ZeroTouch
         /// <returns></returns>
         public static FloorGoal FloorGoal_Change(
             FloorGoal floorGoal,
-            [DefaultArgument("0.0")] float floorHeight,
-            [DefaultArgument("-1.0")] float weight)
+            [DefaultArgument("0.0")] double floorHeight,
+            [DefaultArgument("-1.0")] double weight)
         {
-            floorGoal.FloorHeight = floorHeight;
-            if (weight > 0.0) floorGoal.Weight = weight;
+            floorGoal.FloorHeight = (float)floorHeight;
+            if (weight > 0.0) floorGoal.Weight = (float)weight;
             return floorGoal;
         }
 
@@ -702,16 +702,16 @@ namespace DynaShape.ZeroTouch
         public static LengthGoal LengthGoal_Create(
             Point startPosition1,
             Point startPosition2,
-            [DefaultArgument("-1.0")] float targetLength,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("-1.0")] double targetLength,
+            [DefaultArgument("1.0")] double weight)
         {
             return new LengthGoal(
                 startPosition1.ToTriple(),
                 startPosition2.ToTriple(),
                 targetLength >= 0.0
-                    ? targetLength
+                    ? (float)targetLength
                     : (startPosition2.ToTriple() - startPosition1.ToTriple()).Length,
-                weight);
+                (float)weight);
         }
 
 
@@ -724,14 +724,14 @@ namespace DynaShape.ZeroTouch
         /// <returns></returns>
         public static LengthGoal LengthGoal_Create(
             Line line,
-            [DefaultArgument("-1.0")] float targetLength,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("-1.0")] double targetLength,
+            [DefaultArgument("1.0")] double weight)
         {
             return new LengthGoal(
                 line.StartPoint.ToTriple(),
                 line.EndPoint.ToTriple(),
-                targetLength >= 0.0 ? targetLength : (float)line.Length,
-                weight);
+                targetLength >= 0.0 ? (float)targetLength : (float)line.Length,
+                (float)weight);
         }
 
 
@@ -744,11 +744,11 @@ namespace DynaShape.ZeroTouch
         /// <returns></returns>
         public static LengthGoal LengthGoal_Change(
             LengthGoal lengthGoal,
-            [DefaultArgument("-1.0")] float targetLength,
-            [DefaultArgument("-1.0")] float weight)
+            [DefaultArgument("-1.0")] double targetLength,
+            [DefaultArgument("-1.0")] double weight)
         {
-            if (targetLength >= 0.0) lengthGoal.TargetLength = targetLength;
-            if (weight >= 0.0) lengthGoal.Weight = weight;
+            if (targetLength >= 0.0) lengthGoal.TargetLength = (float)targetLength;
+            if (weight >= 0.0) lengthGoal.Weight = (float)weight;
             return lengthGoal;
         }
 
@@ -767,9 +767,9 @@ namespace DynaShape.ZeroTouch
         /// <returns></returns>
         public static MergeGoal MergeGoal_Create(
             List<Point> startPositions,
-            [DefaultArgument("1000.0")] float weight)
+            [DefaultArgument("1000.0")] double weight)
         {
-            return new MergeGoal(startPositions.ToTriples(), weight);
+            return new MergeGoal(startPositions.ToTriples(), (float)weight);
         }
 
 
@@ -781,9 +781,9 @@ namespace DynaShape.ZeroTouch
         /// <returns></returns>
         public static MergeGoal MergeGoal_Change(
             MergeGoal mergeGoal,
-            [DefaultArgument("-1.0")] float weight)
+            [DefaultArgument("-1.0")] double weight)
         {
-            if (weight >= 0.0) mergeGoal.Weight = weight;
+            if (weight >= 0.0) mergeGoal.Weight = (float)weight;
             return mergeGoal;
         }
 
@@ -802,9 +802,9 @@ namespace DynaShape.ZeroTouch
         public static OnCurveGoal OnCurveGoal_Create(
             List<Point> startPositions,
             Curve targetCurve,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("1.0")] double weight)
         {
-            return new OnCurveGoal(startPositions.ToTriples(), targetCurve, weight);
+            return new OnCurveGoal(startPositions.ToTriples(), targetCurve, (float)weight);
         }
 
 
@@ -818,10 +818,10 @@ namespace DynaShape.ZeroTouch
         public static OnCurveGoal OnCurveGoal_Change(
             OnCurveGoal onCurveGoal,
             [DefaultArgument("null")] Curve targetCurve,
-            float weight)
+            double weight)
         {
             if (targetCurve != null) onCurveGoal.TargetCurve = targetCurve;
-            if (weight >= 0.0) onCurveGoal.Weight = weight;
+            if (weight >= 0.0) onCurveGoal.Weight = (float)weight;
             return onCurveGoal;
         }
 
@@ -843,13 +843,13 @@ namespace DynaShape.ZeroTouch
             List<Point> startPosition,
             [DefaultArgument("Point.Origin()")] Point targetLineOrigin,
             [DefaultArgument("Vector.XAxis()")] Vector targetLineDirection,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("1.0")] double weight)
         {
             return new OnLineGoal(
                 startPosition.ToTriples(),
                 targetLineOrigin.ToTriple(),
                 targetLineDirection.ToTriple().Normalise(),
-                weight);
+                (float)weight);
         }
 
 
@@ -865,9 +865,9 @@ namespace DynaShape.ZeroTouch
             List<Point> startPositions,
             [DefaultArgument("Line.ByStartPointEndPoint(Point.Origin(), Point.ByCoordinates(1.0, 0.0, 0.0))")] Line
                 targetLine,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("1.0")] double weight)
         {
-            return new OnLineGoal(startPositions.ToTriples(), targetLine, weight);
+            return new OnLineGoal(startPositions.ToTriples(), targetLine, (float)weight);
         }
 
 
@@ -883,11 +883,11 @@ namespace DynaShape.ZeroTouch
             OnLineGoal onLineGoal,
             [DefaultArgument("null")] Point targetLineOrigin,
             [DefaultArgument("null")] Vector targetLineDirection,
-            [DefaultArgument("-1.0")] float weight)
+            [DefaultArgument("-1.0")] double weight)
         {
             if (targetLineOrigin != null) onLineGoal.TargetLineOrigin = targetLineOrigin.ToTriple();
             if (targetLineDirection != null) onLineGoal.TargetLineDirection = targetLineDirection.ToTriple();
-            if (weight >= 0.0) onLineGoal.Weight = weight;
+            if (weight >= 0.0) onLineGoal.Weight = (float)weight;
             return onLineGoal;
         }
 
@@ -902,7 +902,7 @@ namespace DynaShape.ZeroTouch
         public static OnLineGoal OnLineGoal_Change(
             OnLineGoal onLineGoal,
             [DefaultArgument("null")] Line targetLine,
-            [DefaultArgument("-1.0")] float weight)
+            [DefaultArgument("-1.0")] double weight)
         {
             if (targetLine != null)
             {
@@ -911,7 +911,7 @@ namespace DynaShape.ZeroTouch
                     (targetLine.EndPoint.ToTriple() - targetLine.StartPoint.ToTriple()).Normalise();
             }
 
-            if (weight >= 0.0) onLineGoal.Weight = weight;
+            if (weight >= 0.0) onLineGoal.Weight = (float)weight;
             return onLineGoal;
         }
 
@@ -933,13 +933,13 @@ namespace DynaShape.ZeroTouch
             List<Point> startPositions,
             [DefaultArgument("Point.Origin()")] Point targetPlaneOrigin,
             [DefaultArgument("Vector.ZAxis()")] Vector targetPlaneNormal,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("1.0")] double weight)
         {
             return new OnPlaneGoal(
                 startPositions.ToTriples(),
                 targetPlaneOrigin.ToTriple(),
                 targetPlaneNormal.ToTriple(),
-                weight);
+                (float)weight);
         }
 
         /// <summary>
@@ -953,10 +953,10 @@ namespace DynaShape.ZeroTouch
         public static OnPlaneGoal OnPlaneGoal_Create(
             List<Point> startPositions,
             [DefaultArgument("Plane.ByOriginNormal(Point.Origin(), Vector.ZAxis())")] Plane targetPlane,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("1.0")] double weight)
         {
             return new OnPlaneGoal(startPositions.ToTriples(), targetPlane.Origin.ToTriple(),
-                targetPlane.Normal.ToTriple(), weight);
+                targetPlane.Normal.ToTriple(), (float)weight);
         }
 
 
@@ -972,11 +972,11 @@ namespace DynaShape.ZeroTouch
             OnPlaneGoal onPlaneGoal,
             [DefaultArgument("null")] Point targetPlaneOrigin,
             [DefaultArgument("null")] Vector targetPlaneNormal,
-            [DefaultArgument("-1.0")] float weight)
+            [DefaultArgument("-1.0")] double weight)
         {
             if (targetPlaneOrigin != null) onPlaneGoal.TargetPlaneOrigin = targetPlaneOrigin.ToTriple();
             if (targetPlaneNormal != null) onPlaneGoal.TargetPlaneNormal = targetPlaneNormal.ToTriple();
-            if (weight >= 0.0) onPlaneGoal.Weight = weight;
+            if (weight >= 0.0) onPlaneGoal.Weight = (float)weight;
             return onPlaneGoal;
         }
 
@@ -991,14 +991,14 @@ namespace DynaShape.ZeroTouch
         public static OnPlaneGoal OnPlaneGoal_Change(
             OnPlaneGoal onPlaneGoal,
             [DefaultArgument("null")] Plane targetPlane,
-            [DefaultArgument("-1.0")] float weight)
+            [DefaultArgument("-1.0")] double weight)
         {
             if (targetPlane != null)
             {
                 onPlaneGoal.TargetPlaneOrigin = targetPlane.Origin.ToTriple();
                 onPlaneGoal.TargetPlaneNormal = targetPlane.Normal.ToTriple();
             }
-            if (weight >= 0.0) onPlaneGoal.Weight = weight;
+            if (weight >= 0.0) onPlaneGoal.Weight = (float)weight;
             return onPlaneGoal;
         }
 
@@ -1017,9 +1017,9 @@ namespace DynaShape.ZeroTouch
         public static OnSurfaceGoal OnSurfaceGoal_Create(
             List<Point> startPositions,
             Surface targetSurface,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("1.0")] double weight)
         {
-            return new OnSurfaceGoal(startPositions.ToTriples(), targetSurface, weight);
+            return new OnSurfaceGoal(startPositions.ToTriples(), targetSurface, (float)weight);
         }
 
 
@@ -1033,10 +1033,10 @@ namespace DynaShape.ZeroTouch
         public static OnSurfaceGoal OnSurfaceGoal_Change(
             OnSurfaceGoal onSurfaceGoal,
             [DefaultArgument("null")] Surface targetSurface,
-            float weight)
+            double weight)
         {
             if (targetSurface != null) onSurfaceGoal.TargetSurface = targetSurface;
-            if (weight >= 0.0) onSurfaceGoal.Weight = weight;
+            if (weight >= 0.0) onSurfaceGoal.Weight = (float)weight;
             return onSurfaceGoal;
         }
 
@@ -1053,9 +1053,9 @@ namespace DynaShape.ZeroTouch
         /// <returns></returns>
         public static ParallelLinesGoal ParallelLinesGoal_Create(
             List<Point> startPositions,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("1.0")] double weight)
         {
-            return new ParallelLinesGoal(startPositions.ToTriples(), weight);
+            return new ParallelLinesGoal(startPositions.ToTriples(), (float)weight);
         }
 
 
@@ -1067,7 +1067,7 @@ namespace DynaShape.ZeroTouch
         /// <returns></returns>
         public static ParallelLinesGoal ParallelLinesGoal_Create(
             List<Line> lines,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("1.0")] double weight)
         {
             List<Triple> startPositions = new List<Triple>();
             foreach (Line line in lines)
@@ -1075,7 +1075,7 @@ namespace DynaShape.ZeroTouch
                 startPositions.Add(line.StartPoint.ToTriple());
                 startPositions.Add(line.EndPoint.ToTriple());
             }
-            return new ParallelLinesGoal(startPositions, weight);
+            return new ParallelLinesGoal(startPositions, (float)weight);
         }
 
 
@@ -1087,9 +1087,9 @@ namespace DynaShape.ZeroTouch
         /// <returns></returns>
         public static ParallelLinesGoal ParallelLinesGoal_Change(
             ParallelLinesGoal parallelLinesGoal,
-            [DefaultArgument("-1.0")] float weight)
+            [DefaultArgument("-1.0")] double weight)
         {
-            if (weight >= 0.0) parallelLinesGoal.Weight = weight;
+            if (weight >= 0.0) parallelLinesGoal.Weight = (float)weight;
             return parallelLinesGoal;
         }
 
@@ -1112,12 +1112,12 @@ namespace DynaShape.ZeroTouch
             List<Point> startPositions,
             [DefaultArgument("null")] List<Point> targetShapePoints,
             [DefaultArgument("false")] bool allowScaling,
-            [DefaultArgument("1.0")] float weight)
+            [DefaultArgument("1.0")] double weight)
         {
             return targetShapePoints == null
-                ? new ShapeMatchingGoal(startPositions.ToTriples(), allowScaling, weight)
+                ? new ShapeMatchingGoal(startPositions.ToTriples(), allowScaling, (float)weight)
                 : new ShapeMatchingGoal(startPositions.ToTriples(), targetShapePoints.ToTriples(), allowScaling,
-                    weight);
+                    (float)weight);
         }
 
 
@@ -1133,10 +1133,10 @@ namespace DynaShape.ZeroTouch
             ShapeMatchingGoal shapeMatchingGoal,
             [DefaultArgument("null")] List<Point> targetShapePoints,
             [DefaultArgument("false")] bool? allowScaling,
-            [DefaultArgument("-1.0")] float weight)
+            [DefaultArgument("-1.0")] double weight)
         {
             if (targetShapePoints != null) shapeMatchingGoal.SetTargetShapePoints(targetShapePoints.ToTriples());
-            if (weight >= 0.0) shapeMatchingGoal.Weight = weight;
+            if (weight >= 0.0) shapeMatchingGoal.Weight = (float)weight;
             if (allowScaling.HasValue) shapeMatchingGoal.AllowScaling = allowScaling.Value;
             return shapeMatchingGoal;
         }
@@ -1175,10 +1175,10 @@ namespace DynaShape.ZeroTouch
         public static SphereCollisionGoal SphereCollisionGoal_Change(
             SphereCollisionGoal sphereCollisionGoal,
             [DefaultArgument("null")] List<float> radii,
-            [DefaultArgument("-1.0")] float weight)
+            [DefaultArgument("-1.0")] double weight)
         {
             if (radii != null) sphereCollisionGoal.Radii = radii.ToArray();
-            if (weight >= 0.0) sphereCollisionGoal.Weight = weight;
+            if (weight >= 0.0) sphereCollisionGoal.Weight = (float)weight;
             return sphereCollisionGoal;
         }
     }
