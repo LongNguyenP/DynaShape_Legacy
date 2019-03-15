@@ -39,7 +39,7 @@ namespace DynaShape.Goals
         {
             for (int i = 0; i < NodeCount; i++)
             {
-                Moves[i] = TargetPlaneNormal * -TargetPlaneNormal.Dot(allNodes[NodeIndices[i]].Position - targetPlaneNormal);
+                Moves[i] = TargetPlaneNormal * -TargetPlaneNormal.Dot(allNodes[NodeIndices[i]].Position - TargetPlaneOrigin);
                 Weights[i] = Weight;
             }
         }

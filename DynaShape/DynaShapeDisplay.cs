@@ -275,6 +275,12 @@ namespace DynaShape
             }
         }
 
+        private void Foo()
+        {
+          
+        }
+
+
         public void Dispose()
         {
             DynaShapeViewExtension.ViewModel.RequestViewRefresh -= RequestViewRefreshHandler;
