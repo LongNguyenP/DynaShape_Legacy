@@ -23,9 +23,9 @@ namespace DynaShape
     [IsVisibleInDynamoLibrary(false)]
     public class DynaShapeDisplay : IDisposable
     {
-        public static Color DefaultPointColor = new Color(0.8f, 0.2f, 0.2f, 1f);
-        public static Color DefaultLineColor = new Color(0.3f, 0.7f, 0.8f, 1f);
-        public static Color DefaultMeshFaceColor = new Color(0, 0.7f, 1f, 0.3f);
+        public static readonly Color DefaultPointColor = new Color(0.8f, 0.2f, 0.2f, 1f);
+        public static readonly Color DefaultLineColor = new Color(0.3f, 0.7f, 0.8f, 1f);
+        public static readonly Color DefaultMeshFaceColor = new Color(0, 0.7f, 1f, 0.3f);
 
         private readonly Solver solver;
 

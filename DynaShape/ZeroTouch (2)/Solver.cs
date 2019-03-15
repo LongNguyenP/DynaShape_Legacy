@@ -36,6 +36,7 @@ namespace DynaShape.ZeroTouch
         /// <param name="enableMomentum">Apply momentum effect to the movement of the nodes. For simulation of physical motion, this results in more realistic motion. For constraint-based optimization, it often helps the solver to reach the final solution in fewer iteration (i.e. faster), but can sometimes lead to unstable and counter-intuitive solution. In such case, try setting momnentum to False </param>
         /// <param name="enableFastDisplay"></param>
         /// <param name="enableManipulation">Enable manipulation of the nodes in the background view with mouse</param>
+        /// <param name="dampingFactor">When momentum mode is enabled, this value will determine how much the node's velocity is damped at each iteration</param>
         /// <returns></returns>
         [MultiReturn("nodePositions", "goalOutputs", "geometries")]
         [CanUpdatePeriodically(true)]
@@ -49,7 +50,8 @@ namespace DynaShape.ZeroTouch
            [DefaultArgument("true")] bool execute,
            [DefaultArgument("true")] bool enableMomentum,
            [DefaultArgument("true")] bool enableFastDisplay,
-           [DefaultArgument("false")] bool enableManipulation)
+           [DefaultArgument("false")] bool enableManipulation,
+           [DefaultArgument("0.95")] float dampingFactor)
         {
 
             Stopwatch stopwatch = new Stopwatch();
@@ -70,6 +72,7 @@ namespace DynaShape.ZeroTouch
                 solver.EnableMomentum = enableMomentum;
                 solver.EnableFastDisplay = enableFastDisplay;
                 solver.IterationCount = iterations;
+                solver.DampingFactor = dampingFactor;
 
                 if (execute) solver.StartBackgroundExecution();
                 else

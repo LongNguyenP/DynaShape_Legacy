@@ -106,6 +106,8 @@
   <ItemGroup>
     <Compile Include="DynaShapeDisplay.cs" />
     <Compile Include="FastSvd3x3.cs" />
+    <Compile Include="GeometryBinders\SphereBinder.cs" />
+    <Compile Include="GeometryBinders\CircleBinder.cs" />
     <Compile Include="GeometryBinders\TexturedMeshBinder.cs" />
     <Compile Include="Goals\AngleGoal.cs" />
     <Compile Include="Goals\ConstantVolumePressureGoal.cs" />

@@ -11,6 +11,20 @@ namespace DynaShape.ZeroTouch
 {
     public static class GeometryBinders
     {
+        public static CircleBinder CircleBinder(
+            Point center,
+            float radius,
+            [DefaultArgument("Vector.ZAxis()")] Vector planeNormal,
+            [DefaultArgument("null")] Color color)
+        {
+            return new CircleBinder(
+                center.ToTriple(),
+                radius,
+                planeNormal.ToTriple(),
+                color?.ToSharpDXColor() ?? DynaShapeDisplay.DefaultLineColor);
+        }
+
+
         public static LineBinder LineBinder(
             Line line,
             [DefaultArgument("null")] Color color)

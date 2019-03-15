@@ -10,7 +10,6 @@ namespace DynaShape.Goals
     {
         public float[] Radii;
 
-
         public SphereCollisionGoal(List<Triple> nodeStartingPositions, List<float> radii, float weight = 1000f)
         {
             if (nodeStartingPositions.Count != radii.Count)
@@ -28,6 +27,9 @@ namespace DynaShape.Goals
         {
             Moves = new Triple[NodeCount];
             Weights = new float[NodeCount];
+            Weights = Util.InitializeArray(NodeCount, Weight);
+
+            int[] counts = new int[NodeCount];
 
             for (int i = 0; i < NodeIndices.Length; i++)
                 for (int j = i + 1; j < NodeIndices.Length; j++)
@@ -40,10 +42,13 @@ namespace DynaShape.Goals
                         move *= 0.5f * (Radii[i] + Radii[j] - d) / d;
                         Moves[i] += move;
                         Moves[j] -= move;
-                        Weights[i] += Weight;
-                        Weights[j] += Weight;
+                        counts[i]++;
+                        counts[j]++;
                     }
                 }
+
+            for (int i = 0; i < NodeIndices.Length; i++)
+                if (counts[i] != 0) Moves[i] /= counts[i];
         }
     }
 }

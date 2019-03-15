@@ -23,6 +23,7 @@ namespace DynaShape
         public bool EnableMouseInteraction = true;
         public bool EnableMomentum = true;
         public bool EnableFastDisplay = true;
+        public float DampingFactor = 0.95f;
 
         public List<Node> Nodes = new List<Node>();
         public List<Goal> Goals = new List<Goal>();
@@ -312,8 +313,8 @@ namespace DynaShape
                     Triple move = nodeMoveSums[i] / nodeWeightSums[i];
                     Nodes[i].Position += move;
                     Nodes[i].Velocity += move;
-                    if (Nodes[i].Velocity.Dot(move) <= 0.0)
-                        Nodes[i].Velocity *= 0.95f;
+                    //if (Nodes[i].Velocity.Dot(move) <= 0.0)
+                        Nodes[i].Velocity *= DampingFactor;
                 }
             else
                 for (int i = 0; i < Nodes.Count; i++)
