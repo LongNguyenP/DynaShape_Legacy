@@ -25,15 +25,18 @@ namespace DynaShape
     {
         public static readonly Color DefaultPointColor = new Color(0.8f, 0.2f, 0.2f, 1f);
         public static readonly Color DefaultLineColor = new Color(0.3f, 0.7f, 0.8f, 1f);
-        public static readonly Color DefaultMeshFaceColor = new Color(0, 0.7f, 1f, 0.3f);
+        public static readonly Color DefaultMeshFaceColor = new Color(0f, 0.7f, 1f, 0.3f);
+        public static readonly Color DefaultTextColor = new Color(0f, 0f, 10f, 0f);
 
         private readonly Solver solver;
 
         private PointGeometryModel3D pointModel;
         private LineGeometryModel3D lineModel;
+        private BillboardTextModel3D billboardTextModel;
 
         private PointGeometry3D pointGeometry;
         private LineGeometry3D lineGeometry;
+        private BillboardText3D billboardText;
 
         private List<MeshGeometryModel3D> meshModels = new List<MeshGeometryModel3D>();
 
@@ -42,20 +45,6 @@ namespace DynaShape
         public DynaShapeDisplay(Solver solver)
         {
             this.solver = solver;
-
-            pointGeometry = new PointGeometry3D
-            {
-                Positions = new Vector3Collection(),
-                Indices = new IntCollection(),
-                Colors = new Color4Collection()
-            };
-
-            lineGeometry = new LineGeometry3D()
-            {
-                Positions = new Vector3Collection(),
-                Indices = new IntCollection(),
-                Colors = new Color4Collection()
-            };
 
             DynaShapeViewExtension.DynamoWindow.Dispatcher.Invoke(
                 () =>
@@ -73,6 +62,9 @@ namespace DynaShape
                         Thickness = 0.5,
                         Color = Color.White,
                     };
+
+
+                    billboardTextModel = new BillboardTextModel3D();
                 },
                 DispatcherPriority.Send);
 
@@ -144,6 +136,11 @@ namespace DynaShape
                 Colors = new Color4Collection()
             };
 
+            billboardText = new BillboardText3D();
+            billboardText.TextInfo.Add(new TextInfo(solver.CurrentIteration.ToString(), new Vector3(0f, 0f, 0f)));
+
+            //billboardTextModel.Detach();
+            //if (sceneItems.Contains(billboardTextModel)) sceneItems.Remove(billboardTextModel);
 
             foreach (MeshGeometryModel3D meshModel in meshModels)
             {
@@ -216,6 +213,10 @@ namespace DynaShape
                     meshModel.Attach(viewport.RenderHost);
                     sceneItems.Add(meshModel);
                 }
+
+            billboardTextModel.Geometry = billboardText;
+            billboardTextModel.Attach(viewport.RenderHost);
+            sceneItems.Add(billboardTextModel);
         }
 
         private void RenderGUI()
@@ -297,6 +298,10 @@ namespace DynaShape
                 lineModel.Detach();
                 lineModel.Dispose();
 
+                if (sceneItems.Contains(billboardTextModel)) sceneItems.Remove(billboardTextModel);
+                billboardTextModel.Detach();
+                billboardTextModel.Dispose();
+
                 foreach (MeshGeometryModel3D meshModel in meshModels)
                 {
                     if (sceneItems.Contains(meshModel)) sceneItems.Remove(meshModel);
@@ -313,6 +318,7 @@ namespace DynaShape
 
             if (pointGeometry.Positions.Count >= 1 && !sceneItems.Contains(pointModel)) sceneItems.Add(pointModel);
             if (lineGeometry.Positions.Count >= 2 && !sceneItems.Contains(lineModel)) sceneItems.Add(lineModel);
+            if (!sceneItems.Contains(billboardTextModel)) sceneItems.Add(billboardTextModel);
             foreach (MeshGeometryModel3D meshModel in meshModels)
                 if (meshModel.Geometry.Positions.Count >= 3 && !sceneItems.Contains(meshModel))
                     sceneItems.Add(meshModel);
