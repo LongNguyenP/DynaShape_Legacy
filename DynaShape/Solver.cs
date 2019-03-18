@@ -246,6 +246,7 @@ namespace DynaShape
             Nodes.Clear();
             Goals.Clear();
             GeometryBinders.Clear();
+            CurrentIteration = 0;
         }
 
         public void Reset()

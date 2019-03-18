@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Media.Animation;
 using Autodesk.DesignScript.Runtime;
 using SharpDX;
@@ -13,30 +14,29 @@ namespace DynaShape
     [IsVisibleInDynamoLibrary(false)]
     public static class Util
     {
-        public static Vector ZeroVector => Vector.ByCoordinates(0.0, 0.0, 0.0);
-        public static Point Duplicate(this Point point) => Point.ByCoordinates(point.X, point.Y, point.Z);
-        public static Vector Duplicate(this Vector vector) => Vector.ByCoordinates(vector.X, vector.Y, vector.Z);
+        public static Point ToPoint(this Triple t) => Point.ByCoordinates(t.X, t.Y, t.Z);
+        public static Vector ToVector(this Triple t) => Vector.ByCoordinates(t.X, t.Y, t.Z);
 
         public static Triple ToTriple(this Point point) => new Triple(point.X, point.Y, point.Z);
         public static Triple ToTriple(this Vector vector) => new Triple(vector.X, vector.Y, vector.Z);
 
-        public static bool IsAlmostZero(this float number, float tolerance = 1E-10f) => -tolerance < number && number < tolerance;
-        public static bool IsAlmostZero(this double number, double tolerance = 1E-10f) => -tolerance < number && number < tolerance;
+        public static Vector ZeroVector => Vector.ByCoordinates(0.0, 0.0, 0.0);
+        public static Point Duplicate(this Point point) => Point.ByCoordinates(point.X, point.Y, point.Z);
+        public static Vector Duplicate(this Vector vector) => Vector.ByCoordinates(vector.X, vector.Y, vector.Z);
 
-        public static bool IsNotAlmostZero(this float number, float tolerance = 1E-10f) => -number < tolerance || tolerance < number;
-        public static bool IsNotAlmostZero(this double number, double tolerance = 1E-10f) => -number < tolerance || tolerance < number;
+        public static bool IsAlmostZero(this float number, float tolerance = 1E-10f) => -tolerance < number && number < tolerance;
+        public static bool IsAlmostZero(this double number, double tolerance = 1E-10) => -tolerance < number && number < tolerance;
 
         public static SharpDX.Color ToSharpDXColor(this DSCore.Color color) 
             => new SharpDX.Color(color.Red * by255, color.Green * by255, color.Blue * by255, color.Alpha * by255);
 
-        public static Vector3 ToVector3(this Triple triple)
-            => new Vector3(triple.X, triple.Z, -triple.Y);
+        public static Vector3 ToVector3(this Triple triple) => new Vector3(triple.X, triple.Z, -triple.Y);
 
         private static readonly float by255 = 1f / 255f;
 
         public static List<Triple> ToTriples(this IEnumerable<Point> points)
         {
-            List<Triple> triples = new List<Triple>();
+            List<Triple> triples = new List<Triple>(points.Count());
             foreach (Point point in points)
                 triples.Add(new Triple(point.X, point.Y, point.Z));
             return triples;
@@ -44,7 +44,7 @@ namespace DynaShape
 
         public static List<Triple> ToTriples(this IEnumerable<Vector> vectors)
         {
-            List<Triple> triples = new List<Triple>();
+            List<Triple> triples = new List<Triple>(vectors.Count());
             foreach (Vector vector in vectors)
                 triples.Add(new Triple(vector.X, vector.Y, vector.Z));
             return triples;

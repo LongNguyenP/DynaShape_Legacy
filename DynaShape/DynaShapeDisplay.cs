@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -65,6 +66,7 @@ namespace DynaShape
 
 
                     billboardTextModel = new BillboardTextModel3D();
+
                 },
                 DispatcherPriority.Send);
 
@@ -98,6 +100,11 @@ namespace DynaShape
             }
         }
 
+        public void DrawText(string text, Triple position)
+        {
+            billboardText.TextInfo.Add(new TextInfo(text, position.ToVector3()));
+        }
+
         public void AddMeshModel(MeshGeometryModel3D meshModel)
         {
             meshModels.Add(meshModel);
@@ -119,8 +126,8 @@ namespace DynaShape
 
         private void RenderAction()
         {
-            Viewport3DX viewport = DynaShapeViewExtension.GetViewport();
-            List<Model3D> sceneItems = viewport.ItemsSource as List<Model3D>;
+            IRenderHost renderHost = DynaShapeViewExtension.GetViewport().RenderHost;
+            List<Model3D> sceneItems = DynaShapeViewExtension.GetSceneItems();
 
             pointGeometry = new PointGeometry3D
             {
@@ -137,10 +144,6 @@ namespace DynaShape
             };
 
             billboardText = new BillboardText3D();
-            billboardText.TextInfo.Add(new TextInfo(solver.CurrentIteration.ToString(), new Vector3(0f, 0f, 0f)));
-
-            //billboardTextModel.Detach();
-            //if (sceneItems.Contains(billboardTextModel)) sceneItems.Remove(billboardTextModel);
 
             foreach (MeshGeometryModel3D meshModel in meshModels)
             {
@@ -156,12 +159,7 @@ namespace DynaShape
 
             for (int i = 0; i < solver.Nodes.Count; i++)
             {
-                pointGeometry.Positions.Add(
-                    new Vector3(
-                        solver.Nodes[i].Position.X,
-                        solver.Nodes[i].Position.Z,
-                        -solver.Nodes[i].Position.Y));
-
+                pointGeometry.Positions.Add(solver.Nodes[i].Position.ToVector3());
                 pointGeometry.Colors.Add(DefaultPointColor);
                 pointGeometry.Indices.Add(i);
             }
@@ -186,7 +184,7 @@ namespace DynaShape
             if (pointGeometry.Positions.Count >= 1)
             {
                 pointModel.Geometry = pointGeometry;
-                if (!pointModel.IsAttached) pointModel.Attach(viewport.RenderHost);
+                if (!pointModel.IsAttached) pointModel.Attach(renderHost);
                 if (!sceneItems.Contains(pointModel)) sceneItems.Add(pointModel);
             }
             else
@@ -198,7 +196,7 @@ namespace DynaShape
             if (lineGeometry.Positions.Count >= 2)
             {
                 lineModel.Geometry = lineGeometry;
-                if (!lineModel.IsAttached) lineModel.Attach(viewport.RenderHost);
+                if (!lineModel.IsAttached) lineModel.Attach(renderHost);
                 if (!sceneItems.Contains(lineModel)) sceneItems.Add(lineModel);
             }
             else
@@ -208,16 +206,26 @@ namespace DynaShape
             }
 
             foreach (MeshGeometryModel3D meshModel in meshModels)
-                if (meshModel.Geometry.Positions.Count >= 3)
-                {
-                    meshModel.Attach(viewport.RenderHost);
-                    sceneItems.Add(meshModel);
-                }
+            {
+                meshModel.Attach(renderHost);
+                sceneItems.Add(meshModel);
+            }
 
-            billboardTextModel.Geometry = billboardText;
-            billboardTextModel.Attach(viewport.RenderHost);
-            sceneItems.Add(billboardTextModel);
+            DrawText(solver.CurrentIteration.ToString(), Triple.Zero);
+
+            if (billboardText.TextInfo.Count >= 1)
+            {
+                billboardTextModel.Geometry = billboardText;
+                if (!billboardTextModel.IsAttached) billboardTextModel.Attach(renderHost);
+                if (!sceneItems.Contains(billboardTextModel)) sceneItems.Add(billboardTextModel);
+            }
+            else
+            {
+                billboardTextModel.Detach();
+                if (sceneItems.Contains(billboardTextModel)) sceneItems.Remove(billboardTextModel);
+            }
         }
+
 
         private void RenderGUI()
         {
@@ -276,11 +284,6 @@ namespace DynaShape
             }
         }
 
-        private void Foo()
-        {
-          
-        }
-
 
         public void Dispose()
         {
@@ -288,7 +291,7 @@ namespace DynaShape
 
             DynaShapeViewExtension.DynamoWindow.Dispatcher.Invoke(() =>
             {
-                List<Model3D> sceneItems = DynaShapeViewExtension.GetViewport().ItemsSource as List<Model3D>;
+                List<Model3D> sceneItems = DynaShapeViewExtension.GetSceneItems();
 
                 if (sceneItems.Contains(pointModel)) sceneItems.Remove(pointModel);
                 pointModel.Detach();
@@ -314,14 +317,15 @@ namespace DynaShape
         // This handler prevents flickering when geometries other than DynaShape ones exist in the viewport
         private void RequestViewRefreshHandler()
         {
-            List<Model3D> sceneItems = DynaShapeViewExtension.ViewModel.SceneItems as List<Model3D>;
-
+            List<Model3D> sceneItems = DynaShapeViewExtension.GetSceneItems();
             if (pointGeometry.Positions.Count >= 1 && !sceneItems.Contains(pointModel)) sceneItems.Add(pointModel);
             if (lineGeometry.Positions.Count >= 2 && !sceneItems.Contains(lineModel)) sceneItems.Add(lineModel);
-            if (!sceneItems.Contains(billboardTextModel)) sceneItems.Add(billboardTextModel);
+            if (billboardText.TextInfo.Count >= 1 && !sceneItems.Contains(billboardTextModel)) sceneItems.Add(billboardTextModel);
             foreach (MeshGeometryModel3D meshModel in meshModels)
-                if (meshModel.Geometry.Positions.Count >= 3 && !sceneItems.Contains(meshModel))
+                if (!sceneItems.Contains(meshModel))
                     sceneItems.Add(meshModel);
+
+            //RenderAction();
         }
     }
 }

@@ -66,6 +66,12 @@ namespace DynaShape
         }
 
 
+        internal static List<Model3D> GetSceneItems()
+        {
+            return (List<Model3D>)ViewModel.SceneItems;
+        }
+
+
         public void Shutdown()
         {
             ViewModel.ViewCameraChanged -= ViewModelViewCameraChangedHandler;
