@@ -45,6 +45,7 @@ namespace DynaShape
 
         private void ViewModelRequestViewRefreshHandler()
         {
+            
         }
 
 

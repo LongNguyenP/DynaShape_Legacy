@@ -24,7 +24,7 @@ namespace DynaShape.Goals
             for (int i = 0; i < NodeCount; i++)
             {
                 Moves[i] = new Triple(0f, 0f, allNodes[i].Position.Z > FloorHeight ? 0f : FloorHeight - allNodes[i].Position.Z);
-                Weights[i] = allNodes[i].Position.Z > FloorHeight ? Weight : Weight;
+                Weights[i] = allNodes[i].Position.Z > FloorHeight ? 0f : Weight;
             }
         }
     }

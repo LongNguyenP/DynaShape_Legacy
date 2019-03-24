@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Runtime;
@@ -54,18 +55,18 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
-        /// <param name="anchorGoal"></param>
+        /// <param name="goal"></param>
         /// <param name="anchor"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static AnchorGoal AnchorGoal_Change(
-            AnchorGoal anchorGoal,
+            AnchorGoal goal,
             [DefaultArgument("null")] Point anchor,
             [DefaultArgument("-1.0")] float weight)
         {
-            if (anchor != null) anchorGoal.Anchor = anchor.ToTriple();
-            if (weight >= 0.0) anchorGoal.Weight = weight;
-            return anchorGoal;
+            if (anchor != null) goal.Anchor = anchor.ToTriple();
+            if (weight >= 0.0) goal.Weight = weight;
+            return goal;
         }
 
 
@@ -123,18 +124,18 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
-        /// <param name="angleGoal"></param>
+        /// <param name="goal"></param>
         /// <param name="targetAngle"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static AngleGoal AngleGoal_Change(
-            AngleGoal angleGoal,
+            AngleGoal goal,
             float targetAngle,
             [DefaultArgument("-1.0")] float weight)
         {
-            angleGoal.TargetAngle = targetAngle.ToRadian();
-            if (weight >= 0.0) angleGoal.Weight = weight;
-            return angleGoal;
+            goal.TargetAngle = targetAngle.ToRadian();
+            if (weight >= 0.0) goal.Weight = weight;
+            return goal;
         }
 
 
@@ -159,15 +160,15 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
-        /// <param name="cyclicPolygonGoal"></param>
+        /// <param name="goal"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static CoCircularGoal CoCircularGoal_Change(
-            CoCircularGoal cyclicPolygonGoal,
+            CoCircularGoal goal,
             [DefaultArgument("-1.0")] float weight)
         {
-            if (weight >= 0.0) cyclicPolygonGoal.Weight = weight;
-            return cyclicPolygonGoal;
+            if (weight >= 0.0) goal.Weight = weight;
+            return goal;
         }
 
 
@@ -194,15 +195,15 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
-        /// <param name="coLinearGoal"></param>
+        /// <param name="goal"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static CoLinearGoal CoLinearGoal_Change(
-            CoLinearGoal coLinearGoal,
+            CoLinearGoal goal,
             [DefaultArgument("-1.0")] float weight)
         {
-            if (weight >= 0.0) coLinearGoal.Weight = weight;
-            return coLinearGoal;
+            if (weight >= 0.0) goal.Weight = weight;
+            return goal;
         }
 
 
@@ -229,18 +230,18 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
-        /// <param name="constantGoal"></param>
+        /// <param name="goal"></param>
         /// <param name="constant"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static ConstantGoal ConstantGoal_Change(
-            ConstantGoal constantGoal,
+            ConstantGoal goal,
             [DefaultArgument("null")] Vector constant,
             [DefaultArgument("-1.0")] float weight)
         {
-            if (constant != null) constantGoal.Move = constant.ToTriple();
-            if (weight >= 0.0) constantGoal.Weight = weight;
-            return constantGoal;
+            if (constant != null) goal.Move = constant.ToTriple();
+            if (weight >= 0.0) goal.Weight = weight;
+            return goal;
         }
 
 
@@ -306,18 +307,18 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
-        /// <param name="constantPressureGoal"></param>
+        /// <param name="goal"></param>
         /// <param name="pressure"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static ConstantPressureGoal ConstantPressureGoal_Change(
-            ConstantPressureGoal constantPressureGoal,
+            ConstantPressureGoal goal,
             [DefaultArgument("-1.0")] float pressure,
             [DefaultArgument("-1.0")] float weight)
         {
-            if (pressure >= 0.0) constantPressureGoal.Pressure = pressure;
-            if (weight >= 0.0) constantPressureGoal.Weight = weight;
-            return constantPressureGoal;
+            if (pressure >= 0.0) goal.Pressure = pressure;
+            if (weight >= 0.0) goal.Weight = weight;
+            return goal;
         }
 
 
@@ -337,25 +338,133 @@ namespace DynaShape.ZeroTouch
             [DefaultArgument("0.0")] float volumePressureConstant,
             [DefaultArgument("1.0")] float weight)
         {
-            return new ConstantVolumePressureGoal(mesh, volumePressureConstant,  weight);
+            return new ConstantVolumePressureGoal(mesh, volumePressureConstant, weight);
         }
 
 
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
-        /// <param name="constantVolumePressureGoal"></param>
+        /// <param name="goal"></param>
         /// <param name="volumePressureConstant"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static ConstantVolumePressureGoal ConstantVolumePressureGoal_Change(
-            ConstantVolumePressureGoal constantVolumePressureGoal,
+            ConstantVolumePressureGoal goal,
             [DefaultArgument("-1.0")] float volumePressureConstant,
             [DefaultArgument("-1.0")] float weight)
         {
-            if (volumePressureConstant >= 0.0) constantVolumePressureGoal.VolumePressureConstant = volumePressureConstant;
-            if (weight >= 0.0) constantVolumePressureGoal.Weight = weight;
-            return constantVolumePressureGoal;
+            if (volumePressureConstant >= 0.0) goal.VolumePressureConstant = volumePressureConstant;
+            if (weight >= 0.0) goal.Weight = weight;
+            return goal;
+        }
+
+
+        //==================================================================
+        // ConvexPolygonCollisionGoal
+        //==================================================================
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="centers"></param>
+        /// <param name="radii"></param>
+        /// <param name="polygonVertices"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static ConvexPolygonCollisionGoal ConvexPolygonCollisionGoal_Create(
+            List<Point> centers,
+            List<float> radii,
+            [DefaultArgument("null")]List<Point> polygonVertices,
+            [DefaultArgument("1000.0")] float weight)
+        {
+            if (centers.Count != radii.Count)
+                throw new Exception("Error: centers count is not equal to radii count");
+            return new ConvexPolygonCollisionGoal(
+                centers.ToTriples(),
+                radii,
+                polygonVertices == null ? new List<Triple>() : polygonVertices.ToTriples(),
+                weight);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="centers"></param>
+        /// <param name="radii"></param>
+        /// <param name="polygonVertices"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static ConvexPolygonCollisionGoal ConvexPolygonCollisionGoal_Change(
+            ConvexPolygonCollisionGoal goal,
+            [DefaultArgument("null")]List<float> radii,
+            [DefaultArgument("null")]List<Point> polygonVertices,
+            [DefaultArgument("-1.0")] float weight)
+        {
+            if (radii != null)
+            {
+                if (goal.NodeCount != radii.Count)
+                    throw new Exception("Error: radii count is not equal to node count");
+                goal.Radii = radii.ToArray();
+            }
+
+            if (polygonVertices != null) goal.PolygonVertices = polygonVertices.ToTriples();
+            if (weight >= 0.0) goal.Weight = weight;
+            return goal;
+        }
+
+
+        //==================================================================
+        // ConvexPolygonContainmentGoal
+        //==================================================================
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="centers"></param>
+        /// <param name="radii"></param>
+        /// <param name="polygonVertices"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static ConvexPolygonContainmentGoal ConvexPolygonContainmentGoal_Create(
+            List<Point> centers,
+            List<float> radii,
+            [DefaultArgument("null")]List<Point> polygonVertices,
+            [DefaultArgument("1000.0")] float weight)
+        {
+            if (centers.Count != radii.Count)
+                throw new Exception("Error: centers count is not equal to radii count");
+            return new ConvexPolygonContainmentGoal(
+                centers.ToTriples(), 
+                radii, 
+                polygonVertices == null ? new List<Triple>() : polygonVertices.ToTriples(), 
+                weight);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="centers"></param>
+        /// <param name="radii"></param>
+        /// <param name="polygonVertices"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static ConvexPolygonContainmentGoal ConvexPolygonContainmentGoal_Change(
+            ConvexPolygonContainmentGoal goal,
+            [DefaultArgument("null")]List<float> radii,
+            [DefaultArgument("null")]List<Point> polygonVertices,
+            [DefaultArgument("-1.0")] float weight)
+        {
+            if (radii != null)
+            {
+                if (goal.NodeCount != radii.Count)
+                    throw new Exception("Error: radii count is not equal to node count");
+                goal.Radii = radii.ToArray();
+            };
+
+            if (polygonVertices != null) goal.PolygonVertices = polygonVertices.ToTriples();
+            if (weight >= 0.0) goal.Weight = weight;
+            return goal;
         }
 
 
@@ -383,15 +492,15 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
-        /// <param name="coPlanarGoal"></param>
+        /// <param name="goal"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static CoPlanarGoal CoPlanarGoal_Change(
-            CoPlanarGoal coPlanarGoal,
+            CoPlanarGoal goal,
             [DefaultArgument("-1.0")] float weight)
         {
-            if (weight >= 0.0) coPlanarGoal.Weight = weight;
-            return coPlanarGoal;
+            if (weight >= 0.0) goal.Weight = weight;
+            return goal;
         }
 
 
@@ -417,15 +526,15 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
-        /// <param name="coSphericalGoal"></param>
+        /// <param name="goal"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static CoSphericalGoal CoSphericalGoal_Change(
-            CoSphericalGoal coSphericalGoal,
+            CoSphericalGoal goal,
             [DefaultArgument("-1.0")] float weight)
         {
-            if (weight >= 0.0) coSphericalGoal.Weight = weight;
-            return coSphericalGoal;
+            if (weight >= 0.0) goal.Weight = weight;
+            return goal;
         }
 
 
@@ -501,18 +610,18 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
-        /// <param name="windGoal"></param>
+        /// <param name="goal"></param>
         /// <param name="windVector"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static DirectionalWindGoal DirectionalWindGoal_Change(
-            DirectionalWindGoal windGoal,
+            DirectionalWindGoal goal,
             [DefaultArgument("null")] Vector windVector,
             [DefaultArgument("-1.0")] float weight)
         {
-            if (windVector != null) windGoal.WindVector = windVector.ToTriple();
-            if (weight >= 0.0) windGoal.Weight = weight;
-            return windGoal;
+            if (windVector != null) goal.WindVector = windVector.ToTriple();
+            if (weight >= 0.0) goal.Weight = weight;
+            return goal;
         }
 
 
@@ -545,18 +654,18 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
-        /// <param name="directionGoal"></param>
+        /// <param name="goal"></param>
         /// <param name="targetDirection"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static DirectionGoal DirectionGoal_Change(
-            DirectionGoal directionGoal,
+            DirectionGoal goal,
             [DefaultArgument("null")] Vector targetDirection,
             [DefaultArgument("-1.0")] float weight)
         {
-            if (targetDirection != null) directionGoal.TargetDirection = targetDirection.ToTriple();
-            if (weight >= 0.0) directionGoal.Weight = weight;
-            return directionGoal;
+            if (targetDirection != null) goal.TargetDirection = targetDirection.ToTriple();
+            if (weight >= 0.0) goal.Weight = weight;
+            return goal;
         }
 
 
@@ -637,15 +746,15 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
-        /// <param name="equalLengthsGoal"></param>
+        /// <param name="goal"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static EqualLengthsGoal EqualLengthsGoal_Change(
-            EqualLengthsGoal equalLengthsGoal,
+            EqualLengthsGoal goal,
             [DefaultArgument("-1.0")] float weight)
         {
-            if (weight >= 1.0) equalLengthsGoal.Weight = weight;
-            return equalLengthsGoal;
+            if (weight >= 1.0) goal.Weight = weight;
+            return goal;
         }
 
 
@@ -672,18 +781,18 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
-        /// <param name="floorGoal"></param>
+        /// <param name="goal"></param>
         /// <param name="floorHeight"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static FloorGoal FloorGoal_Change(
-            FloorGoal floorGoal,
+            FloorGoal goal,
             [DefaultArgument("0.0")] float floorHeight,
             [DefaultArgument("-1.0")] float weight)
         {
-            floorGoal.FloorHeight = floorHeight;
-            if (weight > 0.0) floorGoal.Weight = weight;
-            return floorGoal;
+            goal.FloorHeight = floorHeight;
+            if (weight > 0.0) goal.Weight = weight;
+            return goal;
         }
 
 
@@ -738,18 +847,18 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
-        /// <param name="lengthGoal"></param>
+        /// <param name="goal"></param>
         /// <param name="targetLength"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static LengthGoal LengthGoal_Change(
-            LengthGoal lengthGoal,
+            LengthGoal goal,
             [DefaultArgument("-1.0")] float targetLength,
             [DefaultArgument("-1.0")] float weight)
         {
-            if (targetLength >= 0.0) lengthGoal.TargetLength = targetLength;
-            if (weight >= 0.0) lengthGoal.Weight = weight;
-            return lengthGoal;
+            if (targetLength >= 0.0) goal.TargetLength = targetLength;
+            if (weight >= 0.0) goal.Weight = weight;
+            return goal;
         }
 
 
@@ -776,15 +885,15 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
-        /// <param name="mergeGoal"></param>
+        /// <param name="goal"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static MergeGoal MergeGoal_Change(
-            MergeGoal mergeGoal,
+            MergeGoal goal,
             [DefaultArgument("-1.0")] float weight)
         {
-            if (weight >= 0.0) mergeGoal.Weight = weight;
-            return mergeGoal;
+            if (weight >= 0.0) goal.Weight = weight;
+            return goal;
         }
 
 
@@ -811,18 +920,18 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
-        /// <param name="onCurveGoal"></param>
+        /// <param name="goal"></param>
         /// <param name="targetCurve"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static OnCurveGoal OnCurveGoal_Change(
-            OnCurveGoal onCurveGoal,
+            OnCurveGoal goal,
             [DefaultArgument("null")] Curve targetCurve,
             float weight)
         {
-            if (targetCurve != null) onCurveGoal.TargetCurve = targetCurve;
-            if (weight >= 0.0) onCurveGoal.Weight = weight;
-            return onCurveGoal;
+            if (targetCurve != null) goal.TargetCurve = targetCurve;
+            if (weight >= 0.0) goal.Weight = weight;
+            return goal;
         }
 
 
@@ -874,45 +983,45 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
-        /// <param name="onLineGoal"></param>
+        /// <param name="goal"></param>
         /// <param name="targetLineOrigin"></param>
         /// <param name="targetLineDirection"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static OnLineGoal OnLineGoal_Change(
-            OnLineGoal onLineGoal,
+            OnLineGoal goal,
             [DefaultArgument("null")] Point targetLineOrigin,
             [DefaultArgument("null")] Vector targetLineDirection,
             [DefaultArgument("-1.0")] float weight)
         {
-            if (targetLineOrigin != null) onLineGoal.TargetLineOrigin = targetLineOrigin.ToTriple();
-            if (targetLineDirection != null) onLineGoal.TargetLineDirection = targetLineDirection.ToTriple();
-            if (weight >= 0.0) onLineGoal.Weight = weight;
-            return onLineGoal;
+            if (targetLineOrigin != null) goal.TargetLineOrigin = targetLineOrigin.ToTriple();
+            if (targetLineDirection != null) goal.TargetLineDirection = targetLineDirection.ToTriple();
+            if (weight >= 0.0) goal.Weight = weight;
+            return goal;
         }
 
 
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
-        /// <param name="onLineGoal"></param>
+        /// <param name="goal"></param>
         /// <param name="targetLine"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static OnLineGoal OnLineGoal_Change(
-            OnLineGoal onLineGoal,
+            OnLineGoal goal,
             [DefaultArgument("null")] Line targetLine,
             [DefaultArgument("-1.0")] float weight)
         {
             if (targetLine != null)
             {
-                onLineGoal.TargetLineOrigin = targetLine.StartPoint.ToTriple();
-                onLineGoal.TargetLineDirection =
+                goal.TargetLineOrigin = targetLine.StartPoint.ToTriple();
+                goal.TargetLineDirection =
                     (targetLine.EndPoint.ToTriple() - targetLine.StartPoint.ToTriple()).Normalise();
             }
 
-            if (weight >= 0.0) onLineGoal.Weight = weight;
-            return onLineGoal;
+            if (weight >= 0.0) goal.Weight = weight;
+            return goal;
         }
 
 
@@ -963,43 +1072,43 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
-        /// <param name="onPlaneGoal"></param>
+        /// <param name="goal"></param>
         /// <param name="targetPlaneOrigin"></param>
         /// <param name="targetPlaneNormal"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static OnPlaneGoal OnPlaneGoal_Change(
-            OnPlaneGoal onPlaneGoal,
+            OnPlaneGoal goal,
             [DefaultArgument("null")] Point targetPlaneOrigin,
             [DefaultArgument("null")] Vector targetPlaneNormal,
             [DefaultArgument("-1.0")] float weight)
         {
-            if (targetPlaneOrigin != null) onPlaneGoal.TargetPlaneOrigin = targetPlaneOrigin.ToTriple();
-            if (targetPlaneNormal != null) onPlaneGoal.TargetPlaneNormal = targetPlaneNormal.ToTriple();
-            if (weight >= 0.0) onPlaneGoal.Weight = weight;
-            return onPlaneGoal;
+            if (targetPlaneOrigin != null) goal.TargetPlaneOrigin = targetPlaneOrigin.ToTriple();
+            if (targetPlaneNormal != null) goal.TargetPlaneNormal = targetPlaneNormal.ToTriple();
+            if (weight >= 0.0) goal.Weight = weight;
+            return goal;
         }
 
 
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
-        /// <param name="onPlaneGoal"></param>
+        /// <param name="goal"></param>
         /// <param name="targetPlane"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static OnPlaneGoal OnPlaneGoal_Change(
-            OnPlaneGoal onPlaneGoal,
+            OnPlaneGoal goal,
             [DefaultArgument("null")] Plane targetPlane,
             [DefaultArgument("-1.0")] float weight)
         {
             if (targetPlane != null)
             {
-                onPlaneGoal.TargetPlaneOrigin = targetPlane.Origin.ToTriple();
-                onPlaneGoal.TargetPlaneNormal = targetPlane.Normal.ToTriple();
+                goal.TargetPlaneOrigin = targetPlane.Origin.ToTriple();
+                goal.TargetPlaneNormal = targetPlane.Normal.ToTriple();
             }
-            if (weight >= 0.0) onPlaneGoal.Weight = weight;
-            return onPlaneGoal;
+            if (weight >= 0.0) goal.Weight = weight;
+            return goal;
         }
 
 
@@ -1026,18 +1135,18 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
-        /// <param name="onSurfaceGoal"></param>
+        /// <param name="goal"></param>
         /// <param name="targetSurface"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static OnSurfaceGoal OnSurfaceGoal_Change(
-            OnSurfaceGoal onSurfaceGoal,
+            OnSurfaceGoal goal,
             [DefaultArgument("null")] Surface targetSurface,
             float weight)
         {
-            if (targetSurface != null) onSurfaceGoal.TargetSurface = targetSurface;
-            if (weight >= 0.0) onSurfaceGoal.Weight = weight;
-            return onSurfaceGoal;
+            if (targetSurface != null) goal.TargetSurface = targetSurface;
+            if (weight >= 0.0) goal.Weight = weight;
+            return goal;
         }
 
 
@@ -1048,14 +1157,26 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Force a set of lines to be parallel.
         /// </summary>
-        /// <param name="startPositions">The nodes at the linie start points and end points, in the following order: start1, end1, start2, end2, etc...</param>
+        /// <param name="StartPointsEndPoints">The nodes at the linie start points and end points, in the following order: start1, end1, start2, end2, etc...</param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static ParallelLinesGoal ParallelLinesGoal_Create(
-            List<Point> startPositions,
+            List<Point> lineStartPoints,
+            List<Point> lineEndPoints,
             [DefaultArgument("1.0")] float weight)
         {
-            return new ParallelLinesGoal(startPositions.ToTriples(), weight);
+            if (lineStartPoints.Count != lineEndPoints.Count)
+                throw new Exception("Error: lineStartPoints count is not equal to lineEndPoints count");
+
+            List<Triple> pointPairs = new List<Triple>();
+
+            for (int i = 0; i < lineStartPoints.Count; i++)
+            {
+                pointPairs.Add(lineStartPoints[i].ToTriple());
+                pointPairs.Add(lineEndPoints[i].ToTriple());
+            }
+
+            return new ParallelLinesGoal(pointPairs, weight);
         }
 
 
@@ -1082,15 +1203,15 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
-        /// <param name="parallelLinesGoal"></param>
+        /// <param name="goal"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static ParallelLinesGoal ParallelLinesGoal_Change(
-            ParallelLinesGoal parallelLinesGoal,
+            ParallelLinesGoal goal,
             [DefaultArgument("-1.0")] float weight)
         {
-            if (weight >= 0.0) parallelLinesGoal.Weight = weight;
-            return parallelLinesGoal;
+            if (weight >= 0.0) goal.Weight = weight;
+            return goal;
         }
 
 
@@ -1124,21 +1245,21 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
-        /// <param name="shapeMatchingGoal"></param>
+        /// <param name="goal"></param>
         /// <param name="targetShapePoints"></param>
         /// <param name="allowScaling"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static ShapeMatchingGoal ShapeMatchingGoal_Change(
-            ShapeMatchingGoal shapeMatchingGoal,
+            ShapeMatchingGoal goal,
             [DefaultArgument("null")] List<Point> targetShapePoints,
             [DefaultArgument("false")] bool? allowScaling,
             [DefaultArgument("-1.0")] float weight)
         {
-            if (targetShapePoints != null) shapeMatchingGoal.SetTargetShapePoints(targetShapePoints.ToTriples());
-            if (weight >= 0.0) shapeMatchingGoal.Weight = weight;
-            if (allowScaling.HasValue) shapeMatchingGoal.AllowScaling = allowScaling.Value;
-            return shapeMatchingGoal;
+            if (targetShapePoints != null) goal.SetTargetShapePoints(targetShapePoints.ToTriples());
+            if (weight >= 0.0) goal.Weight = weight;
+            if (allowScaling.HasValue) goal.AllowScaling = allowScaling.Value;
+            return goal;
         }
 
 
@@ -1147,20 +1268,80 @@ namespace DynaShape.ZeroTouch
         //==================================================================
 
         /// <summary>
-        /// Move a set of nodes to positions that resemble a target shape.
-        /// The target shape is defined by a sequence of points, in the same order as how the nodes are specified.
+        /// Maintain minimum distance between the nodes
         /// </summary>
-        /// <param name="startPositions"></param>
-        /// <param name="targetShapePoints"></param>
-        /// <param name="allowScaling"></param>
+        /// <param name="centers"></param>
+        /// <param name="radii"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static SphereCollisionGoal SphereCollisionGoal_Create(
-            List<Point> startPositions,
+            List<Point> centers,
             List<float> radii,
             [DefaultArgument("1.0")] float weight)
         {
-            return new SphereCollisionGoal(startPositions.ToTriples(), radii, weight);
+            if (centers.Count != radii.Count)
+                throw new Exception("Error: centers count is not equal to radii count");
+
+            return new SphereCollisionGoal(centers.ToTriples(), radii, weight);
+        }
+
+
+        /// <summary>
+        /// Maintain minimum distance between the nodes and the (static) lines
+        /// </summary>
+        /// <param name="goal"></param>
+        /// <param name="radii"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static SphereCollisionGoal SphereCollisionGoal_Change(
+            SphereCollisionGoal goal,
+            [DefaultArgument("null")] List<float> radii,
+            [DefaultArgument("-1.0")] float weight)
+        {
+            if (radii != null)
+            {
+                if (goal.NodeCount != radii.Count)
+                    throw new Exception("Error: radii count is not equal to node count");
+                goal.Radii = radii.ToArray();
+            }
+
+            if (weight >= 0.0) goal.Weight = weight;
+            return goal;
+        }
+
+        //==================================================================
+        // SphereStaticLineCollision
+        //==================================================================
+
+        /// <summary>
+        /// Move a set of nodes to positions that resemble a target shape.
+        /// The target shape is defined by a sequence of points, in the same order as how the nodes are specified.
+        /// </summary>
+        /// <param name="centers"></param>
+        /// <param name="radii"></param>
+        /// <param name="lines"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static SphereStaticLineCollisionGoal SphereStaticLineCollisionGoal_Create(
+            List<Point> centers,
+            List<float> radii,
+            [DefaultArgument("null")]List<Line> lines,
+            [DefaultArgument("1.0")] float weight)
+        {
+            if (centers.Count != radii.Count)
+                throw new Exception("Error: centers count is not equal to radii count");
+
+            List<Triple> lineStarts = new List<Triple>();
+            List<Triple> lineEnds = new List<Triple>();
+
+            if (lines != null)
+                foreach (Line line in lines)
+                {
+                    lineStarts.Add(line.StartPoint.ToTriple());
+                    lineEnds.Add(line.EndPoint.ToTriple());
+                }
+
+            return new SphereStaticLineCollisionGoal(centers.ToTriples(), radii, lineStarts, lineEnds, weight);
         }
 
 
@@ -1172,14 +1353,33 @@ namespace DynaShape.ZeroTouch
         /// <param name="allowScaling"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
-        public static SphereCollisionGoal SphereCollisionGoal_Change(
-            SphereCollisionGoal sphereCollisionGoal,
+        public static SphereStaticLineCollisionGoal SphereStaticLineCollisionGoal_Change(
+            SphereStaticLineCollisionGoal goal,
             [DefaultArgument("null")] List<float> radii,
+            [DefaultArgument("null")] List<Line> lines,
             [DefaultArgument("-1.0")] float weight)
         {
-            if (radii != null) sphereCollisionGoal.Radii = radii.ToArray();
-            if (weight >= 0.0) sphereCollisionGoal.Weight = weight;
-            return sphereCollisionGoal;
+            if (radii != null)
+            {
+                if (goal.NodeCount != radii.Count)
+                    throw new Exception("Error: radii count is not equal to node count");
+                goal.Radii = radii.ToArray();
+            }
+
+            if (lines != null)
+            {
+                goal.LineStarts = new List<Triple>(lines.Count);
+                goal.LineEnds = new List<Triple>(lines.Count);
+
+                for (int i = 0; i < lines.Count; i++)
+                {
+                    goal.LineStarts.Add(lines[i].StartPoint.ToTriple());
+                    goal.LineStarts.Add(lines[i].EndPoint.ToTriple());
+                }
+            }
+
+            if (weight >= 0.0) goal.Weight = weight;
+            return goal;
         }
     }
 }

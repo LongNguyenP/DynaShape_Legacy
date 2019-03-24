@@ -28,19 +28,13 @@ namespace DynaShape.GeometryBinders
 
         public override List<object> CreateGeometryObjects(List<Node> allNodes)
         {
-            return new List<object>
-            {
-            };
+            return new List<object>();
         }
 
 
         public override void CreateDisplayedGeometries(DynaShapeDisplay display, List<Node> allNodes)
         {
-            Triple center = allNodes[NodeIndices[0]].Position;
-
-           
-            
-            //display.DrawPolyline(vertices, Color, true);
+            display.DrawText(Text, allNodes[NodeIndices[0]].Position);
         }
     }
 }

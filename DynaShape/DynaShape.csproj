@@ -114,6 +114,9 @@
     <Compile Include="Goals\AngleGoal.cs" />
     <Compile Include="Goals\ConstantVolumePressureGoal.cs" />
     <Compile Include="Goals\ConstantPressureGoal.cs" />
+    <Compile Include="Goals\ConvexPolygonCollisionGoal.cs" />
+    <Compile Include="Goals\ConvexPolygonContainmentGoal.cs" />
+    <Compile Include="Goals\SphereStaticLineCollision.cs" />
     <Compile Include="Goals\SphereCollisionGoal.cs" />
     <Compile Include="Goals\OnSurfaceGoal.cs" />
     <Compile Include="Goals\OnLineGoal.cs" />

@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
-using DSCore;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Runtime;
 using DynaShape.GeometryBinders;
 using HelixToolkit.Wpf.SharpDX.Core;
+using SharpDX;
+using Color = DSCore.Color;
 using Point = Autodesk.DesignScript.Geometry.Point;
 
 
@@ -61,7 +62,7 @@ namespace DynaShape.ZeroTouch
 
 
         public static MeshBinder MeshBinder(
-            Autodesk.DesignScript.Geometry.Mesh mesh,
+            Mesh mesh,
             [DefaultArgument("null")] Color color)
         {
             return new MeshBinder(
@@ -93,10 +94,23 @@ namespace DynaShape.ZeroTouch
                 textureCoordinates.Content);
         }
 
+        public static TextBinder TextBinder(
+            Point position,
+            string text,
+            [DefaultArgument("null")] Color color)
+        {
+            return new TextBinder(position.ToTriple(), text, color?.ToSharpDXColor() ?? DynaShapeDisplay.DefaultLineColor);
+        }
 
         public static GeometryBinder ChangeColor(GeometryBinder geometryBinder, Color color)
         {
             geometryBinder.Color = color.ToSharpDXColor();
+            return geometryBinder;
+        }
+
+        public static GeometryBinder Show(GeometryBinder geometryBinder, bool show)
+        {
+            geometryBinder.Show = show;
             return geometryBinder;
         }
     }

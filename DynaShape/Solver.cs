@@ -73,7 +73,7 @@ namespace DynaShape
                 }
 
                 if (IterationCount > 0) Iterate(IterationCount);
-                else Iterate(25.0);
+                else Iterate(25);
 
                 if (EnableFastDisplay) Display.Render();
 
@@ -92,7 +92,7 @@ namespace DynaShape
             if (backgroundExecutionTask == null) return;
             ctSource?.Cancel();
             backgroundExecutionTask?.Wait(300);
-            Display.DispatcherOperation?.Task.Wait();
+            Display.DispatcherOperation?.Task.Wait(300);
         }
 
         public void AddGoals(IEnumerable<Goal> goals, double nodeMergeThreshold = 0.0001)
@@ -251,6 +251,7 @@ namespace DynaShape
 
         public void Reset()
         {
+            CurrentIteration = 0;
             foreach (Node node in Nodes) node.Reset();
         }
 
@@ -358,47 +359,35 @@ namespace DynaShape
             return ke;
         }
 
-        private void ViewportCameraChangedHandler(object sender, RoutedEventArgs args)
+        public void Dispose()
         {
-            NearestNodeIndex = -1;
-        }
-
-        private void ViewportMouseDownHandler(object sender, MouseButtonEventArgs args)
-        {
-            if (args.LeftButton == MouseButtonState.Pressed && EnableMouseInteraction)
-                HandleNodeIndex = FindNearestNodeIndex();
-        }
-
-        private void ViewportMouseUpHandler(object sender, MouseButtonEventArgs args)
-        {
-            HandleNodeIndex = -1;
-            NearestNodeIndex = -1;
-        }
-
-        private void ViewportMouseMoveHandler(object sender, MouseEventArgs args)
-        {
-            if (!EnableMouseInteraction) return;
-            if (args.LeftButton == MouseButtonState.Released) HandleNodeIndex = -1;
-            NearestNodeIndex = FindNearestNodeIndex();
+            StopBackgroundExecution();
+            Clear();
+            DynaShapeViewExtension.ViewModel.ViewMouseDown -= ViewportMouseDownHandler;
+            DynaShapeViewExtension.ViewModel.ViewMouseUp -= ViewportMouseUpHandler;
+            DynaShapeViewExtension.ViewModel.ViewMouseMove -= ViewportMouseMoveHandler;
+            DynaShapeViewExtension.ViewModel.ViewCameraChanged -= ViewportCameraChangedHandler;
+            DynaShapeViewExtension.ViewModel.CanNavigateBackgroundPropertyChanged -= ViewportCanNavigateBackgroundPropertyChangedHandler;
+            Display.Dispose();
         }
 
         internal int FindNearestNodeIndex(float range = 0.03f)
         {
             CameraData cameraData = DynaShapeViewExtension.CameraData;
 
-            Triple camZ = new Triple( cameraData.LookDirection.X,
-                                     -cameraData.LookDirection.Z,
-                                      cameraData.LookDirection.Y).Normalise();
+            Triple camZ = new Triple(cameraData.LookDirection.X,
+                -cameraData.LookDirection.Z,
+                cameraData.LookDirection.Y).Normalise();
 
-            Triple camY = new Triple( cameraData.UpDirection.X,
-                                     -cameraData.UpDirection.Z,
-                                      cameraData.UpDirection.Y).Normalise();
+            Triple camY = new Triple(cameraData.UpDirection.X,
+                -cameraData.UpDirection.Z,
+                cameraData.UpDirection.Y).Normalise();
 
             Triple camX = camY.Cross(camZ).Normalise();
 
             Triple mousePosition2D = new Triple(DynaShapeViewExtension.MouseRayDirection.Dot(camX),
-                                                DynaShapeViewExtension.MouseRayDirection.Dot(camY),
-                                                DynaShapeViewExtension.MouseRayDirection.Dot(camZ));
+                DynaShapeViewExtension.MouseRayDirection.Dot(camY),
+                DynaShapeViewExtension.MouseRayDirection.Dot(camZ));
 
             mousePosition2D /= mousePosition2D.Z;
 
@@ -424,22 +413,37 @@ namespace DynaShape
             return nearestNodeIndex;
         }
 
+        private void ViewportCameraChangedHandler(object sender, RoutedEventArgs args)
+        {
+            NearestNodeIndex = -1;
+        }
+
+        private void ViewportMouseDownHandler(object sender, MouseButtonEventArgs args)
+        {
+            if (args.LeftButton == MouseButtonState.Pressed && EnableMouseInteraction)
+                HandleNodeIndex = FindNearestNodeIndex();
+        }
+
+        private void ViewportMouseUpHandler(object sender, MouseButtonEventArgs args)
+        {
+            HandleNodeIndex = -1;
+            NearestNodeIndex = -1;
+        }
+
+        private void ViewportMouseMoveHandler(object sender, MouseEventArgs args)
+        {
+            if (!EnableMouseInteraction) return;
+            if (args.LeftButton == MouseButtonState.Released) HandleNodeIndex = -1;
+            NearestNodeIndex = FindNearestNodeIndex();
+        }
+
+
         private void ViewportCanNavigateBackgroundPropertyChangedHandler(bool canNavigate)
         {
             HandleNodeIndex = -1;
             NearestNodeIndex = -1;
         }
 
-        public void Dispose()
-        {
-            StopBackgroundExecution();
-            Clear();
-            DynaShapeViewExtension.ViewModel.ViewMouseDown -= ViewportMouseDownHandler;
-            DynaShapeViewExtension.ViewModel.ViewMouseUp -= ViewportMouseUpHandler;
-            DynaShapeViewExtension.ViewModel.ViewMouseMove -= ViewportMouseMoveHandler;
-            DynaShapeViewExtension.ViewModel.ViewCameraChanged -= ViewportCameraChangedHandler;
-            DynaShapeViewExtension.ViewModel.CanNavigateBackgroundPropertyChanged -= ViewportCanNavigateBackgroundPropertyChangedHandler;
-            Display.Dispose();
-        }
+        
     }
 }

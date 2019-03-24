@@ -10,9 +10,8 @@ namespace DynaShape.Goals
         public ParallelLinesGoal(List<Triple> pointPairs, float weight = 1f)
         {
             Weight = weight;
-            if (pointPairs.Count % 2 != 0) throw new Exception("Equal-Length Goal: Node count must be even");
             StartingPositions = pointPairs.ToArray();
-            Moves = new Triple[StartingPositions.Length];          
+            Moves = new Triple[StartingPositions.Length];
             Weights = new float[StartingPositions.Length];
         }
 
