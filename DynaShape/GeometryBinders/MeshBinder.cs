@@ -40,11 +40,12 @@ namespace DynaShape.GeometryBinders
             }
         }
 
-
+#if CLI == false
         public MeshBinder(Autodesk.DesignScript.Geometry.Mesh mesh)
             : this(mesh, DynaShapeDisplay.DefaultMeshFaceColor)
         {
         }
+#endif
 
 
         public MeshBinder(Autodesk.Dynamo.MeshToolkit.Mesh mesh, Color color)
@@ -74,12 +75,12 @@ namespace DynaShape.GeometryBinders
             }
         }
 
-
+#if CLI == false
         public MeshBinder(Autodesk.Dynamo.MeshToolkit.Mesh mesh)
             : this(mesh, DynaShapeDisplay.DefaultMeshFaceColor)
         {
         }
-
+#endif
 
         public override List<object> CreateGeometryObjects(List<Node> allNodes)
         {
@@ -93,7 +94,7 @@ namespace DynaShape.GeometryBinders
             
         }
 
-
+#if CLI == false
         public override void CreateDisplayedGeometries(DynaShapeDisplay display, List<Node> allNodes)
         {
             //======================================================================
@@ -152,5 +153,6 @@ namespace DynaShape.GeometryBinders
                     Material = new PhongMaterial { DiffuseColor = Color },
                 });
         }
+#endif
     }
 }

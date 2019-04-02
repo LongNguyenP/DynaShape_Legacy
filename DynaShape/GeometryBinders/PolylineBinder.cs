@@ -20,12 +20,12 @@ namespace DynaShape.GeometryBinders
             Loop = loop;
         }
 
-
+#if CLI == false
         public PolylineBinder(List<Triple> vertices, bool loop = false)
             : this(vertices, DynaShapeDisplay.DefaultLineColor, loop)
         {
         }
-
+#endif
 
         public override List<object> CreateGeometryObjects(List<Node> allNodes)
         {
@@ -34,12 +34,13 @@ namespace DynaShape.GeometryBinders
             return new List<object> { PolyCurve.ByPoints(points, Loop) };
         }
 
-
+#if CLI == false
         public override void CreateDisplayedGeometries(DynaShapeDisplay display, List<Node> allNodes)
         {
             List<Triple> vertices = new List<Triple>();
             for (int i = 0; i < NodeCount; i++) vertices.Add(allNodes[NodeIndices[i]].Position);
             display.DrawPolyline(vertices, Color, Loop);
         }
+#endif
     }
 }

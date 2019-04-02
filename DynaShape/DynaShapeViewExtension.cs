@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿#if CLI == false
+
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,6 +12,7 @@ using System;
 using Dynamo.Controls;
 using Dynamo.Graph.Nodes;
 using HelixToolkit.Wpf.SharpDX;
+
 
 
 namespace DynaShape
@@ -100,3 +103,5 @@ namespace DynaShape
         public string Name => "DynaShapeViewExtension";
     }
 }
+
+#endif

@@ -18,7 +18,10 @@ using Vector = Autodesk.DesignScript.Geometry.Vector;
 namespace DynaShape
 {
     [IsVisibleInDynamoLibrary(false)]
-    public class Solver : IDisposable
+    public class Solver
+#if CLI == false
+        : IDisposable
+#endif
     {
         public bool EnableMouseInteraction = true;
         public bool EnableMomentum = true;
@@ -32,8 +35,6 @@ namespace DynaShape
         internal int HandleNodeIndex = -1;
         internal int NearestNodeIndex = -1;
 
-        internal DynaShapeDisplay Display;
-
         private Task backgroundExecutionTask;
 
         public int IterationCount = 0;
@@ -45,54 +46,16 @@ namespace DynaShape
         public Solver()
         {
             TimeCreated = DateTime.Now;
-
-            if (DynaShapeViewExtension.ViewModel == null) throw new Exception("Oh no, DynaShape could not get access to the Helix ViewModel. Sad!");
-
             CurrentIteration = 0;
+#if CLI == false
+            if (DynaShapeViewExtension.ViewModel == null) throw new Exception("Oh no, DynaShape could not get access to the Helix ViewModel. Sad!");
             Display = new DynaShapeDisplay(this);
-
             DynaShapeViewExtension.ViewModel.ViewMouseDown += ViewportMouseDownHandler;
             DynaShapeViewExtension.ViewModel.ViewMouseUp += ViewportMouseUpHandler;
             DynaShapeViewExtension.ViewModel.ViewMouseMove += ViewportMouseMoveHandler;
             DynaShapeViewExtension.ViewModel.ViewCameraChanged += ViewportCameraChangedHandler;
             DynaShapeViewExtension.ViewModel.CanNavigateBackgroundPropertyChanged += ViewportCanNavigateBackgroundPropertyChangedHandler;
-        }
-
-        CancellationTokenSource ctSource;
-
-        private void BackgroundExecutionAction()
-        {
-            while (!ctSource.Token.IsCancellationRequested)
-            {
-                // Even when the workspace is closed, the background task still runs
-                // Therefore we need to check for this case and terminate the while loop, so that the task can completed
-                if (!DynaShapeViewExtension.Parameters.CurrentWorkspaceModel.Nodes.Any())
-                {
-                    Dispose();
-                    break;
-                }
-
-                if (IterationCount > 0) Iterate(IterationCount);
-                else Iterate(25);
-
-                if (EnableFastDisplay) Display.Render();
-
-            }
-        }
-
-        public void StartBackgroundExecution()
-        {
-            if (backgroundExecutionTask != null && backgroundExecutionTask.Status == TaskStatus.Running) return;
-            ctSource = new CancellationTokenSource();
-            backgroundExecutionTask = Task.Factory.StartNew(BackgroundExecutionAction, ctSource.Token);  
-        }
-
-        public void StopBackgroundExecution()
-        {
-            if (backgroundExecutionTask == null) return;
-            ctSource?.Cancel();
-            backgroundExecutionTask?.Wait(300);
-            Display.DispatcherOperation?.Task.Wait(300);
+#endif
         }
 
         public void AddGoals(IEnumerable<Goal> goals, double nodeMergeThreshold = 0.0001)
@@ -294,6 +257,7 @@ namespace DynaShape
             // Move the manipulated node toward the mouse ray
             //=================================================================================
 
+#if CLI == false
             if (HandleNodeIndex != -1)
             {
                 float manipulationWeight = 30f;
@@ -303,6 +267,7 @@ namespace DynaShape
                 Triple mouseRayPull = v.Dot(DynaShapeViewExtension.MouseRayDirection) * DynaShapeViewExtension.MouseRayDirection - v;
                 nodeMoveSums[HandleNodeIndex] += manipulationWeight * mouseRayPull;
             }
+#endif
 
             //=============================================================================================
             // Move the nodes to their new positions
@@ -357,6 +322,45 @@ namespace DynaShape
                 ke += Nodes[i].Velocity.LengthSquared;
 
             return ke;
+        }
+
+#if CLI == false
+        CancellationTokenSource ctSource;
+        internal DynaShapeDisplay Display;
+
+        private void BackgroundExecutionAction()
+        {
+            while (!ctSource.Token.IsCancellationRequested)
+            {
+                // Even when the workspace is closed, the background task still runs
+                // Therefore we need to check for this case and terminate the while loop, so that the task can completed
+                if (!DynaShapeViewExtension.Parameters.CurrentWorkspaceModel.Nodes.Any())
+                {
+                    Dispose();
+                    break;
+                }
+
+                if (IterationCount > 0) Iterate(IterationCount);
+                else Iterate(25);
+
+                if (EnableFastDisplay) Display.Render();
+
+            }
+        }
+
+        public void StartBackgroundExecution()
+        {
+            if (backgroundExecutionTask != null && backgroundExecutionTask.Status == TaskStatus.Running) return;
+            ctSource = new CancellationTokenSource();
+            backgroundExecutionTask = Task.Factory.StartNew(BackgroundExecutionAction, ctSource.Token);
+        }
+
+        public void StopBackgroundExecution()
+        {
+            if (backgroundExecutionTask == null) return;
+            ctSource?.Cancel();
+            backgroundExecutionTask?.Wait(300);
+            Display.DispatcherOperation?.Task.Wait(300);
         }
 
         public void Dispose()
@@ -443,7 +447,6 @@ namespace DynaShape
             HandleNodeIndex = -1;
             NearestNodeIndex = -1;
         }
-
-        
+#endif
     }
 }

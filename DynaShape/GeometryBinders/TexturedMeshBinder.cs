@@ -52,12 +52,12 @@ namespace DynaShape.GeometryBinders
             }
         }
 
-
+#if CLI == false
         public TexturedMeshBinder(Autodesk.Dynamo.MeshToolkit.Mesh mesh, string textureFileName, Vector2Collection textureCoordinates)
             : this(mesh, DynaShapeDisplay.DefaultMeshFaceColor, textureFileName, textureCoordinates)
         {
         }
-
+#endif
 
         public override List<object> CreateGeometryObjects(List<Node> allNodes)
         {
@@ -68,7 +68,7 @@ namespace DynaShape.GeometryBinders
             return new List<object> { Autodesk.Dynamo.MeshToolkit.Mesh.ByVerticesAndIndices(vertices, faceIndices) };
         }
 
-
+#if CLI == false
         public override void CreateDisplayedGeometries(DynaShapeDisplay display, List<Node> allNodes)
         {
             //======================================================================
@@ -132,5 +132,6 @@ namespace DynaShape.GeometryBinders
                     }
                 });
         }
+#endif
     }
 }

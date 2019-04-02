@@ -15,12 +15,12 @@ namespace DynaShape.GeometryBinders
             Color = color;
         }
 
-
+#if CLI == false
         public LineBinder(Triple startPoint, Triple endPoint)
             : this(startPoint, endPoint, DynaShapeDisplay.DefaultLineColor)
         {
         }
-
+#endif
 
         public override List<object> CreateGeometryObjects(List<Node> allNodes)
         {
@@ -32,6 +32,7 @@ namespace DynaShape.GeometryBinders
             };
         }
 
+#if CLI == false
         public override void CreateDisplayedGeometries(DynaShapeDisplay display, List<Node> allNodes)
         {
             display.DrawLine(
@@ -39,5 +40,6 @@ namespace DynaShape.GeometryBinders
                 allNodes[NodeIndices[1]].Position,
                 Color);
         }
+#endif
     }
 }

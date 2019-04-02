@@ -53,7 +53,11 @@ namespace DynaShape.ZeroTouch
            [DefaultArgument("false")] bool enableManipulation,
            [DefaultArgument("0.95")] float dampingFactor)
         {
-
+#if CLI
+            throw new Exception("DynaShape is currently running in CLI-compatible mode, " +
+                                "therefore this node is disabled. " +
+                                "You can only use the DynaShape.ExecuteSilently node instead");
+#else
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             
@@ -91,6 +95,7 @@ namespace DynaShape.ZeroTouch
                    { "nodePositions", solver.GetNodePositionsAsPoints() },
                    { "goalOutputs", solver.GetGoalOutputs() },
                    { "geometries", solver.GetGeometries() } };
+#endif
         }
 
 
