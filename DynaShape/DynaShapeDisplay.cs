@@ -1,6 +1,4 @@
-﻿#if CLI == false
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -25,13 +23,17 @@ using Model3D = HelixToolkit.Wpf.SharpDX.Model3D;
 namespace DynaShape
 {
     [IsVisibleInDynamoLibrary(false)]
-    public class DynaShapeDisplay : IDisposable
+    public class DynaShapeDisplay
+#if CLI == false
+        : IDisposable
+#endif
     {
         public static readonly Color DefaultPointColor = new Color(0.8f, 0.2f, 0.2f, 1f);
         public static readonly Color DefaultLineColor = new Color(0.3f, 0.7f, 0.8f, 1f);
         public static readonly Color DefaultMeshFaceColor = new Color(0f, 0.7f, 1f, 0.3f);
         public static readonly Color DefaultTextColor = new Color(0f, 0f, 10f, 0f);
 
+#if CLI == false
         private readonly Solver solver;
 
         private PointGeometryModel3D pointModel;
@@ -353,7 +355,8 @@ namespace DynaShape
 
             //RenderAction();
         }
+
+#endif
     }
 }
 
-#endif

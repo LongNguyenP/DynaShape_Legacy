@@ -20,12 +20,12 @@ namespace DynaShape.GeometryBinders
             Loop = loop;
         }
 
-#if CLI == false
+
         public PolylineBinder(List<Triple> vertices, bool loop = false)
             : this(vertices, DynaShapeDisplay.DefaultLineColor, loop)
         {
         }
-#endif
+
 
         public override List<object> CreateGeometryObjects(List<Node> allNodes)
         {

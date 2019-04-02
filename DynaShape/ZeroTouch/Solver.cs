@@ -54,9 +54,8 @@ namespace DynaShape.ZeroTouch
            [DefaultArgument("0.95")] float dampingFactor)
         {
 #if CLI
-            throw new Exception("DynaShape is currently running in CLI-compatible mode, " +
-                                "therefore this node is disabled. " +
-                                "You can only use the DynaShape.ExecuteSilently node instead");
+            throw new Exception("This node will not work as DynaShape is currently running in CLI-compatible mode. " +
+                                "You can use the DynaShape.ExecuteSilently node instead");
 #else
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
