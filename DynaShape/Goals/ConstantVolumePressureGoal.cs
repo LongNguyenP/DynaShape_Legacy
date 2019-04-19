@@ -43,7 +43,7 @@ namespace DynaShape.Goals
         }
 
 
-        public override void Compute(List<Node> allNodes)
+        internal override void Compute(List<Node> allNodes)
         {
             List<Point> vertices = new List<Point>();
             foreach (int i in NodeIndices)

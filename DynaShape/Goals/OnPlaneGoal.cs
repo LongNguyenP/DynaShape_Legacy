@@ -35,7 +35,7 @@ namespace DynaShape.Goals
         }
 
 
-        public override void Compute(List<Node> allNodes)
+        internal override void Compute(List<Node> allNodes)
         {
             for (int i = 0; i < NodeCount; i++)
             {

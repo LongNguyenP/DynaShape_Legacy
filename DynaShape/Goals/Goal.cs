@@ -7,14 +7,14 @@ namespace DynaShape.Goals
     [IsVisibleInDynamoLibrary(false)]
     public abstract class Goal
     {
-        public float Weight;
-        public float[] Weights;
-        public Triple[] StartingPositions;
-        public int[] NodeIndices;
-        public Triple[] Moves;
+        internal float Weight;
+        internal float[] Weights;
+        internal Triple[] StartingPositions;
+        internal int[] NodeIndices;
+        internal Triple[] Moves;
 
         public int NodeCount => StartingPositions.Length;
-        public abstract void Compute(List<Node> allNodes);
+        internal abstract void Compute(List<Node> allNodes);
         public virtual List<object> GetOutput(List<Node> allNodes) => null;
     }
 }

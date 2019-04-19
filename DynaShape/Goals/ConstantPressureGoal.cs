@@ -22,7 +22,7 @@ namespace DynaShape.Goals
         }
 
 
-        public override void Compute(List<Node> allNodes)
+        internal override void Compute(List<Node> allNodes)
         {
             Triple n = (allNodes[NodeIndices[1]].Position - allNodes[NodeIndices[0]].Position)
                 .Cross(allNodes[NodeIndices[2]].Position - allNodes[NodeIndices[0]].Position);

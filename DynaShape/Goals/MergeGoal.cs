@@ -19,7 +19,7 @@ namespace DynaShape.Goals
         }
 
 
-        public override void Compute(List<Node> allNodes)
+        internal override void Compute(List<Node> allNodes)
         {
             Triple center = Triple.Zero;
             for (int i = 0; i < NodeCount; i++) center += allNodes[NodeIndices[i]].Position;

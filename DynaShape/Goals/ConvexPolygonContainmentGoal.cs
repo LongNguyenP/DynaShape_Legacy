@@ -56,7 +56,7 @@ namespace DynaShape.Goals
         }
 
 
-        public override void Compute(List<Node> allNodes)
+        internal override void Compute(List<Node> allNodes)
         {
             if (polygonVertices .Count <=3) return;
 

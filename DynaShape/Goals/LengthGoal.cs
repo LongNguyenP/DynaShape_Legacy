@@ -26,10 +26,10 @@ namespace DynaShape.Goals
         }
 
 
-        public override void Compute(List<Node> allNodes)
+        internal override void Compute(List<Node> allNodes)
         {
             Triple move = allNodes[NodeIndices[1]].Position - allNodes[NodeIndices[0]].Position;
-            if (move.IsAlmostZero(1E-5f)) move = new Triple(1E-5f);
+            if (move.IsAlmostZero(1E-5f)) move = new Triple(0.01f);
             move *= 0.5f * (move.Length - TargetLength) / move.Length;
 
             Moves[0] = move;

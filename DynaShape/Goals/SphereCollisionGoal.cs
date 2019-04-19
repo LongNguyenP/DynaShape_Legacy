@@ -20,7 +20,7 @@ namespace DynaShape.Goals
         }
 
 
-        public override void Compute(List<Node> allNodes)
+        internal override void Compute(List<Node> allNodes)
         {
             Moves = new Triple[NodeCount];
             Weights = new float[NodeCount];

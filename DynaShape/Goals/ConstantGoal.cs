@@ -18,7 +18,7 @@ namespace DynaShape.Goals
             Weights = new float[StartingPositions.Length];
         }
 
-        public override void Compute(List<Node> allNodes)
+        internal override void Compute(List<Node> allNodes)
         {
             Moves.FillArray(Move);
             Weights.FillArray(Weight);

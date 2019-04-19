@@ -15,6 +15,7 @@ using SharpDX;
 using Mesh = Autodesk.Dynamo.MeshToolkit.Mesh;
 using Point = Autodesk.DesignScript.Geometry.Point;
 
+
 namespace DynaShape.ZeroTouch
 {
     public static class TestingUtilities
@@ -419,85 +420,6 @@ namespace DynaShape.ZeroTouch
             };
         }
 
-        //[MultiReturn("goals", "geometryBinders")]
-        //public static Dictionary<string, object> AuxeticButterflies(int xCount = 5, int yCount = 5, double offset = 0.2, double thickness = 0.0)
-        //{
-        //    List<Goal> goals = new List<Goal>();
-        //    List<GeometryBinder> geometryBinders = new List<GeometryBinder>();
-
-        //    List<Point> vertices = new List<Point>();
-        //    List<int> indices = new List<int>();
-
-        //    for (int i = 0; i < xCount; i++)
-        //    for (int j = 0; j < yCount; j++)
-        //    {
-        //        goals.Add(
-        //            ProcessQuad(
-        //                new Triple(i, j * (2 - 2 * offset), 0),
-        //                new Triple(i, j * (2 - 2 * offset) + 1, 0),
-        //                new Triple(i, j * (2 - 2 * offset) + 1, thickness),
-        //                new Triple(i, j * (2 - 2 * offset), thickness),
-        //                vertices, indices));
-
-        //        goals.Add(
-        //            ProcessQuad(
-        //                new Triple(i, j * (2 - 2 * offset), 0),
-        //                new Triple(i + 0.5, j * (2 - 2 * offset) + offset, 0),
-        //                new Triple(i + 0.5, j * (2 - 2 * offset) + offset, thickness),
-        //                new Triple(i, j * (2 - 2 * offset), thickness),
-        //                vertices, indices));
-
-        //        goals.Add(
-        //            ProcessQuad(
-        //                new Triple(i + 0.5, j * (2 - 2 * offset) + offset, 0),
-        //                new Triple(i + 1.0, j * (2 - 2 * offset), 0),
-        //                new Triple(i + 1.0, j * (2 - 2 * offset), thickness),
-        //                new Triple(i + 0.5, j * (2 - 2 * offset) + offset, thickness),
-        //                vertices, indices));
-
-        //        goals.Add(
-        //            ProcessQuad(
-        //                new Triple(i, j * (2 - 2 * offset) + 1, 0),
-        //                new Triple(i + 0.5, j * (2 - 2 * offset) + 1 -  offset, 0),
-        //                new Triple(i + 0.5, j * (2 - 2 * offset) + 1 - offset, thickness),
-        //                new Triple(i, j * (2 - 2 * offset) + 1, thickness),
-        //                vertices, indices));
-
-        //        goals.Add(
-        //            ProcessQuad(
-        //                new Triple(i + 0.5, j * (2 - 2 * offset) + 1 - offset, 0),
-        //                new Triple(i + 1.0, j * (2 - 2 * offset) + 1, 0),
-        //                new Triple(i + 1.0, j * (2 - 2 * offset) + 1, thickness),
-        //                new Triple(i + 0.5, j * (2 - 2 * offset) + 1 - offset, thickness),
-        //                vertices, indices));
-
-        //        if (i == xCount - 1)
-        //            goals.Add(
-        //                ProcessQuad(
-        //                    new Triple(xCount, j * (2 - 2 * offset), 0),
-        //                    new Triple(xCount, j * (2 - 2 * offset) + 1, 0),
-        //                    new Triple(xCount, j * (2 - 2 * offset) + 1, thickness),
-        //                    new Triple(xCount, j * (2 - 2 * offset), thickness),
-        //                    vertices, indices));
-
-        //        if (j < yCount - 1)
-        //            goals.Add(
-        //                ProcessQuad(
-        //                    new Triple(i + 0.5, j * (2 - 2 * offset) + 1 - offset, 0),
-        //                    new Triple(i + 0.5, (j + 1) * (2 - 2 * offset) + offset, 0),
-        //                    new Triple(i + 0.5, (j + 1) * (2 - 2 * offset) + offset, thickness),
-        //                    new Triple(i + 0.5, j * (2 - 2 * offset) + 1 - offset, thickness),
-        //                    vertices, indices));
-        //        }
-                 
-        //    geometryBinders.Add(new MeshBinder(Mesh.ByVerticesAndIndices(vertices, indices), new Color(.3f, .6f, .8f, 1f)));
-
-        //    return new Dictionary<string, object>
-        //    {
-        //        {"goals", goals},
-        //        {"geometryBinders", geometryBinders},
-        //    };
-        //}
 
         private static ShapeMatchingGoal ProcessQuad(Triple A, Triple B, Triple C, Triple D, List<Point> vertices, List<int> indices)
         {
@@ -544,49 +466,5 @@ namespace DynaShape.ZeroTouch
 
             return new ShapeMatchingGoal(triples, triples);
         }
-
-        //private static void ProcessCube(
-        //    Triple v0, Triple v1, Triple v2, Triple v3,
-        //    Triple v4, Triple v5, Triple v6, Triple v7,
-        //    List<ShapeMatchingGoal> shapeMatchingGoals,
-        //    List<LineBinder> lineBinders, 
-        //    List<Point> meshVertices,
-        //    List<int> meshVertexIndices)
-        //{
-        //    shapeMatchingGoals.Add(new ShapeMatchingGoal(new List<Triple> {v0, v1, v2, v3, v4, v5, v6, v7}));
-        //    lineBinders.Add(new LineBinder(v0, v1));
-        //    lineBinders.Add(new LineBinder(v1, v2));
-        //    lineBinders.Add(new LineBinder(v2, v3));
-        //    lineBinders.Add(new LineBinder(v3, v0));
-
-        //    lineBinders.Add(new LineBinder(v4, v5));
-        //    lineBinders.Add(new LineBinder(v5, v6));
-        //    lineBinders.Add(new LineBinder(v6, v7));
-        //    lineBinders.Add(new LineBinder(v7, v4));
-
-        //    lineBinders.Add(new LineBinder(v0, v4));
-        //    lineBinders.Add(new LineBinder(v1, v5));
-        //    lineBinders.Add(new LineBinder(v2, v6));
-        //    lineBinders.Add(new LineBinder(v3, v7));
-
-        //    int n = meshVertices.Count;
-
-        //    meshVertices.Add(v3.ToPoint()); meshVertices.Add(v2.ToPoint()); meshVertices.Add(v1.ToPoint()); meshVertices.Add(v0.ToPoint());
-        //    meshVertices.Add(v4.ToPoint()); meshVertices.Add(v5.ToPoint()); meshVertices.Add(v6.ToPoint()); meshVertices.Add(v7.ToPoint());
-        //    meshVertices.Add(v1.ToPoint()); meshVertices.Add(v2.ToPoint()); meshVertices.Add(v6.ToPoint()); meshVertices.Add(v5.ToPoint());
-        //    meshVertices.Add(v0.ToPoint()); meshVertices.Add(v1.ToPoint()); meshVertices.Add(v5.ToPoint()); meshVertices.Add(v4.ToPoint());
-        //    meshVertices.Add(v0.ToPoint()); meshVertices.Add(v3.ToPoint()); meshVertices.Add(v7.ToPoint()); meshVertices.Add(v4.ToPoint());
-        //    meshVertices.Add(v7.ToPoint()); meshVertices.Add(v6.ToPoint()); meshVertices.Add(v2.ToPoint()); meshVertices.Add(v3.ToPoint());
-
-        //    for (int i = 0; i < 24; i += 4)
-        //    {
-        //        meshVertexIndices.Add(n + i);
-        //        meshVertexIndices.Add(n + i + 1);
-        //        meshVertexIndices.Add(n + i + 2);
-        //        meshVertexIndices.Add(n + i);
-        //        meshVertexIndices.Add(n + i + 2);
-        //        meshVertexIndices.Add(n + i + 3);
-        //    }
-        //}
     }
 }
