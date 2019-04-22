@@ -26,7 +26,7 @@ namespace DynaShape.ZeroTouch
             internal OnPlaneGoal OnPlaneGoal;
             internal DirectionGoal GlobalDirectionGoal;
             internal List<AnchorGoal> DepartmentAnchorGoals = new List<AnchorGoal>();
-            
+
             internal SphereCollisionGoal SphereCollisionGoal;
 
             internal List<LengthGoal> DepartmentCohesionGoals = new List<LengthGoal>();
@@ -36,7 +36,16 @@ namespace DynaShape.ZeroTouch
             internal List<CircleBinder> CircleBinders = new List<CircleBinder>();
             internal List<LineBinder> SpaceAdjacencyLineBinders = new List<LineBinder>();
             internal List<LineBinder> SpaceDepartmentAdjacencyLineBinders = new List<LineBinder>();
+
             internal List<TextBinder> TextBinders = new List<TextBinder>();
+            //internal SpacePlanningBubbleMeshesBinder BubbleMeshesBinder;
+
+            internal List<int> SpaceAdjI = new List<int>();
+            internal List<int> SpaceAdjJ = new List<int>();
+            internal List<float> SpaceAdjTargets = new List<float>();
+
+            internal List<float> SpaceAdjErrors = new List<float>();
+            internal List<float> SpaceAdjErrorRatios = new List<float>();
 
             internal void SetUp()
             {
@@ -53,6 +62,7 @@ namespace DynaShape.ZeroTouch
                 GeometryBinders.AddRange(SpaceAdjacencyLineBinders);
                 GeometryBinders.AddRange(SpaceDepartmentAdjacencyLineBinders);
                 GeometryBinders.AddRange(TextBinders);
+                //GeometryBinders.Add(BubbleMeshesBinder);
 
                 Solver = new DynaShape.Solver();
                 Solver.AddGoals(Goals);
@@ -60,13 +70,17 @@ namespace DynaShape.ZeroTouch
             }
 
 
-            public void Reset()
+            public void ComputeScores()
             {
-                Solver.StopBackgroundExecution();
-                Solver.Clear();
-                Solver.AddGoals(Goals);
-                Solver.AddGeometryBinders(GeometryBinders);
-                Solver.Display.Render();
+                SpaceAdjErrors.Clear();
+                SpaceAdjErrorRatios.Clear();
+
+                for (int i = 0; i < SpaceAdjacencyGoals.Count; i++)
+                {
+                    float currentDistance = (float) (SpaceAdjacencyGoals[i].GetOutput(Solver.Nodes)[0]);
+                    SpaceAdjErrors.Add(currentDistance - SpaceAdjTargets[i]);
+                    SpaceAdjErrorRatios.Add(currentDistance / SpaceAdjTargets[i]);
+                }
             }
         }
 
@@ -74,24 +88,14 @@ namespace DynaShape.ZeroTouch
         {
             Engine engine = new Engine();
 
-            //===========================================================================
-            // Read Depart from spreadsheet
-            //===========================================================================
-
-            List<string> departments = new List<string>
-            {
-                "PSYCHIATRIC INPATIENT",
-                "EXAM ROOM",
-                "KPU PSY INPATIENT",
-                "WORKSTATION",
-            };
 
             //===========================================================================
-            // Read spaces from spreadsheet
+            // Read CSV data 
             //===========================================================================
 
             List<string> texts = new List<string>();
             foreach (object datum in data) texts.Add(datum?.ToString().Trim());
+            int stride = 12;
 
             List<string> spaceNames = new List<string>();
             List<int> departmentIds = new List<int>();
@@ -102,7 +106,20 @@ namespace DynaShape.ZeroTouch
             List<List<int>> adjacentSpaceIds = new List<List<int>>();
             List<List<int>> adjacentDepartmentIds = new List<List<int>>();
 
-            int stride = 12;
+            //===========================================================================
+            // Read departments
+            //===========================================================================
+
+            List<string> departments = new List<string>();
+
+            for (int i = stride; i < data.Count; i += stride)
+                if (!departments.Contains(texts[i + 2]))
+                    departments.Add(texts[i + 2]);
+
+            //===========================================================================
+            // Read spaces 
+            //===========================================================================
+
             for (int i = stride; i < data.Count; i += stride)
             {
                 spaceNames.Add(texts[i + 1]);
@@ -147,10 +164,11 @@ namespace DynaShape.ZeroTouch
             {
                 double alpha = (double) i / departments.Count * Math.PI * 2.0;
                 departmentCenters.Add(20f * new Triple(Math.Cos(alpha), Math.Sin(alpha), 0.0));
-                if (i == 0) engine.DepartmentAnchorGoals.Add(new AnchorGoal(departmentCenters.Last(), Triple.Zero, 0.1f));
+                if (i == 0)
+                    engine.DepartmentAnchorGoals.Add(new AnchorGoal(departmentCenters.Last(), Triple.Zero, 0.1f));
             }
 
-            engine.SpaceAdjacencyLineBinders.Add(new LineBinder(departmentCenters[0], departmentCenters[1], Color.Orange));
+            //engine.SpaceAdjacencyLineBinders.Add(new LineBinder(departmentCenters[0], departmentCenters[1], Color.Orange));
 
             List<Color> departmentColors = new List<Color>()
             {
@@ -177,14 +195,16 @@ namespace DynaShape.ZeroTouch
                 for (int j = 0; j < 1; j++)
                     //for (int j = 0; j < quantities[i]; j++)
                 {
-                    double a =10;
-                    Triple spaceCenter = departmentCenter + new Triple(random.NextDouble() * 2.0 * a - a, random.NextDouble() * 2.0 * a - a, 0.0);
+                    double a = 10;
+                    Triple spaceCenter = departmentCenter + new Triple(random.NextDouble() * 2.0 * a - a,
+                                             random.NextDouble() * 2.0 * a - a, 0.0);
                     float spaceRadius = (float) Math.Sqrt(areas[i] / Math.PI);
                     spaceCenterList.Add(spaceCenter);
                     spaceCenters.Add(spaceCenter);
                     spaceRadii.Add(spaceRadius);
 
-                    engine.CircleBinders.Add(new CircleBinder(spaceCenter, spaceRadius, Triple.BasisZ, departmentColors[departmentIds[i]]));
+                    engine.CircleBinders.Add(new CircleBinder(spaceCenter, spaceRadius, Triple.BasisZ,
+                        departmentColors[departmentIds[i]]));
                     engine.TextBinders.Add(new TextBinder(spaceCenter, i.ToString()));
                     engine.DepartmentCohesionGoals.Add(new LengthGoal(spaceCenter, departmentCenter, 0f));
                 }
@@ -192,8 +212,9 @@ namespace DynaShape.ZeroTouch
                 spaceCentersStructured.Add(spaceCenterList);
             }
 
-            engine.OnPlaneGoal = new OnPlaneGoal(spaceCenters, new Triple(0f, 0f, 0.0001f), Triple.BasisZ, 1.0f);
-            engine.GlobalDirectionGoal = new DirectionGoal(departmentCenters[0], departmentCenters[1], Triple.BasisX, 1.0f);
+            engine.OnPlaneGoal = new OnPlaneGoal(spaceCenters, new Triple(0f, 0f, 0.001f), Triple.BasisZ, 1.0f);
+            engine.GlobalDirectionGoal =
+                new DirectionGoal(departmentCenters[0], departmentCenters[1], Triple.BasisX, 1.0f);
             engine.SphereCollisionGoal = new SphereCollisionGoal(spaceCenters, spaceRadii, 0.5f);
             engine.ContainmentGoal = new ConvexPolygonContainmentGoal(spaceCenters, spaceRadii, new List<Triple>(), 1f);
 
@@ -207,7 +228,8 @@ namespace DynaShape.ZeroTouch
             {
                 foreach (int j in adjacentSpaceIds[i])
                 {
-                    if (i == j || j >= spaceNames.Count) continue; // Safeguard against some non-sense data from the csv file
+                    if (i == j || j >= spaceNames.Count)
+                        continue; // Safeguard against some non-sense data from the csv file
                     int adjacencyKey = i < j ? i * spaceNames.Count + j : j * spaceNames.Count + i;
                     if (adjacencyKeys.Contains(adjacencyKey)) continue;
                     adjacencyKeys.Add(adjacencyKey);
@@ -215,8 +237,12 @@ namespace DynaShape.ZeroTouch
                     foreach (Triple startPoint in spaceCentersStructured[i])
                     foreach (Triple endPoint in spaceCentersStructured[j])
                     {
-                        engine.SpaceAdjacencyGoals.Add(new LengthGoal(startPoint, endPoint, spaceRadii[i] + spaceRadii[j], 30f));
+                        engine.SpaceAdjacencyGoals.Add(new LengthGoal(startPoint, endPoint,
+                            spaceRadii[i] + spaceRadii[j], 30f));
                         engine.SpaceAdjacencyLineBinders.Add(new LineBinder(startPoint, endPoint));
+                        engine.SpaceAdjI.Add(i);
+                        engine.SpaceAdjJ.Add(j);
+                        engine.SpaceAdjTargets.Add(spaceRadii[i] + spaceRadii[j]);
                     }
                 }
             }
@@ -228,16 +254,20 @@ namespace DynaShape.ZeroTouch
         }
 
 
-        [MultiReturn("info", "nodePositions", "geometries")]
-
+        [MultiReturn("info", "nodePositions", "geometries", "spaceAdjErrors", "spaceAdjErrorRatios")]
         public static Dictionary<string, object> Execute(
+
             Engine engine,
-            [DefaultArgument("0")] int iterations,
+            [DefaultArgument("false")] bool silentMode,
+
+            [DefaultArgument("10000")] int SILENT_maxIterations,
+            [DefaultArgument("0.01")] float SILENT_terminationThreshold,
+
             [DefaultArgument("true")] bool reset,
             [DefaultArgument("true")] bool execute,
-            [DefaultArgument("true")] bool enableMomentum,
-            [DefaultArgument("true")] bool enableFastDisplay,
             [DefaultArgument("false")] bool enableManipulation,
+            [DefaultArgument("0")] int iterations,
+
             [DefaultArgument("0.95")] float dampingFactor,
             List<Point> BoundaryVertices,
             [DefaultArgument("1.0")] float BoundaryStrength,
@@ -250,35 +280,83 @@ namespace DynaShape.ZeroTouch
             [DefaultArgument("true")] bool showSpaceAdjacency,
             [DefaultArgument("true")] bool showSpaceDepartmentAdjacency)
         {
-#if CLI
-            if (!execute)
-                new Dictionary<string, object> {
-                    { "info", null },
-                    { "nodePositions", null },
-                    { "geometries", null } };
+            if (silentMode)
+            {
+                Stopwatch stopwatch = Stopwatch.StartNew();
 
+#if CLI == false
+                engine.Solver.StopBackgroundExecution();
+                engine.Solver.Display.ClearRender();
+#endif
 
-#else
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
+                engine.Solver.Reset();
+                engine.Solver.EnableMouseInteraction = enableManipulation;
+                engine.Solver.IterationCount = iterations;
+                engine.Solver.DampingFactor = dampingFactor;
+
+                foreach (var binder in engine.TextBinders) binder.Show = showSpaceNames;
+                foreach (var binder in engine.SpaceAdjacencyLineBinders) binder.Show = showSpaceAdjacency;
+                foreach (var binder in engine.SpaceDepartmentAdjacencyLineBinders)
+                    binder.Show = showSpaceDepartmentAdjacency;
+
+                engine.ContainmentGoal.PolygonVertices = BoundaryVertices.ToTriples();
+                engine.ContainmentGoal.Weight = BoundaryStrength;
+                engine.OnPlaneGoal.Weight = globalPositioningStrength;
+                engine.GlobalDirectionGoal.Weight = globalPositioningStrength * 50f;
+                foreach (var goal in engine.DepartmentAnchorGoals) goal.Weight = globalPositioningStrength;
+
+                engine.SphereCollisionGoal.Weight = sphereCollisionStrength;
+
+                foreach (var goal in engine.DepartmentCohesionGoals) goal.Weight = departmentCohesionStrength;
+                foreach (var goal in engine.SpaceAdjacencyGoals) goal.Weight = spaceAdjacencyStrength;
+                foreach (var goal in engine.SpaceDepartmentAdjacencyGoals)
+                    goal.Weight = spaceDepartmentAdjacencyStrength;
+
+                while (engine.Solver.CurrentIteration < SILENT_maxIterations)
+                {
+                    engine.Solver.Iterate();
+                    if (engine.Solver.GetLargestMove() < SILENT_terminationThreshold) break;
+                }
+
+                TimeSpan computationTime = stopwatch.Elapsed;
+                stopwatch.Restart();
+
+                engine.ComputeScores();
+
+                return new Dictionary<string, object>
+                {
+                    {
+                        "info", String.Concat(
+                            "Computation Time: " + computationTime,
+                            "\nData Output Time: " + stopwatch.Elapsed,
+                            "\nIterations      : " + engine.Solver.CurrentIteration,
+                            "\nLargest Movement: " + engine.Solver.GetLargestMove())
+                    },
+                    {"nodePositions", engine.Solver.GetNodePositionsAsPoints()},
+                    {"geometries", engine.Solver.GetGeometries()},
+                    {"spaceAdjErrors", engine.SpaceAdjErrors},
+                    {"spaceAdjErrorRatios", engine.SpaceAdjErrorRatios},
+                };
+            }
+
+#if CLI == false
 
             if (reset)
             {
-                engine.Reset();
+                engine.Solver.StopBackgroundExecution();
+                engine.Solver.Reset();
+                engine.Solver.Display.Render();
             }
             else
             {
-                if (engine.Solver.Goals.Count == 0) engine.Solver.Reset();
-
                 engine.Solver.EnableMouseInteraction = enableManipulation;
-                engine.Solver.EnableMomentum = enableMomentum;
-                engine.Solver.EnableFastDisplay = enableFastDisplay;
                 engine.Solver.IterationCount = iterations;
                 engine.Solver.DampingFactor = dampingFactor;
-                
+
                 foreach (var binder in engine.TextBinders) binder.Show = showSpaceNames;
                 foreach (var binder in engine.SpaceAdjacencyLineBinders) binder.Show = showSpaceAdjacency;
-                foreach (var binder in engine.SpaceDepartmentAdjacencyLineBinders) binder.Show = showSpaceDepartmentAdjacency;
+                foreach (var binder in engine.SpaceDepartmentAdjacencyLineBinders)
+                    binder.Show = showSpaceDepartmentAdjacency;
 
                 engine.ContainmentGoal.PolygonVertices = BoundaryVertices.ToTriples();
                 engine.ContainmentGoal.Weight = BoundaryStrength;
@@ -290,25 +368,34 @@ namespace DynaShape.ZeroTouch
 
                 foreach (Goal goal in engine.DepartmentCohesionGoals) goal.Weight = departmentCohesionStrength;
                 foreach (Goal goal in engine.SpaceAdjacencyGoals) goal.Weight = spaceAdjacencyStrength;
-                foreach (Goal goal in engine.SpaceDepartmentAdjacencyGoals) goal.Weight = spaceDepartmentAdjacencyStrength;
+                foreach (Goal goal in engine.SpaceDepartmentAdjacencyGoals)
+                    goal.Weight = spaceDepartmentAdjacencyStrength;
 
                 if (execute) engine.Solver.StartBackgroundExecution();
                 else
                 {
                     engine.Solver.StopBackgroundExecution();
-                    if (!enableFastDisplay) engine.Solver.Iterate();
+                    engine.ComputeScores();
                 }
             }
 
-            return enableFastDisplay
-                ? new Dictionary<string, object> {
-                    { "info", null },
-                    { "nodePositions", null },
-                    { "geometries", null } }
-                : new Dictionary<string, object> {
-                    { "info", null },
-                    { "nodePositions", engine.Solver.GetNodePositionsAsPoints() },
-                    { "geometries", engine.Solver.GetGeometries() } };
+            return execute
+                ? new Dictionary<string, object>
+                {
+                    {"info", null},
+                    {"nodePositions", null},
+                    {"geometries", null},
+                    {"spaceAdjErrors", null},
+                    {"spaceAdjErrorRatios", null}
+                }
+                : new Dictionary<string, object>
+                {
+                    {"info", null},
+                    {"nodePositions", engine.Solver.GetNodePositionsAsPoints()},
+                    {"geometries", engine.Solver.GetGeometries()},
+                    {"spaceAdjErrors", engine.SpaceAdjErrors},
+                    {"spaceAdjErrorRatios", engine.SpaceAdjErrorRatios}
+                };
 #endif
         }
     }

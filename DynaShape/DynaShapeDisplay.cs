@@ -151,6 +151,12 @@ namespace DynaShape
         }
 
 
+        internal void ClearRender()
+        {
+            DynaShapeViewExtension.DynamoWindow.Dispatcher.Invoke(Dispose, DispatcherPriority.Send);
+        }
+
+
         private void RenderAction()
         {
             IRenderHost renderHost = DynaShapeViewExtension.GetViewport().RenderHost;
@@ -352,8 +358,6 @@ namespace DynaShape
             foreach (MeshGeometryModel3D meshModel in meshModels)
                 if (!sceneItems.Contains(meshModel))
                     sceneItems.Add(meshModel);
-
-            //RenderAction();
         }
 
 #endif

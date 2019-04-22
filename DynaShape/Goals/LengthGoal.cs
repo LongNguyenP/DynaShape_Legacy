@@ -9,7 +9,6 @@ namespace DynaShape.Goals
     {
         public float TargetLength;
 
-
         public LengthGoal(Triple firstNodePosition, Triple secondNodePosition, float targetLength, float weight = 1000f)
         {
             Weight = weight;
@@ -35,6 +34,11 @@ namespace DynaShape.Goals
             Moves[0] = move;
             Moves[1] = -move;
             Weights[0] = Weights[1] = Weight;
+        }
+
+        public override List<object> GetOutput(List<Node> allNodes)
+        {
+            return new List<object> {allNodes[NodeIndices[1]].Position.DistanceTo(allNodes[NodeIndices[0]].Position)};
         }
     }
 }

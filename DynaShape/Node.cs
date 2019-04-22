@@ -11,6 +11,8 @@ namespace DynaShape
         public Triple Position;
         public Triple Velocity;
 
+        internal Triple Move;
+
         public Node(Triple startingPosition)
         {
             StartingPosition = startingPosition;

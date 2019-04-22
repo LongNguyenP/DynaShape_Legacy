@@ -183,24 +183,24 @@ namespace DynaShape
         public List<Vector> GetNodeVelocitiesAsVectors()
         {
             List<Vector> nodeVelocities = new List<Vector>(Nodes.Count);
-            for (int i = 0; i < Nodes.Count; i++)
-                nodeVelocities.Add(Nodes[i].Velocity.ToVector());
+            foreach (Node node in Nodes)
+                nodeVelocities.Add(node.Velocity.ToVector());
             return nodeVelocities;
         }
 
         public List<List<object>> GetGeometries()
         {
             List<List<object>> geometries = new List<List<object>>(GeometryBinders.Count);
-            for (int i = 0; i < GeometryBinders.Count; i++)
-                geometries.Add(GeometryBinders[i].CreateGeometryObjects(Nodes));
+            foreach (GeometryBinder geometryBinder in GeometryBinders)
+                if (geometryBinder.Show)
+                    geometries.Add(geometryBinder.CreateGeometryObjects(Nodes));
             return geometries;
         }
 
         public List<List<object>> GetGoalOutputs()
         {
             List<List<object>> goalOutputs = new List<List<object>>(Goals.Count);
-            for (int i = 0; i < Goals.Count; i++)
-                goalOutputs.Add(Goals[i].GetOutput(Nodes));
+            foreach (Goal goal in Goals) goalOutputs.Add(goal.GetOutput(Nodes));
             return goalOutputs;
         }
 
@@ -278,6 +278,7 @@ namespace DynaShape
                 {
                     if (nodeWeightSums[i] == 0f) continue;
                     Triple move = nodeMoveSums[i] / nodeWeightSums[i];
+                    Nodes[i].Move = move;
                     Nodes[i].Position += move;
                     Nodes[i].Velocity += move;
                     //if (Nodes[i].Velocity.Dot(move) <= 0.0)
@@ -288,6 +289,7 @@ namespace DynaShape
                 {
                     if (nodeWeightSums[i] == 0f) continue;
                     Triple move = nodeMoveSums[i] / nodeWeightSums[i];
+                    Nodes[i].Move = move;
                     Nodes[i].Position += move;
                     Nodes[i].Velocity = Triple.Zero;
                 }
@@ -298,14 +300,14 @@ namespace DynaShape
             for (int i = 0; i < iterationCount; i++) Iterate();
         }
 
-        public void Iterate(double miliseconds)
+        public void Iterate(float miliseconds)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
             while (stopwatch.Elapsed.TotalMilliseconds < miliseconds)
                 Iterate();
         }
 
-        public void Execute(int maxIterationCount, double keThreshold)
+        public void Execute(int maxIterationCount, float keThreshold)
         {
             while (CurrentIteration < maxIterationCount)
             {
@@ -314,14 +316,27 @@ namespace DynaShape
             }
         }
 
-        public double GetKineticEnergy()
+        public float GetKineticEnergy()
         {
-            double ke = 0.0;
+            float ke = 0f;
 
             for (int i = 0; i < Nodes.Count; i++)
                 ke += Nodes[i].Velocity.LengthSquared;
 
             return ke;
+        }
+
+        public float GetLargestMove()
+        {
+            float largestMove = 0f;
+
+            foreach (Node node in Nodes)
+            {
+                float move = node.Move.Length;
+                if (move > largestMove) largestMove = move;
+            }
+
+            return largestMove;
         }
 
 #if CLI == false

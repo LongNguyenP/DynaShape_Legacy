@@ -645,7 +645,7 @@
             <param name="dampingFactor">When momentum mode is enabled, this value will determine how much the node's velocity is damped at each iteration</param>
             <returns></returns>
         </member>
-        <member name="M:DynaShape.ZeroTouch.Solver.ExecuteSilently(System.Collections.Generic.List{DynaShape.Goals.Goal},System.Collections.Generic.List{DynaShape.GeometryBinders.GeometryBinder},System.Single,System.Int32,System.Double,System.Boolean,System.Boolean)">
+        <member name="M:DynaShape.ZeroTouch.Solver.ExecuteSilently(System.Collections.Generic.List{DynaShape.Goals.Goal},System.Collections.Generic.List{DynaShape.GeometryBinders.GeometryBinder},System.Single,System.Int32,System.Single,System.Boolean,System.Boolean)">
             <summary>
             Execute the solver silently and only display the final result.
             </summary>

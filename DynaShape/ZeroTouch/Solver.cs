@@ -54,7 +54,7 @@ namespace DynaShape.ZeroTouch
            [DefaultArgument("0.95")] float dampingFactor)
         {
 #if CLI
-            throw new Exception("This node will not work as DynaShape is currently running in CLI-compatible mode. " +
+            throw new Exception("This node will not work as you are currently using the CLI-compatible verison of DynaShape. " +
                                 "You can use the DynaShape.ExecuteSilently node instead");
 #else
             Stopwatch stopwatch = new Stopwatch();
@@ -117,7 +117,7 @@ namespace DynaShape.ZeroTouch
            [DefaultArgument("null")] List<GeometryBinder> geometryBinders,
            [DefaultArgument("0.001")] float nodeMergeThreshold,
            [DefaultArgument("10000")] int iterations,
-           [DefaultArgument("0.001")] double terminationThreshold,
+           [DefaultArgument("0.001")] float terminationThreshold,
            [DefaultArgument("true")] bool execute,
            [DefaultArgument("true")] bool enableMomentum)
         {
