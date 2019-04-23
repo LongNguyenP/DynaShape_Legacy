@@ -197,6 +197,17 @@ namespace DynaShape
             return geometries;
         }
 
+
+        public List<List<object>> GetGeometries(IEnumerable<GeometryBinder> geometryBinders)
+        {
+            List<List<object>> geometries = new List<List<object>>(GeometryBinders.Count);
+            foreach (GeometryBinder geometryBinder in geometryBinders)
+                if (geometryBinder.Show)
+                    geometries.Add(geometryBinder.CreateGeometryObjects(Nodes));
+            return geometries;
+        }
+
+
         public List<List<object>> GetGoalOutputs()
         {
             List<List<object>> goalOutputs = new List<List<object>>(Goals.Count);

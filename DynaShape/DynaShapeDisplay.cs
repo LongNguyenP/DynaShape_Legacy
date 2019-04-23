@@ -153,7 +153,30 @@ namespace DynaShape
 
         internal void ClearRender()
         {
-            DynaShapeViewExtension.DynamoWindow.Dispatcher.Invoke(Dispose, DispatcherPriority.Send);
+            DynaShapeViewExtension.ViewModel.RequestViewRefresh -= RequestViewRefreshHandler;
+            DynaShapeViewExtension.DynamoWindow.Dispatcher.Invoke(() =>
+            {
+                List<Model3D> sceneItems = DynaShapeViewExtension.GetSceneItems();
+
+                if (sceneItems.Contains(pointModel)) sceneItems.Remove(pointModel);
+                pointModel.Detach();
+                pointModel.Dispose();
+
+                if (sceneItems.Contains(lineModel)) sceneItems.Remove(lineModel);
+                lineModel.Detach();
+                lineModel.Dispose();
+
+                if (sceneItems.Contains(billboardTextModel)) sceneItems.Remove(billboardTextModel);
+                billboardTextModel.Detach();
+                billboardTextModel.Dispose();
+
+                foreach (MeshGeometryModel3D meshModel in meshModels)
+                {
+                    if (sceneItems.Contains(meshModel)) sceneItems.Remove(meshModel);
+                    meshModel.Detach();
+                    meshModel.Dispose();
+                }
+            });
         }
 
 
@@ -321,31 +344,7 @@ namespace DynaShape
 
         public void Dispose()
         {
-            DynaShapeViewExtension.ViewModel.RequestViewRefresh -= RequestViewRefreshHandler;
-
-            DynaShapeViewExtension.DynamoWindow.Dispatcher.Invoke(() =>
-            {
-                List<Model3D> sceneItems = DynaShapeViewExtension.GetSceneItems();
-
-                if (sceneItems.Contains(pointModel)) sceneItems.Remove(pointModel);
-                pointModel.Detach();
-                pointModel.Dispose();
-
-                if (sceneItems.Contains(lineModel)) sceneItems.Remove(lineModel);
-                lineModel.Detach();
-                lineModel.Dispose();
-
-                if (sceneItems.Contains(billboardTextModel)) sceneItems.Remove(billboardTextModel);
-                billboardTextModel.Detach();
-                billboardTextModel.Dispose();
-
-                foreach (MeshGeometryModel3D meshModel in meshModels)
-                {
-                    if (sceneItems.Contains(meshModel)) sceneItems.Remove(meshModel);
-                    meshModel.Detach();
-                    meshModel.Dispose();
-                }
-            });
+            ClearRender();
         }
 
         // This handler prevents flickering when geometries other than DynaShape ones exist in the viewport

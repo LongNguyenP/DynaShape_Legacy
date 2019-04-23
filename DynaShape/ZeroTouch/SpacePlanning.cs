@@ -254,7 +254,13 @@ namespace DynaShape.ZeroTouch
         }
 
 
-        [MultiReturn("info", "nodePositions", "geometries", "spaceAdjErrors", "spaceAdjErrorRatios")]
+        [MultiReturn(
+            "stats", 
+            "spaceCircles",
+            "spaceAdjLines",
+            "spaceAdjErrors", 
+            "spaceAdjErrorRatios")]
+
         public static Dictionary<string, object> Execute(
 
             Engine engine,
@@ -326,20 +332,22 @@ namespace DynaShape.ZeroTouch
                 return new Dictionary<string, object>
                 {
                     {
-                        "info", String.Concat(
+                        "stats", String.Concat(
                             "Computation Time: " + computationTime,
                             "\nData Output Time: " + stopwatch.Elapsed,
-                            "\nIterations      : " + engine.Solver.CurrentIteration,
+                            "\nIterations Used : " + engine.Solver.CurrentIteration,
                             "\nLargest Movement: " + engine.Solver.GetLargestMove())
                     },
-                    {"nodePositions", engine.Solver.GetNodePositionsAsPoints()},
-                    {"geometries", engine.Solver.GetGeometries()},
+                    {"spaceCircles", engine.Solver.GetGeometries(engine.CircleBinders)},
+                    {"spaceAdjLines", engine.Solver.GetGeometries(engine.SpaceAdjacencyLineBinders)},
                     {"spaceAdjErrors", engine.SpaceAdjErrors},
                     {"spaceAdjErrorRatios", engine.SpaceAdjErrorRatios},
                 };
             }
 
-#if CLI == false
+#if CLI
+            throw new Exception("You are using CLI-compatible version of DynaShape, which only supports Silent execution mode");
+#else
 
             if (reset)
             {
@@ -382,17 +390,17 @@ namespace DynaShape.ZeroTouch
             return execute
                 ? new Dictionary<string, object>
                 {
-                    {"info", null},
-                    {"nodePositions", null},
-                    {"geometries", null},
+                    {"stats", null},
+                    {"spaceCircles", null},
+                    {"spaceAdjLines", null},
                     {"spaceAdjErrors", null},
                     {"spaceAdjErrorRatios", null}
                 }
                 : new Dictionary<string, object>
                 {
-                    {"info", null},
-                    {"nodePositions", engine.Solver.GetNodePositionsAsPoints()},
-                    {"geometries", engine.Solver.GetGeometries()},
+                    {"stats", null},
+                    {"spaceCircles", engine.Solver.GetGeometries(engine.CircleBinders)},
+                    {"spaceAdjLines", engine.Solver.GetGeometries(engine.SpaceAdjacencyLineBinders)},
                     {"spaceAdjErrors", engine.SpaceAdjErrors},
                     {"spaceAdjErrorRatios", engine.SpaceAdjErrorRatios}
                 };

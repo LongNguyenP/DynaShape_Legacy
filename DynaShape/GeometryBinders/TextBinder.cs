@@ -19,12 +19,12 @@ namespace DynaShape.GeometryBinders
             Color = color;
         }
 
-#if CLI == false
+
         public TextBinder(Triple center, string text)
             : this (center, text, DynaShapeDisplay.DefaultLineColor)
         {
         }
-#endif
+
 
         public override List<object> CreateGeometryObjects(List<Node> allNodes)
         {

@@ -29,6 +29,8 @@ namespace DynaShape
 
 
         public void Dispose() { }
+
+
         public void Startup(ViewStartupParams parameters) { }
 
 
