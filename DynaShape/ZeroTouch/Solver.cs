@@ -71,6 +71,7 @@ namespace DynaShape.ZeroTouch
             }
             else
             {
+
                 solver.EnableMouseInteraction = enableManipulation;
                 solver.EnableMomentum = enableMomentum;
                 solver.EnableFastDisplay = enableFastDisplay;
@@ -81,11 +82,12 @@ namespace DynaShape.ZeroTouch
                 else
                 {
                     solver.StopBackgroundExecution();
+                    if (!enableFastDisplay) solver.Display.ClearRender();
                     if (!enableFastDisplay) solver.Iterate();
                 }
             }
 
-            return enableFastDisplay
+            return execute || enableFastDisplay
                ? new Dictionary<string, object> {
                    { "nodePositions", null },
                    { "goalOutputs", null },

@@ -18,26 +18,26 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\bin\_DynaShape\bin\</OutputPath>
+    <OutputPath>C:\Users\Long Nguyen\AppData\Roaming\Dynamo\Dynamo Core\2.0\packages\_DynaShape\bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>..\bin\_DynaShape\bin\\DynaShape.xml</DocumentationFile>
+    <DocumentationFile>DynaShape.xml</DocumentationFile>
     <WarningsAsErrors>
     </WarningsAsErrors>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>..\bin\_DynaShape\bin\</OutputPath>
+    <OutputPath>C:\Users\Long Nguyen\AppData\Roaming\Dynamo\Dynamo Core\2.0\packages\_DynaShape\bin\</OutputPath>
     <DefineConstants>TRACE;#define CLI</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>..\bin\_DynaShape\bin\DynaShape.xml</DocumentationFile>
+    <DocumentationFile>DynaShape.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <WarningLevel>0</WarningLevel>
   </PropertyGroup>

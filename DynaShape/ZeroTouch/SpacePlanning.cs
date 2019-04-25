@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Runtime;
 using DynaShape.GeometryBinders;
 using DynaShape.Goals;
@@ -82,12 +83,27 @@ namespace DynaShape.ZeroTouch
                     SpaceAdjErrorRatios.Add(currentDistance / SpaceAdjTargets[i]);
                 }
             }
+
+            public List<Circle> GetSpaceCircles()
+            {
+                List<Circle> circles = new List<Circle>();
+                foreach (CircleBinder circleBinder in CircleBinders)
+                    circles.Add((Circle)Solver.GetGeometries(circleBinder)[0]);
+                return circles;
+            }
+
+            public List<Line> GetSpaceAdjLines()
+            {
+                List<Line> lines = new List<Line>();
+                foreach (LineBinder lineBinder in SpaceAdjacencyLineBinders)
+                    lines.Add((Line)Solver.GetGeometries(lineBinder)[0]);
+                return lines;
+            }
         }
 
-        public static Engine Create(List<object> data)
+        public static Engine Create(List<object> data, float dummy)
         {
             Engine engine = new Engine();
-
 
             //===========================================================================
             // Read CSV data 
@@ -284,7 +300,9 @@ namespace DynaShape.ZeroTouch
             [DefaultArgument("0.1")] float spaceDepartmentAdjacencyStrength,
             [DefaultArgument("true")] bool showSpaceNames,
             [DefaultArgument("true")] bool showSpaceAdjacency,
-            [DefaultArgument("true")] bool showSpaceDepartmentAdjacency)
+            [DefaultArgument("true")] bool showSpaceDepartmentAdjacency,
+            
+            List<object> data)
         {
             if (silentMode)
             {
@@ -294,6 +312,8 @@ namespace DynaShape.ZeroTouch
                 engine.Solver.StopBackgroundExecution();
                 engine.Solver.Display.ClearRender();
 #endif
+
+                engine = SpacePlanning.Create(data, 2f);
 
                 engine.Solver.Reset();
                 engine.Solver.EnableMouseInteraction = enableManipulation;
@@ -338,8 +358,8 @@ namespace DynaShape.ZeroTouch
                             "\nIterations Used : " + engine.Solver.CurrentIteration,
                             "\nLargest Movement: " + engine.Solver.GetLargestMove())
                     },
-                    {"spaceCircles", engine.Solver.GetGeometries(engine.CircleBinders)},
-                    {"spaceAdjLines", engine.Solver.GetGeometries(engine.SpaceAdjacencyLineBinders)},
+                    {"spaceCircles", engine.GetSpaceCircles()},
+                    {"spaceAdjLines", engine.GetSpaceAdjLines()},
                     {"spaceAdjErrors", engine.SpaceAdjErrors},
                     {"spaceAdjErrorRatios", engine.SpaceAdjErrorRatios},
                 };

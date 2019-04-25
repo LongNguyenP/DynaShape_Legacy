@@ -208,6 +208,12 @@ namespace DynaShape
         }
 
 
+        public List<object> GetGeometries(GeometryBinder geometryBinder)
+        {
+            return geometryBinder.CreateGeometryObjects(Nodes);
+        }
+
+
         public List<List<object>> GetGoalOutputs()
         {
             List<List<object>> goalOutputs = new List<List<object>>(Goals.Count);
