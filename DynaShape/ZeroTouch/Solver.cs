@@ -51,7 +51,7 @@ namespace DynaShape.ZeroTouch
            [DefaultArgument("true")] bool enableMomentum,
            [DefaultArgument("true")] bool enableFastDisplay,
            [DefaultArgument("false")] bool enableManipulation,
-           [DefaultArgument("0.95")] float dampingFactor)
+           [DefaultArgument("0.98")] float dampingFactor)
         {
 #if CLI
             throw new Exception("This node will not work as you are currently using the CLI-compatible verison of DynaShape. " +
@@ -115,13 +115,14 @@ namespace DynaShape.ZeroTouch
         [MultiReturn("nodePositions", "goalOutputs", "geometries", "stats")]
         [CanUpdatePeriodically(true)]
         public static Dictionary<string, object> ExecuteSilently(
-           List<Goal> goals,
-           [DefaultArgument("null")] List<GeometryBinder> geometryBinders,
-           [DefaultArgument("0.001")] float nodeMergeThreshold,
-           [DefaultArgument("10000")] int iterations,
-           [DefaultArgument("0.001")] float terminationThreshold,
-           [DefaultArgument("true")] bool execute,
-           [DefaultArgument("true")] bool enableMomentum)
+            List<Goal> goals,
+            [DefaultArgument("null")] List<GeometryBinder> geometryBinders,
+            [DefaultArgument("0.001")] float nodeMergeThreshold,
+            [DefaultArgument("10000")] int iterations,
+            [DefaultArgument("0.001")] float terminationThreshold,
+            [DefaultArgument("true")] bool execute,
+            [DefaultArgument("true")] bool enableMomentum,
+            [DefaultArgument("0.98")] float dampingFactor)
         {
             if (!execute)
                 return new Dictionary<string, object> {
@@ -137,6 +138,7 @@ namespace DynaShape.ZeroTouch
             solver.AddGoals(goals, nodeMergeThreshold);
             if (geometryBinders != null) solver.AddGeometryBinders(geometryBinders, nodeMergeThreshold);
             solver.EnableMomentum = enableMomentum;
+            solver.DampingFactor = dampingFactor;
             solver.Execute(iterations, terminationThreshold);
 
             TimeSpan computationTime = stopwatch.Elapsed;

@@ -26,7 +26,7 @@ namespace DynaShape
         public bool EnableMouseInteraction = true;
         public bool EnableMomentum = true;
         public bool EnableFastDisplay = true;
-        public float DampingFactor = 0.95f;
+        public float DampingFactor = 0.98f;
 
         public List<Node> Nodes = new List<Node>();
         public List<Goal> Goals = new List<Goal>();

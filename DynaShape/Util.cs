@@ -30,6 +30,9 @@ namespace DynaShape
         public static SharpDX.Color ToSharpDXColor(this DSCore.Color color) 
             => new SharpDX.Color(color.Red * by255, color.Green * by255, color.Blue * by255, color.Alpha * by255);
 
+        public static SharpDX.Color ToSharpDXColor(this System.Drawing.Color color)
+            => new SharpDX.Color(color.R * by255, color.G * by255, color.B * by255, color.A * by255);
+
         public static Vector3 ToVector3(this Triple triple) => new Vector3(triple.X, triple.Z, -triple.Y);
 
         private static readonly float by255 = 1f / 255f;
@@ -391,6 +394,48 @@ namespace DynaShape
                 (temp - 2f * (x0 * sX + y0 * sY + z0 * sZ)) / N);
 
             return true;
+        }
+
+        public static System.Drawing.Color ColorFromHSL(float h, float s, float l)
+        {
+            float r = 0, g = 0, b = 0;
+            if (l != 0)
+            {
+                if (s == 0)
+                    r = g = b = l;
+                else
+                {
+                    float temp2;
+                    if (l < 0.5f)
+                        temp2 = l * (1f + s);
+                    else
+                        temp2 = l + s - (l * s);
+
+                    float temp1 = 2f * l - temp2;
+
+                    r = GetColorComponent(temp1, temp2, h + 1f / 3f);
+                    g = GetColorComponent(temp1, temp2, h);
+                    b = GetColorComponent(temp1, temp2, h - 1f / 3f);
+                }
+            }
+            return System.Drawing.Color.FromArgb((int)(255 * r), (int)(255 * g), (int)(255 * b));
+        }
+
+        private static float GetColorComponent(float temp1, float temp2, float temp3)
+        {
+            if (temp3 < 0f)
+                temp3 += 1f;
+            else if (temp3 > 1f)
+                temp3 -= 1f;
+
+            if (temp3 < 1f / 6f)
+                return temp1 + (temp2 - temp1) * 6f * temp3;
+            else if (temp3 < 0.5f)
+                return temp2;
+            else if (temp3 < 2f / 3f)
+                return temp1 + ((temp2 - temp1) * ((2f / 3f) - temp3) * 6f);
+            else
+                return temp1;
         }
     }
 }
