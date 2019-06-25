@@ -30,10 +30,46 @@ namespace DynaShape.ZeroTouch
         {
             return new SilentModeSettings()
             {
-                MaxIterationCount =  maxIterationCount,
+                MaxIterationCount = maxIterationCount,
                 TerminationThreshold = terminationThreshold,
                 SphereCollisionKickin = sphereCollisionKickin,
                 PlanarConstraintKickin = planarConstraintKickin
+            };
+        }
+
+        [IsVisibleInDynamoLibrary(false)]
+        public class Settings
+        {
+            public float DampingFactor;
+            public int Iterations;
+            public float BoundaryStrength;
+            public float PlanarConstraintStrength;
+            public float SphereCollisionStrength;
+            public float DepartmentCohesionStrength;
+            public float SpaceAdjacencyStrength;
+            public float SpaceDepartmentAdjacencyStrength;
+        }
+
+        public static Settings CreateSettings(
+            [DefaultArgument("0.95")] float dampingFactor,
+            [DefaultArgument("0")] int iterations,
+            [DefaultArgument("1.0")] float boundaryStrength,
+            [DefaultArgument("1.0")] float planarConstraintStrength,
+            [DefaultArgument("30.0")] float sphereCollisionStrength,
+            [DefaultArgument("0.02")] float departmentCohesionStrength,
+            [DefaultArgument("0.1")] float spaceAdjacencyStrength,
+            [DefaultArgument("0.1")] float spaceDepartmentAdjacencyStrength)
+        {
+            return new Settings()
+            {
+                DampingFactor = dampingFactor,
+                Iterations = iterations,
+                BoundaryStrength = boundaryStrength,
+                PlanarConstraintStrength = planarConstraintStrength,
+                SphereCollisionStrength = sphereCollisionStrength,
+                DepartmentCohesionStrength = departmentCohesionStrength,
+                SpaceAdjacencyStrength = spaceAdjacencyStrength,
+                SpaceDepartmentAdjacencyStrength = spaceDepartmentAdjacencyStrength
             };
         }
 
@@ -94,10 +130,10 @@ namespace DynaShape.ZeroTouch
                 departments.Add(data[j + cols["DEPARTMENT"]].ToString());
                 departmentIds.Add(int.Parse(data[j + cols["DEPARTMENT ID"]].ToString()));
                 quantities.Add(int.Parse(data[j + cols["QUANTITY"]].ToString()));
-                if (data[j + cols["WIDTH"]] != null) widths.Add(double.Parse(data[j + cols["WIDTH"]].ToString()));
-                if (data[j + cols["HEIGHT"]] != null) heights.Add(double.Parse(data[j + cols["HEIGHT"]].ToString()));
-                if (data[j + cols["AREA"]] != null) areas.Add(double.Parse(data[j + cols["AREA"]].ToString()));
-                if (data[j + cols["PREFERENCE"]] != null) areas.Add(double.Parse(data[j + cols["PREFERENCE"]].ToString()));
+                widths.Add(data[j + cols["WIDTH"]] == null ? double.NaN : double.Parse( data[j + cols["WIDTH"]].ToString()));
+                heights.Add(data[j + cols["HEIGHT"]] == null ? double.NaN : double.Parse(data[j + cols["HEIGHT"]].ToString()));
+                areas.Add(data[j + cols["AREA"]] == null ? double.NaN : double.Parse(data[j + cols["AREA"]].ToString()));
+                preferences.Add(int.Parse(data[j + cols["PREFERENCE"]].ToString()));
 
                 adjacentSpaces.Add(new List<int>());
                 object raw = data[j + cols["ADJACENT SPACES"]];
@@ -116,11 +152,53 @@ namespace DynaShape.ZeroTouch
                     foreach (string segment in segments)
                         adjacentDepartments.Last().Add(int.Parse(segment));
                 }
-
-                // Clean up inconsitencies and redundancies in ADJACENT SPACES
-
-                for (int i = 0; i < )
             }
+
+            //=====================================================================
+            // Clean up inconsitencies and redundancies in ADJACENT SPACES
+            //=====================================================================
+
+            List<HashSet<int>> hashSets = new List<HashSet<int>>();
+
+            for (int i = 0; i < adjacentSpaces.Count; i++)
+            {
+                hashSets.Add(new HashSet<int>());
+
+                foreach (int j in adjacentSpaces[i])
+                {
+                    if (i < j) hashSets.Last().Add(j);
+                    else hashSets[j].Add(i);
+                }
+            }
+
+            for (int i = 0; i < adjacentSpaces.Count; i++)
+            {
+                adjacentSpaces[i] = hashSets[i].ToList();
+                adjacentSpaces[i].Sort();
+            }
+
+
+            //========================================================================
+            // Automatically compute Width, Height, or Area if missing from CSV file
+            //========================================================================
+
+            for (int i = 0; i < spaceNames.Count; i++)
+            {
+                if (double.IsNaN(widths[i]) && double.IsNaN(heights[i]) && !double.IsNaN(areas[i]))
+                    heights[i] = widths[i] = Math.Sqrt(areas[i]);
+                else if (!double.IsNaN(widths[i]) && double.IsNaN(heights[i]) && !double.IsNaN(areas[i]))
+                    heights[i] = areas[i] / widths[i];
+                else if (double.IsNaN(widths[i]) && !double.IsNaN(heights[i]) && !double.IsNaN(areas[i]))
+                    widths[i] = areas[i] / heights[i];
+                else if (!double.IsNaN(widths[i]) && !double.IsNaN(heights[i]) && double.IsNaN(areas[i]))
+                    areas[i] = widths[i] * heights[i];
+            }
+
+
+
+            //=====================================================================
+            // Output
+            //=====================================================================
 
             return new Dictionary<string, object>
                {
@@ -138,7 +216,7 @@ namespace DynaShape.ZeroTouch
         }
 
 
-      [IsVisibleInDynamoLibrary(false)]
+        [IsVisibleInDynamoLibrary(false)]
         public class Engine
         {
             internal DynaShape.Solver Solver = new DynaShape.Solver();
@@ -235,7 +313,7 @@ namespace DynaShape.ZeroTouch
             }
         }
         
-        public static Engine Create(List<object> data, float dummy)
+        public static Engine Create(List<object> data, float dummy = 0f)
         {
             Engine engine = new Engine();
 
@@ -422,29 +500,31 @@ namespace DynaShape.ZeroTouch
             "spaceAdjErrorRatios")]
 
         public static Dictionary<string, object> Execute(
-
             Engine engine,
+            [DefaultArgument("null")] List<Point> boundaryVertices,
             [DefaultArgument("null")] SilentModeSettings silentModeSettings,
-
             [DefaultArgument("true")] bool reset,
             [DefaultArgument("true")] bool execute,
             [DefaultArgument("false")] bool enableManipulation,
-            [DefaultArgument("0")] int iterations,
-
-            [DefaultArgument("0.95")] float dampingFactor,
-            List<Point> boundaryVertices,
-            [DefaultArgument("1.0")] float boundaryStrength,
-            [DefaultArgument("1.0")] float planarConstraintStrength,
-            [DefaultArgument("30.0")] float sphereCollisionStrength,
-            [DefaultArgument("0.02")] float departmentCohesionStrength,
-            [DefaultArgument("0.1")] float spaceAdjacencyStrength,
-            [DefaultArgument("0.1")] float spaceDepartmentAdjacencyStrength,
             [DefaultArgument("true")] bool showSpaceNames,
             [DefaultArgument("true")] bool showSpaceAdjacency,
             [DefaultArgument("true")] bool showSpaceDepartmentAdjacency,
-            
-            List<object> data)
+            [DefaultArgument("null")] Settings settings)
         {
+            if (settings == null)
+                settings = new Settings()
+                {
+                    DampingFactor = 0f,
+                    Iterations = 0,
+                    BoundaryStrength = 200f,
+                    PlanarConstraintStrength = 10f,
+                    SphereCollisionStrength = 100f,
+                    DepartmentCohesionStrength = 0.5f,
+                    SpaceAdjacencyStrength = 0.5f,
+                    SpaceDepartmentAdjacencyStrength = 0f
+                };
+
+
             if (silentModeSettings != null)
             {
                 Stopwatch stopwatch = Stopwatch.StartNew();
@@ -454,32 +534,30 @@ namespace DynaShape.ZeroTouch
                 engine.Solver.Display.ClearRender();
 #endif
 
-                engine = SpacePlanning.Create(data, 2f);
-
                 engine.Solver.Reset();
                 engine.Solver.EnableMouseInteraction = enableManipulation;
-                engine.Solver.IterationCount = iterations;
-                engine.Solver.DampingFactor = dampingFactor;
+                engine.Solver.IterationCount = settings.Iterations;
+                engine.Solver.DampingFactor = settings.DampingFactor;
 
                 foreach (var binder in engine.TextBinders) binder.Show = showSpaceNames;
                 foreach (var binder in engine.SpaceAdjacencyLineBinders) binder.Show = showSpaceAdjacency;
                 foreach (var binder in engine.SpaceDepartmentAdjacencyLineBinders)
                     binder.Show = showSpaceDepartmentAdjacency;
 
-                engine.ContainmentGoal.PolygonVertices = boundaryVertices.ToTriples();
-                engine.ContainmentGoal.Weight = boundaryStrength;
-                engine.OnPlaneGoal.Weight = planarConstraintStrength;
+                engine.ContainmentGoal.PolygonVertices = boundaryVertices == null ? boundaryVertices.ToTriples() : null;
+                engine.ContainmentGoal.Weight = settings.BoundaryStrength;
+                engine.OnPlaneGoal.Weight = settings.PlanarConstraintStrength;
 
-                foreach (var goal in engine.DepartmentCohesionGoals) goal.Weight = departmentCohesionStrength;
-                foreach (var goal in engine.SpaceAdjacencyGoals) goal.Weight = spaceAdjacencyStrength;
+                foreach (var goal in engine.DepartmentCohesionGoals) goal.Weight = settings.DepartmentCohesionStrength;
+                foreach (var goal in engine.SpaceAdjacencyGoals) goal.Weight = settings.SpaceAdjacencyStrength;
                 foreach (var goal in engine.SpaceDepartmentAdjacencyGoals)
-                    goal.Weight = spaceDepartmentAdjacencyStrength;
+                    goal.Weight = settings.SpaceDepartmentAdjacencyStrength;
 
 
                 while (engine.Solver.CurrentIteration < silentModeSettings.MaxIterationCount)
                 {
-                    engine.SphereCollisionGoal.Weight = engine.Solver.CurrentIteration < silentModeSettings.SphereCollisionKickin ? 0 : sphereCollisionStrength;
-                    engine.OnPlaneGoal.Weight = engine.Solver.CurrentIteration < silentModeSettings.PlanarConstraintKickin ? 0 : planarConstraintStrength;
+                    engine.SphereCollisionGoal.Weight = engine.Solver.CurrentIteration < silentModeSettings.SphereCollisionKickin ? 0 : settings.SphereCollisionStrength;
+                    engine.OnPlaneGoal.Weight = engine.Solver.CurrentIteration < silentModeSettings.PlanarConstraintKickin ? 0 : settings.PlanarConstraintStrength;
                     engine.Solver.Iterate();
 
                     if (
@@ -527,8 +605,8 @@ namespace DynaShape.ZeroTouch
             else
             {
                 engine.Solver.EnableMouseInteraction = enableManipulation;
-                engine.Solver.IterationCount = iterations;
-                engine.Solver.DampingFactor = dampingFactor;
+                engine.Solver.IterationCount = settings.Iterations;
+                engine.Solver.DampingFactor = settings.DampingFactor;
 
                 foreach (var binder in engine.TextBinders) binder.Show = showSpaceNames;
                 foreach (var binder in engine.SpaceAdjacencyLineBinders) binder.Show = showSpaceAdjacency;
@@ -536,15 +614,15 @@ namespace DynaShape.ZeroTouch
                     binder.Show = showSpaceDepartmentAdjacency;
 
                 engine.ContainmentGoal.PolygonVertices = boundaryVertices.ToTriples();
-                engine.ContainmentGoal.Weight = boundaryStrength;
-                engine.OnPlaneGoal.Weight = planarConstraintStrength;
+                engine.ContainmentGoal.Weight = settings.BoundaryStrength;
+                engine.OnPlaneGoal.Weight = settings.PlanarConstraintStrength;
 
-                engine.SphereCollisionGoal.Weight = sphereCollisionStrength;
+                engine.SphereCollisionGoal.Weight = settings.SphereCollisionStrength;
 
-                foreach (Goal goal in engine.DepartmentCohesionGoals) goal.Weight = departmentCohesionStrength;
-                foreach (Goal goal in engine.SpaceAdjacencyGoals) goal.Weight = spaceAdjacencyStrength;
+                foreach (Goal goal in engine.DepartmentCohesionGoals) goal.Weight = settings.DepartmentCohesionStrength;
+                foreach (Goal goal in engine.SpaceAdjacencyGoals) goal.Weight = settings.SpaceAdjacencyStrength;
                 foreach (Goal goal in engine.SpaceDepartmentAdjacencyGoals)
-                    goal.Weight = spaceDepartmentAdjacencyStrength;
+                    goal.Weight = settings.SpaceDepartmentAdjacencyStrength;
 
                 if (execute) engine.Solver.StartBackgroundExecution();
                 else

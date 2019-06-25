@@ -24,6 +24,12 @@ namespace DynaShape.Goals
             }
             set
             {
+                if (value == null)
+                {
+                    polygonVertices = null;
+                    return;
+                }
+
                 polygonVertices = value;
                 planeNormal = Triple.Zero;
                 for (int i = 0; i < polygonVertices.Count; i++)
@@ -58,7 +64,10 @@ namespace DynaShape.Goals
 
         internal override void Compute(List<Node> allNodes)
         {
-            if (polygonVertices .Count <=3) return;
+            Moves = new Triple[NodeCount];
+            Weights = new float[NodeCount];
+
+            if (polygonVertices == null || polygonVertices.Count <=3) return;
 
             Moves = new Triple[NodeCount];
             Weights = new float[NodeCount];

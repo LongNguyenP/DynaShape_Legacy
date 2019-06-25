@@ -15,7 +15,7 @@ namespace DynaShape.GeometryBinders
     public abstract class GeometryBinder
     {
         public Color Color;
-        public Bool Show = true;
+        public bool Show = true;
 
         public Triple[] StartingPositions;
         public int[] NodeIndices;

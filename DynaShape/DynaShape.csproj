@@ -30,7 +30,7 @@
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>..bin\_DynaShape\bin\</OutputPath>
+    <OutputPath>..\bin\_DynaShape\bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -46,49 +46,49 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DSCoreNodes">
-      <HintPath>C:\Program Files\DynamoCoreRuntime 2.2.0\DSCoreNodes.dll</HintPath>
+      <HintPath>..\..\ReferencedAssemblies\DynamoCore_2.0.2.6986\DSCoreNodes.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DynamoCore">
-      <HintPath>C:\Program Files\DynamoCoreRuntime 2.2.0\DynamoCore.dll</HintPath>
+      <HintPath>..\..\ReferencedAssemblies\DynamoCore_2.0.2.6986\DynamoCore.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DynamoCoreWpf">
-      <HintPath>C:\Program Files\DynamoCoreRuntime 2.2.0\DynamoCoreWpf.dll</HintPath>
+      <HintPath>..\..\ReferencedAssemblies\DynamoCore_2.0.2.6986\DynamoCoreWpf.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DynamoServices">
-      <HintPath>C:\Program Files\DynamoCoreRuntime 2.2.0\DynamoServices.dll</HintPath>
+      <HintPath>..\..\ReferencedAssemblies\DynamoCore_2.0.2.6986\DynamoServices.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="HelixToolkit.Wpf.SharpDX">
-      <HintPath>C:\Program Files\DynamoCoreRuntime 2.2.0\HelixToolkit.Wpf.SharpDX.dll</HintPath>
+      <HintPath>..\..\ReferencedAssemblies\HelixToolkit_2015.1.629.0\HelixToolkit.Wpf.SharpDX.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="MeshToolkit">
-      <HintPath>..\..\ReferencedAssemblies\MeshToolkit\bin\MeshToolkit.dll</HintPath>
+      <HintPath>..\..\ReferencedAssemblies\MeshToolkit_2.0.1\MeshToolkit.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="ProtoCore">
-      <HintPath>C:\Program Files\DynamoCoreRuntime 2.2.0\ProtoCore.dll</HintPath>
+      <HintPath>..\..\ReferencedAssemblies\DynamoCore_2.0.2.6986\ProtoCore.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ProtoGeometry">
-      <HintPath>C:\Program Files\DynamoCoreRuntime 2.2.0\ProtoGeometry.dll</HintPath>
+      <HintPath>..\..\ReferencedAssemblies\DynamoCore_2.0.2.6986\ProtoGeometry.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX">
-      <HintPath>C:\Program Files\DynamoCoreRuntime 2.2.0\SharpDX.dll</HintPath>
+      <HintPath>..\..\ReferencedAssemblies\HelixToolkit_2015.1.629.0\SharpDX.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX.Direct3D11">
-      <HintPath>C:\Program Files\DynamoCoreRuntime 2.2.0\SharpDX.Direct3D11.dll</HintPath>
+      <HintPath>..\..\ReferencedAssemblies\HelixToolkit_2015.1.629.0\SharpDX.Direct3D11.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX.Direct3D11.Effects">
-      <HintPath>C:\Program Files\DynamoCoreRuntime 2.2.0\SharpDX.Direct3D11.Effects.dll</HintPath>
+      <HintPath>..\..\ReferencedAssemblies\HelixToolkit_2015.1.629.0\SharpDX.Direct3D11.Effects.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -157,6 +157,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>Copy "$(TargetPath)" "%25AppData%25\Dynamo\Dynamo Core\2.2\packages\_DynaShape\bin\DynaShape.dll"</PostBuildEvent>
+    <PostBuildEvent>Copy "$(TargetDir)\$(TargetName).dll" "%25AppData%25\Dynamo\Dynamo Core\2.2\packages\_DynaShape\bin\$(TargetName).dll"
+Copy "$(TargetDir)\$(TargetName).xml" "%25AppData%25\Dynamo\Dynamo Core\2.2\packages\_DynaShape\bin\$(TargetName).xml"</PostBuildEvent>
   </PropertyGroup>
 </Project>
