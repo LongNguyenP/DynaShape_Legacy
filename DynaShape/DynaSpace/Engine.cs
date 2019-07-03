@@ -7,318 +7,85 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Runtime;
+using DynaShape;
 using DynaShape.GeometryBinders;
 using DynaShape.Goals;
 using SharpDX;
 
 using Point = Autodesk.DesignScript.Geometry.Point;
 
-namespace DynaShape.ZeroTouch
+namespace DynaSpace
 {
-    public static class SpacePlanning
+    public class Engine
     {
-        [IsVisibleInDynamoLibrary(false)]
-        public class SilentModeSettings
-        {
-            public int MaxIterationCount;
-            public float TerminationThreshold;
-            public int SphereCollisionKickin;
-            public int PlanarConstraintKickin;
-        }
+        internal DynaShape.Solver Solver = new DynaShape.Solver();
+        internal List<Goal> Goals = new List<Goal>();
+        internal List<GeometryBinder> GeometryBinders = new List<GeometryBinder>();
 
-        public static SilentModeSettings CreateSilentModeSettings(int maxIterationCount, float terminationThreshold, int sphereCollisionKickin = 2500, int planarConstraintKickin = 5000)
-        {
-            return new SilentModeSettings()
-            {
-                MaxIterationCount = maxIterationCount,
-                TerminationThreshold = terminationThreshold,
-                SphereCollisionKickin = sphereCollisionKickin,
-                PlanarConstraintKickin = planarConstraintKickin
-            };
-        }
+        internal List<string> DepartmentNames = new List<string>();
+        internal List<List<string>> SpaceNames = new List<List<string>>();
+        internal List<List<int>> SpaceIds = new List<List<int>>();
 
-        [IsVisibleInDynamoLibrary(false)]
-        public class Settings
-        {
-            public float DampingFactor;
-            public int Iterations;
-            public float BoundaryStrength;
-            public float PlanarConstraintStrength;
-            public float SphereCollisionStrength;
-            public float DepartmentCohesionStrength;
-            public float SpaceAdjacencyStrength;
-            public float SpaceDepartmentAdjacencyStrength;
-        }
+        internal ConvexPolygonContainmentGoal ContainmentGoal;
+        internal OnPlaneGoal OnPlaneGoal;
+        internal DirectionGoal GlobalDirectionGoal;
+        internal List<AnchorGoal> DepartmentAnchorGoals = new List<AnchorGoal>();
 
-        public static Settings CreateSettings(
-            [DefaultArgument("0.95")] float dampingFactor,
-            [DefaultArgument("0")] int iterations,
-            [DefaultArgument("1.0")] float boundaryStrength,
-            [DefaultArgument("1.0")] float planarConstraintStrength,
-            [DefaultArgument("30.0")] float sphereCollisionStrength,
-            [DefaultArgument("0.02")] float departmentCohesionStrength,
-            [DefaultArgument("0.1")] float spaceAdjacencyStrength,
-            [DefaultArgument("0.1")] float spaceDepartmentAdjacencyStrength)
-        {
-            return new Settings()
-            {
-                DampingFactor = dampingFactor,
-                Iterations = iterations,
-                BoundaryStrength = boundaryStrength,
-                PlanarConstraintStrength = planarConstraintStrength,
-                SphereCollisionStrength = sphereCollisionStrength,
-                DepartmentCohesionStrength = departmentCohesionStrength,
-                SpaceAdjacencyStrength = spaceAdjacencyStrength,
-                SpaceDepartmentAdjacencyStrength = spaceDepartmentAdjacencyStrength
-            };
-        }
+        internal SphereCollisionGoal SphereCollisionGoal;
+
+        internal List<LengthGoal> DepartmentCohesionGoals = new List<LengthGoal>();
+        internal List<LengthGoal> SpaceAdjacencyGoals = new List<LengthGoal>();
+        internal List<LengthGoal> SpaceDepartmentAdjacencyGoals = new List<LengthGoal>();
+
+        internal List<List<CircleBinder>> CircleBinders = new List<List<CircleBinder>>();
+        internal List<LineBinder> SpaceAdjacencyLineBinders = new List<LineBinder>();
+        internal List<LineBinder> SpaceDepartmentAdjacencyLineBinders = new List<LineBinder>();
 
 
-        [MultiReturn(
-          "SpaceName",
-          "Department",
-          "DepartmentId",
-          "Quantity",
-          "Width",
-          "Height",
-          "Area",
-          "Preference",
-          "AdjacentSpaces",
-          "AdjacentDepartments")]
-        public static Dictionary<string, object> ParseData(List<object> data)
-        {
-            List<string> spaceNames = new List<string>();
-            List<string> departments = new List<string>();
-            List<int> departmentIds = new List<int>();
-            List<int> quantities = new List<int>();
-            List<double> widths = new List<double>();
-            List<double> heights = new List<double>();
-            List<double> areas = new List<double>();
-            List<int> preferences = new List<int>();
-            List<List<int>> adjacentSpaces = new List<List<int>>();
-            List<List<int>> adjacentDepartments = new List<List<int>>();
+        internal List<TextBinder> TextBinders = new List<TextBinder>();
+        //internal SpacePlanningBubbleMeshesBinder BubbleMeshesBinder;
 
-            int stride = 12;
-            int sheetHeight = data.Count / stride - 1;
+        internal List<int> SpaceAdjI = new List<int>();
+        internal List<int> SpaceAdjJ = new List<int>();
+        internal List<float> SpaceAdjTargets = new List<float>();
 
-            Dictionary<string, int> cols = new Dictionary<string, int>();
-
-            List<string> columnNames = new List<string>
-            {
-                "SPACE ID",
-                "SPACE NAME",
-                "DEPARTMENT",
-                "DEPARTMENT ID",
-                "QUANTITY",
-                "WIDTH",
-                "HEIGHT",
-                "AREA",
-                "PREFERENCE",
-                "ADJACENT SPACES",
-                "ADJACENT DEPARTMENTS"
-            };
-
-            for (int i = 0; i < stride; i++)
-                foreach (string columnName in columnNames)
-                    if (data[i].ToString() == columnName)
-                        cols.Add(columnName, i);
-       
-
-            for (int j = stride; j < data.Count; j += stride)
-            {
-                spaceNames.Add(data[j + cols["SPACE NAME"]].ToString());
-                departments.Add(data[j + cols["DEPARTMENT"]].ToString());
-                departmentIds.Add(int.Parse(data[j + cols["DEPARTMENT ID"]].ToString()));
-                quantities.Add(int.Parse(data[j + cols["QUANTITY"]].ToString()));
-                widths.Add(data[j + cols["WIDTH"]] == null ? double.NaN : double.Parse( data[j + cols["WIDTH"]].ToString()));
-                heights.Add(data[j + cols["HEIGHT"]] == null ? double.NaN : double.Parse(data[j + cols["HEIGHT"]].ToString()));
-                areas.Add(data[j + cols["AREA"]] == null ? double.NaN : double.Parse(data[j + cols["AREA"]].ToString()));
-                preferences.Add(int.Parse(data[j + cols["PREFERENCE"]].ToString()));
-
-                adjacentSpaces.Add(new List<int>());
-                object raw = data[j + cols["ADJACENT SPACES"]];
-                if (raw != null)
-                {
-                    string[] segments = raw.ToString().Split('.', ';');
-                    foreach (string segment in segments)
-                        adjacentSpaces.Last().Add(int.Parse(segment));
-                }
-
-                adjacentDepartments.Add(new List<int>());
-                raw = data[j + cols["ADJACENT DEPARTMENTS"]];
-                if (raw != null)
-                {
-                    string[] segments = raw.ToString().Split('.', ';');
-                    foreach (string segment in segments)
-                        adjacentDepartments.Last().Add(int.Parse(segment));
-                }
-            }
-
-            //=====================================================================
-            // Clean up inconsitencies and redundancies in ADJACENT SPACES
-            //=====================================================================
-
-            List<HashSet<int>> hashSets = new List<HashSet<int>>();
-
-            for (int i = 0; i < adjacentSpaces.Count; i++)
-            {
-                hashSets.Add(new HashSet<int>());
-
-                foreach (int j in adjacentSpaces[i])
-                {
-                    if (i < j) hashSets.Last().Add(j);
-                    else hashSets[j].Add(i);
-                }
-            }
-
-            for (int i = 0; i < adjacentSpaces.Count; i++)
-            {
-                adjacentSpaces[i] = hashSets[i].ToList();
-                adjacentSpaces[i].Sort();
-            }
-
-
-            //========================================================================
-            // Automatically compute Width, Height, or Area if missing from CSV file
-            //========================================================================
-
-            for (int i = 0; i < spaceNames.Count; i++)
-            {
-                if (double.IsNaN(widths[i]) && double.IsNaN(heights[i]) && !double.IsNaN(areas[i]))
-                    heights[i] = widths[i] = Math.Sqrt(areas[i]);
-                else if (!double.IsNaN(widths[i]) && double.IsNaN(heights[i]) && !double.IsNaN(areas[i]))
-                    heights[i] = areas[i] / widths[i];
-                else if (double.IsNaN(widths[i]) && !double.IsNaN(heights[i]) && !double.IsNaN(areas[i]))
-                    widths[i] = areas[i] / heights[i];
-                else if (!double.IsNaN(widths[i]) && !double.IsNaN(heights[i]) && double.IsNaN(areas[i]))
-                    areas[i] = widths[i] * heights[i];
-            }
-
-
-
-            //=====================================================================
-            // Output
-            //=====================================================================
-
-            return new Dictionary<string, object>
-               {
-                    {"SpaceName", spaceNames},
-                    {"Department", departments},
-                    {"DepartmentId", departmentIds},
-                    {"Quantity", quantities},
-                    {"Width", widths},
-                    {"Height", heights},
-                    {"Area", areas},
-                    {"Preference", preferences},
-                    {"AdjacentSpaces", adjacentSpaces},
-                    {"AdjacentDepartments", adjacentDepartments}
-               };
-        }
+        internal List<float> SpaceAdjErrors = new List<float>();
+        internal List<float> SpaceAdjErrorRatios = new List<float>();
 
 
         [IsVisibleInDynamoLibrary(false)]
-        public class Engine
+        public Engine() { }
+
+
+        internal void SetUp()
         {
-            internal DynaShape.Solver Solver = new DynaShape.Solver();
-            internal List<Goal> Goals = new List<Goal>();
-            internal List<GeometryBinder> GeometryBinders = new List<GeometryBinder>();
+            Goals.Add(ContainmentGoal);
+            Goals.Add(OnPlaneGoal);
+            Goals.Add(SphereCollisionGoal);
+            //Goals.Add(GlobalDirectionGoal);
+            //Goals.AddRange(DepartmentAnchorGoals);
+            Goals.AddRange(DepartmentCohesionGoals);
+            Goals.AddRange(SpaceAdjacencyGoals);
+            Goals.AddRange(SpaceDepartmentAdjacencyGoals);
 
-            internal List<string> DepartmentNames = new List<string>();
-            internal List<List<string>> SpaceNames = new List<List<string>>();
-            internal List<List<int>> SpaceIds = new List<List<int>>();
+            foreach (var circleBinderList in CircleBinders) GeometryBinders.AddRange(circleBinderList);
+            GeometryBinders.AddRange(SpaceAdjacencyLineBinders);
+            GeometryBinders.AddRange(SpaceDepartmentAdjacencyLineBinders);
+            GeometryBinders.AddRange(TextBinders);
+            //GeometryBinders.Add(BubbleMeshesBinder);
 
-            internal ConvexPolygonContainmentGoal ContainmentGoal;
-            internal OnPlaneGoal OnPlaneGoal;
-            internal DirectionGoal GlobalDirectionGoal;
-            internal List<AnchorGoal> DepartmentAnchorGoals = new List<AnchorGoal>();
-
-            internal SphereCollisionGoal SphereCollisionGoal;
-
-            internal List<LengthGoal> DepartmentCohesionGoals = new List<LengthGoal>();
-            internal List<LengthGoal> SpaceAdjacencyGoals = new List<LengthGoal>();
-            internal List<LengthGoal> SpaceDepartmentAdjacencyGoals = new List<LengthGoal>();
-
-            internal List<List<CircleBinder>> CircleBinders = new List<List<CircleBinder>>();
-            internal List<LineBinder> SpaceAdjacencyLineBinders = new List<LineBinder>();
-            internal List<LineBinder> SpaceDepartmentAdjacencyLineBinders = new List<LineBinder>();
-
-           
-            internal List<TextBinder> TextBinders = new List<TextBinder>();
-            //internal SpacePlanningBubbleMeshesBinder BubbleMeshesBinder;
-
-            internal List<int> SpaceAdjI = new List<int>();
-            internal List<int> SpaceAdjJ = new List<int>();
-            internal List<float> SpaceAdjTargets = new List<float>();
-
-            internal List<float> SpaceAdjErrors = new List<float>();
-            internal List<float> SpaceAdjErrorRatios = new List<float>();
-
-            internal void SetUp()
-            {
-                Goals.Add(ContainmentGoal);
-                Goals.Add(OnPlaneGoal);
-                Goals.Add(SphereCollisionGoal);
-                //Goals.Add(GlobalDirectionGoal);
-                //Goals.AddRange(DepartmentAnchorGoals);
-                Goals.AddRange(DepartmentCohesionGoals);
-                Goals.AddRange(SpaceAdjacencyGoals);
-                Goals.AddRange(SpaceDepartmentAdjacencyGoals);
-
-                foreach (var circleBinderList in CircleBinders) GeometryBinders.AddRange(circleBinderList);
-                GeometryBinders.AddRange(SpaceAdjacencyLineBinders);
-                GeometryBinders.AddRange(SpaceDepartmentAdjacencyLineBinders);
-                GeometryBinders.AddRange(TextBinders);
-                //GeometryBinders.Add(BubbleMeshesBinder);
-
-                Solver = new DynaShape.Solver();
-                Solver.AddGoals(Goals);
-                Solver.AddGeometryBinders(GeometryBinders);
-            }
-
-
-            public void ComputeScores()
-            {
-                SpaceAdjErrors.Clear();
-                SpaceAdjErrorRatios.Clear();
-
-                for (int i = 0; i < SpaceAdjacencyGoals.Count; i++)
-                {
-                    float currentDistance = (float) (SpaceAdjacencyGoals[i].GetOutput(Solver.Nodes)[0]);
-                    SpaceAdjErrors.Add(currentDistance - SpaceAdjTargets[i]);
-                    SpaceAdjErrorRatios.Add(currentDistance / SpaceAdjTargets[i]);
-                }
-            }
-
-            public List<List<Circle>> GetSpaceCircles()
-            {
-                List<List<Circle>> circles = new List<List<Circle>>();
-
-                for (int i = 0; i < CircleBinders.Count; i++)
-                {
-                    circles.Add(new List<Circle>());
-                    foreach (CircleBinder circleBinder in CircleBinders[i])
-                        circles[i].Add((Circle)Solver.GetGeometries(circleBinder)[0]);
-                    return circles;
-                }
-
-                return circles;
-            }
-
-            public List<Line> GetSpaceAdjLines()
-            {
-                List<Line> lines = new List<Line>();
-                foreach (LineBinder lineBinder in SpaceAdjacencyLineBinders)
-                    lines.Add((Line)Solver.GetGeometries(lineBinder)[0]);
-                return lines;
-            }
+            Solver = new DynaShape.Solver();
+            Solver.AddGoals(Goals);
+            Solver.AddGeometryBinders(GeometryBinders);
         }
-        
-        public static Engine Create(List<object> data, float dummy = 0f)
+
+
+        public static Engine Create(List<object> data)
         {
             Engine engine = new Engine();
 
             //===========================================================================
-            // Read CSV data 
+            // Read CSV data
             //===========================================================================
 
             List<string> texts = new List<string>();
@@ -404,7 +171,7 @@ namespace DynaShape.ZeroTouch
 
             for (int i = 0; i < engine.DepartmentNames.Count; i++)
             {
-                double alpha = (double) i / engine.DepartmentNames.Count * Math.PI * 2.0;
+                double alpha = (double)i / engine.DepartmentNames.Count * Math.PI * 2.0;
                 departmentCenters.Add(20f * new Triple(Math.Cos(alpha), Math.Sin(alpha), 0.0));
                 if (i == 0) engine.DepartmentAnchorGoals.Add(new AnchorGoal(departmentCenters.Last(), Triple.Zero, 0.1f));
             }
@@ -430,11 +197,11 @@ namespace DynaShape.ZeroTouch
                 engine.CircleBinders.Add(new List<CircleBinder>());
                 Triple departmentCenter = departmentCenters[departmentIds[i]];
                 for (int j = 0; j < 1; j++)
-                    //for (int j = 0; j < quantities[i]; j++)
+                //for (int j = 0; j < quantities[i]; j++)
                 {
                     double a = 10;
                     Triple spaceCenter = departmentCenter + new Triple(random.NextDouble() * 2.0 * a - a, random.NextDouble() * 2.0 * a - a, 0.01 + random.NextDouble() * 1);
-                    float spaceRadius = (float) Math.Sqrt(areas[i] / Math.PI);
+                    float spaceRadius = (float)Math.Sqrt(areas[i] / Math.PI);
                     spaceCenterList.Add(spaceCenter);
                     spaceCentersFlattened.Add(spaceCenter);
                     spaceRadiiFlattened.Add(spaceRadius);
@@ -470,15 +237,15 @@ namespace DynaShape.ZeroTouch
                     adjacencyKeys.Add(adjacencyKey);
 
                     foreach (Triple startPoint in spaceCenters[i])
-                    foreach (Triple endPoint in spaceCenters[j])
-                    {
-                        engine.SpaceAdjacencyGoals.Add(new LengthGoal(startPoint, endPoint,
-                            spaceRadiiFlattened[i] + spaceRadiiFlattened[j], 30f));
-                        engine.SpaceAdjacencyLineBinders.Add(new LineBinder(startPoint, endPoint));
-                        engine.SpaceAdjI.Add(i);
-                        engine.SpaceAdjJ.Add(j);
-                        engine.SpaceAdjTargets.Add(spaceRadiiFlattened[i] + spaceRadiiFlattened[j]);
-                    }
+                        foreach (Triple endPoint in spaceCenters[j])
+                        {
+                            engine.SpaceAdjacencyGoals.Add(new LengthGoal(startPoint, endPoint,
+                                spaceRadiiFlattened[i] + spaceRadiiFlattened[j], 30f));
+                            engine.SpaceAdjacencyLineBinders.Add(new LineBinder(startPoint, endPoint));
+                            engine.SpaceAdjI.Add(i);
+                            engine.SpaceAdjJ.Add(j);
+                            engine.SpaceAdjTargets.Add(spaceRadiiFlattened[i] + spaceRadiiFlattened[j]);
+                        }
                 }
             }
             //===================================================================================
@@ -489,27 +256,65 @@ namespace DynaShape.ZeroTouch
         }
 
 
-        [MultiReturn(
-            "stats", 
-            "departmentNames",
-            "spaceIds",
-            "spaceNames",
-            "spaceCircles",
-            "spaceAdjLines",
-            "spaceAdjErrors", 
-            "spaceAdjErrorRatios")]
+        public void ComputeScores()
+        {
+            SpaceAdjErrors.Clear();
+            SpaceAdjErrorRatios.Clear();
 
+            for (int i = 0; i < SpaceAdjacencyGoals.Count; i++)
+            {
+                float currentDistance = (float)(SpaceAdjacencyGoals[i].GetOutput(Solver.Nodes)[0]);
+                SpaceAdjErrors.Add(currentDistance - SpaceAdjTargets[i]);
+                SpaceAdjErrorRatios.Add(currentDistance / SpaceAdjTargets[i]);
+            }
+        }
+
+
+        public List<List<Circle>> GetSpaceCircles()
+        {
+            List<List<Circle>> circles = new List<List<Circle>>();
+
+            for (int i = 0; i < CircleBinders.Count; i++)
+            {
+                circles.Add(new List<Circle>());
+                foreach (CircleBinder circleBinder in CircleBinders[i])
+                    circles[i].Add((Circle)Solver.GetGeometries(circleBinder)[0]);
+                return circles;
+            }
+
+            return circles;
+        }
+
+
+        public List<Line> GetSpaceAdjLines()
+        {
+            List<Line> lines = new List<Line>();
+            foreach (LineBinder lineBinder in SpaceAdjacencyLineBinders)
+                lines.Add((Line)Solver.GetGeometries(lineBinder)[0]);
+            return lines;
+        }
+
+
+        [MultiReturn(
+           "stats",
+           "departmentNames",
+           "spaceIds",
+           "spaceNames",
+           "spaceCircles",
+           "spaceAdjLines",
+           "spaceAdjErrors",
+           "spaceAdjErrorRatios")]
         public static Dictionary<string, object> Execute(
-            Engine engine,
-            [DefaultArgument("null")] List<Point> boundaryVertices,
-            [DefaultArgument("null")] SilentModeSettings silentModeSettings,
-            [DefaultArgument("true")] bool reset,
-            [DefaultArgument("true")] bool execute,
-            [DefaultArgument("false")] bool enableManipulation,
-            [DefaultArgument("true")] bool showSpaceNames,
-            [DefaultArgument("true")] bool showSpaceAdjacency,
-            [DefaultArgument("true")] bool showSpaceDepartmentAdjacency,
-            [DefaultArgument("null")] Settings settings)
+           Engine engine,
+           [DefaultArgument("null")] List<Point> boundaryVertices,
+           [DefaultArgument("null")] SilentModeSettings silentModeSettings,
+           [DefaultArgument("true")] bool reset,
+           [DefaultArgument("true")] bool execute,
+           [DefaultArgument("false")] bool enableManipulation,
+           [DefaultArgument("true")] bool showSpaceNames,
+           [DefaultArgument("true")] bool showSpaceAdjacency,
+           [DefaultArgument("true")] bool showSpaceDepartmentAdjacency,
+           [DefaultArgument("null")] Settings settings)
         {
             if (settings == null)
                 settings = new Settings()
@@ -656,6 +461,148 @@ namespace DynaShape.ZeroTouch
                     {"spaceAdjErrorRatios", engine.SpaceAdjErrorRatios},
                 };
 #endif
+        }
+
+
+        [MultiReturn(
+             "SpaceName",
+             "Department",
+             "DepartmentId",
+             "Quantity",
+             "Width",
+             "Height",
+             "Area",
+             "Preference",
+             "AdjacentSpaces",
+             "AdjacentDepartments")]
+        public static Dictionary<string, object> ParseData(List<object> data)
+        {
+            List<string> spaceNames = new List<string>();
+            List<string> departments = new List<string>();
+            List<int> departmentIds = new List<int>();
+            List<int> quantities = new List<int>();
+            List<double> widths = new List<double>();
+            List<double> heights = new List<double>();
+            List<double> areas = new List<double>();
+            List<int> preferences = new List<int>();
+            List<List<int>> adjacentSpaces = new List<List<int>>();
+            List<List<int>> adjacentDepartments = new List<List<int>>();
+
+            int stride = 12;
+            int sheetHeight = data.Count / stride - 1;
+
+            Dictionary<string, int> cols = new Dictionary<string, int>();
+
+            List<string> columnNames = new List<string>
+            {
+                "SPACE ID",
+                "SPACE NAME",
+                "DEPARTMENT",
+                "DEPARTMENT ID",
+                "QUANTITY",
+                "WIDTH",
+                "HEIGHT",
+                "AREA",
+                "PREFERENCE",
+                "ADJACENT SPACES",
+                "ADJACENT DEPARTMENTS"
+            };
+
+            for (int i = 0; i < stride; i++)
+                foreach (string columnName in columnNames)
+                    if (data[i].ToString() == columnName)
+                        cols.Add(columnName, i);
+
+
+            for (int j = stride; j < data.Count; j += stride)
+            {
+                spaceNames.Add(data[j + cols["SPACE NAME"]].ToString());
+                departments.Add(data[j + cols["DEPARTMENT"]].ToString());
+                departmentIds.Add(int.Parse(data[j + cols["DEPARTMENT ID"]].ToString()));
+                quantities.Add(int.Parse(data[j + cols["QUANTITY"]].ToString()));
+                widths.Add(data[j + cols["WIDTH"]] == null ? double.NaN : double.Parse(data[j + cols["WIDTH"]].ToString()));
+                heights.Add(data[j + cols["HEIGHT"]] == null ? double.NaN : double.Parse(data[j + cols["HEIGHT"]].ToString()));
+                areas.Add(data[j + cols["AREA"]] == null ? double.NaN : double.Parse(data[j + cols["AREA"]].ToString()));
+                preferences.Add(int.Parse(data[j + cols["PREFERENCE"]].ToString()));
+
+                adjacentSpaces.Add(new List<int>());
+                object raw = data[j + cols["ADJACENT SPACES"]];
+                if (raw != null)
+                {
+                    string[] segments = raw.ToString().Split('.', ';');
+                    foreach (string segment in segments)
+                        adjacentSpaces.Last().Add(int.Parse(segment));
+                }
+
+                adjacentDepartments.Add(new List<int>());
+                raw = data[j + cols["ADJACENT DEPARTMENTS"]];
+                if (raw != null)
+                {
+                    string[] segments = raw.ToString().Split('.', ';');
+                    foreach (string segment in segments)
+                        adjacentDepartments.Last().Add(int.Parse(segment));
+                }
+            }
+
+            //=====================================================================
+            // Clean up inconsitencies and redundancies in ADJACENT SPACES
+            //=====================================================================
+
+            List<HashSet<int>> hashSets = new List<HashSet<int>>();
+
+            for (int i = 0; i < adjacentSpaces.Count; i++)
+            {
+                hashSets.Add(new HashSet<int>());
+
+                foreach (int j in adjacentSpaces[i])
+                {
+                    if (i < j) hashSets.Last().Add(j);
+                    else hashSets[j].Add(i);
+                }
+            }
+
+            for (int i = 0; i < adjacentSpaces.Count; i++)
+            {
+                adjacentSpaces[i] = hashSets[i].ToList();
+                adjacentSpaces[i].Sort();
+            }
+
+
+            //========================================================================
+            // Automatically compute Width, Height, or Area if missing from CSV file
+            //========================================================================
+
+            for (int i = 0; i < spaceNames.Count; i++)
+            {
+                if (double.IsNaN(widths[i]) && double.IsNaN(heights[i]) && !double.IsNaN(areas[i]))
+                    heights[i] = widths[i] = Math.Sqrt(areas[i]);
+                else if (!double.IsNaN(widths[i]) && double.IsNaN(heights[i]) && !double.IsNaN(areas[i]))
+                    heights[i] = areas[i] / widths[i];
+                else if (double.IsNaN(widths[i]) && !double.IsNaN(heights[i]) && !double.IsNaN(areas[i]))
+                    widths[i] = areas[i] / heights[i];
+                else if (!double.IsNaN(widths[i]) && !double.IsNaN(heights[i]) && double.IsNaN(areas[i]))
+                    areas[i] = widths[i] * heights[i];
+            }
+
+
+
+            //=====================================================================
+            // Output
+            //=====================================================================
+
+            return new Dictionary<string, object>
+               {
+                    {"SpaceName", spaceNames},
+                    {"Department", departments},
+                    {"DepartmentId", departmentIds},
+                    {"Quantity", quantities},
+                    {"Width", widths},
+                    {"Height", heights},
+                    {"Area", areas},
+                    {"Preference", preferences},
+                    {"AdjacentSpaces", adjacentSpaces},
+                    {"AdjacentDepartments", adjacentDepartments}
+               };
         }
     }
 }
