@@ -82,6 +82,11 @@ namespace DynaSpace
 
         public static Engine Create(List<object> data)
         {
+            return CreateWithInitialPositions(data, null);
+        }
+
+        public static Engine CreateWithInitialPositions(List<object> data, List<Point> initialPositions = null)
+        {
             Engine engine = new Engine();
 
             //===========================================================================
@@ -200,7 +205,9 @@ namespace DynaSpace
                 //for (int j = 0; j < quantities[i]; j++)
                 {
                     double a = 10;
-                    Triple spaceCenter = departmentCenter + new Triple(random.NextDouble() * 2.0 * a - a, random.NextDouble() * 2.0 * a - a, 0.01 + random.NextDouble() * 1);
+                    Triple spaceCenter = initialPositions == null
+                        ? departmentCenter + new Triple(random.NextDouble() * 2.0 * a - a, random.NextDouble() * 2.0 * a - a, 0.01 + random.NextDouble() * 1)
+                        : initialPositions[i].ToTriple();
                     float spaceRadius = (float)Math.Sqrt(areas[i] / Math.PI);
                     spaceCenterList.Add(spaceCenter);
                     spaceCentersFlattened.Add(spaceCenter);
@@ -254,7 +261,6 @@ namespace DynaSpace
 
             return engine;
         }
-
 
         public void ComputeScores()
         {
@@ -591,18 +597,30 @@ namespace DynaSpace
             //=====================================================================
 
             return new Dictionary<string, object>
-               {
-                    {"SpaceName", spaceNames},
-                    {"Department", departments},
-                    {"DepartmentId", departmentIds},
-                    {"Quantity", quantities},
-                    {"Width", widths},
-                    {"Height", heights},
-                    {"Area", areas},
-                    {"Preference", preferences},
-                    {"AdjacentSpaces", adjacentSpaces},
-                    {"AdjacentDepartments", adjacentDepartments}
-               };
+            {
+                {"SpaceName", spaceNames},
+                {"Department", departments},
+                {"DepartmentId", departmentIds},
+                {"Quantity", quantities},
+                {"Width", widths},
+                {"Height", heights},
+                {"Area", areas},
+                {"Preference", preferences},
+                {"AdjacentSpaces", adjacentSpaces},
+                {"AdjacentDepartments", adjacentDepartments}
+            };
+        }
+
+        public static List<Point> TestInitPositions(int n)
+        {
+            List<Point> positions = new List<Point>();
+
+            float r = 10f;
+
+            for (int i = 0; i < n; i++)
+                positions.Add(Point.ByCoordinates(r * Math.Cos((float)i / n * Math.PI * 2f), r * Math.Sin((float)i / n * Math.PI * 2f), 0f));
+
+            return positions;
         }
     }
 }
