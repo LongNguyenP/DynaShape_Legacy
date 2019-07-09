@@ -7,7 +7,7 @@ namespace DynaShape.Goals
     [IsVisibleInDynamoLibrary(false)]
     public abstract class Goal
     {
-        internal float Weight;
+        public float Weight;
         internal float[] Weights;
         internal Triple[] StartingPositions;
         internal int[] NodeIndices;

@@ -67,7 +67,7 @@ namespace DynaShape.ZeroTouch
                 solver.AddGoals(goals);
                 if (geometryBinders != null)
                     solver.AddGeometryBinders(geometryBinders, nodeMergeThreshold);
-                solver.Display.Render();
+                solver.Render();
             }
             else
             {
@@ -82,7 +82,7 @@ namespace DynaShape.ZeroTouch
                 else
                 {
                     solver.StopBackgroundExecution();
-                    if (!enableFastDisplay) solver.Display.ClearRender();
+                    if (!enableFastDisplay) solver.ClearRender();
                     if (!enableFastDisplay) solver.Iterate();
                 }
             }

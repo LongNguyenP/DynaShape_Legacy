@@ -4,45 +4,35 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{157AD178-EE17-46E9-B6DC-C50EB9DCCA60}</ProjectGuid>
+    <ProjectGuid>{50C21246-A074-46A9-9F57-531F780D76BD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DynaShape</RootNamespace>
-    <AssemblyName>DynaShape</AssemblyName>
+    <RootNamespace>DynaSpace</RootNamespace>
+    <AssemblyName>DynaSpace</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <AssemblyVersion>0.5.1.3</AssemblyVersion>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..bin\_DynaShape\bin\</OutputPath>
+    <OutputPath>bin\x64\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>..\bin\_DynaShape\bin\DynaSpace.xml</DocumentationFile>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>DynaShape.xml</DocumentationFile>
-    <WarningsAsErrors>
-    </WarningsAsErrors>
-    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>..\bin\_DynaShape\bin\</OutputPath>
+    <OutputPath>bin\x64\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>..\bin\_DynaShape\bin\DynaSpace.xml</DocumentationFile>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>DynaShape.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
-    <WarningLevel>0</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UnitTest|x64'">
-    <OutputPath>..bin\_DynaShape\bin\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DSCoreNodes">
@@ -69,8 +59,6 @@
       <HintPath>..\..\ReferencedAssemblies\MeshToolkit_2.0.1\MeshToolkit.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="ProtoCore">
       <HintPath>..\..\ReferencedAssemblies\DynamoCore_2.0.2.6986\ProtoCore.dll</HintPath>
       <Private>False</Private>
@@ -94,65 +82,26 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DynaShapeDisplay.cs" />
-    <Compile Include="FastSvd3x3.cs" />
-    <Compile Include="GeometryBinders\SpacePlanningBubbleMeshesBinder.cs" />
-    <Compile Include="GeometryBinders\TextBinder.cs" />
-    <Compile Include="GeometryBinders\GeometryBinder.cs" />
-    <Compile Include="GeometryBinders\SphereBinder.cs" />
-    <Compile Include="GeometryBinders\CircleBinder.cs" />
-    <Compile Include="GeometryBinders\TexturedMeshBinder.cs" />
-    <Compile Include="Goals\AngleGoal.cs" />
-    <Compile Include="Goals\ConstantVolumePressureGoal.cs" />
-    <Compile Include="Goals\ConstantPressureGoal.cs" />
-    <Compile Include="Goals\ConvexPolygonCollisionGoal.cs" />
-    <Compile Include="Goals\ConvexPolygonContainmentGoal.cs" />
-    <Compile Include="Goals\SphereStaticLineCollision.cs" />
-    <Compile Include="Goals\SphereCollisionGoal.cs" />
-    <Compile Include="Goals\OnSurfaceGoal.cs" />
-    <Compile Include="Goals\OnLineGoal.cs" />
-    <Compile Include="Goals\MergeGoal.cs" />
-    <Compile Include="Goals\OnCurveGoal.cs" />
-    <Compile Include="Goals\OnPlaneGoal.cs" />
-    <Compile Include="Goals\DirectionalWindGoal.cs" />
-    <Compile Include="ZeroTouch\GeometryBinders.cs" />
-    <Compile Include="ZeroTouch\Goals.cs" />
-    <Compile Include="ZeroTouch\Utilities.cs" />
-    <Compile Include="ZeroTouch\Solver.cs" />
-    <Compile Include="GeometryBinders\LineBinder.cs" />
-    <Compile Include="GeometryBinders\MeshBinder.cs" />
-    <Compile Include="GeometryBinders\PolylineBinder.cs" />
-    <Compile Include="Goals\AnchorGoal.cs" />
-    <Compile Include="Goals\ConstantGoal.cs" />
-    <Compile Include="Goals\CoLinearGoal.cs" />
-    <Compile Include="Goals\CoPlanarGoal.cs" />
-    <Compile Include="Goals\CoSphericalGoal.cs" />
-    <Compile Include="Goals\CoCircularGoal.cs" />
-    <Compile Include="Goals\DirectionGoal.cs" />
-    <Compile Include="Goals\EqualLengthsGoal.cs" />
-    <Compile Include="Goals\FloorGoal.cs" />
-    <Compile Include="Goals\Goal.cs" />
-    <Compile Include="Goals\LengthGoal.cs" />
-    <Compile Include="Goals\ParallelLinesGoal.cs" />
-    <Compile Include="Goals\ShapeMatchingGoal.cs" />
-    <Compile Include="Node.cs" />
+    <Compile Include="Engine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ZeroTouch\TestingUtilities.cs" />
-    <Compile Include="Solver.cs" />
-    <Compile Include="Triple.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="SilentModeSettings.cs" />
     <Compile Include="Util.cs" />
-    <Compile Include="DynaShapeViewExtension.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DynaShape\DynaShape.csproj">
+      <Project>{157ad178-ee17-46e9-b6dc-c50eb9dcca60}</Project>
+      <Name>DynaShape</Name>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

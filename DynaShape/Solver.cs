@@ -360,6 +360,9 @@ namespace DynaShape
         CancellationTokenSource ctSource;
         internal DynaShapeDisplay Display;
 
+        public void ClearRender() { Display.ClearRender(); }
+        public void Render() { Display.Render(); }
+
         private void BackgroundExecutionAction()
         {
             while (!ctSource.Token.IsCancellationRequested)
