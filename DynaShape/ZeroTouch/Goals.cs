@@ -390,7 +390,7 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="centers"></param>
+        /// <param name="goal"></param>
         /// <param name="radii"></param>
         /// <param name="polygonVertices"></param>
         /// <param name="weight"></param>
@@ -444,7 +444,7 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="centers"></param>
+        /// <param name="goal"></param>
         /// <param name="radii"></param>
         /// <param name="polygonVertices"></param>
         /// <param name="weight"></param>
@@ -1157,7 +1157,8 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Force a set of lines to be parallel.
         /// </summary>
-        /// <param name="StartPointsEndPoints">The nodes at the linie start points and end points, in the following order: start1, end1, start2, end2, etc...</param>
+        /// <param name="lineStartPoints"></param>
+        /// <param name="lineEndPoints"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static ParallelLinesGoal ParallelLinesGoal_Create(
@@ -1348,9 +1349,9 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Adjust the goal's parameters while the solver is running.
         /// </summary>
-        /// <param name="shapeMatchingGoal"></param>
-        /// <param name="targetShapePoints"></param>
-        /// <param name="allowScaling"></param>
+        /// <param name="goal"></param>
+        /// <param name="radii"></param>
+        /// <param name="lines"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
         public static SphereStaticLineCollisionGoal SphereStaticLineCollisionGoal_Change(

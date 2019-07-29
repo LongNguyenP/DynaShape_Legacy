@@ -26,6 +26,7 @@ namespace DynaShape.ZeroTouch
         /// <param name="X">Number of nodes along the X axis, minimum is 2</param>
         /// <param name="Y">Number of nodes along the Y axis, minimum is 2</param>
         /// <param name="Z">Number of nodes along the Z axis, minimum is 2</param>
+        /// <param name="allowScaling"></param>
         /// <returns>The ShapeMatching goals, Anchor goals, and polyline binders</returns>
         [MultiReturn("goals", "geometryBinders", "anchorGoals", "points")]
         public static Dictionary<string, object> WonkyCubes(int X = 21, int Y = 21, int Z = 21, bool allowScaling = false)

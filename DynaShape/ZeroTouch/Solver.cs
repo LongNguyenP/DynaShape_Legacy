@@ -103,7 +103,6 @@ namespace DynaShape.ZeroTouch
         /// <summary>
         /// Execute the solver silently and only display the final result.
         /// </summary>
-        /// <param name="solver">The solver, which can be obtained from the Solver.Create node</param>
         /// <param name="goals">The goals/constraints that the solver will solve</param>
         /// <param name="geometryBinders">The geometry binders</param>
         /// <param name="nodeMergeThreshold">Before the solver starts to run, nodes that have identical positions (within this threshold) will be merged into one node</param>
@@ -111,6 +110,7 @@ namespace DynaShape.ZeroTouch
         /// <param name="terminationThreshold">if the nodes's movement is below this threshold, the solver will stop executing and output the result</param>
         /// <param name="execute">This allows us to temporarily disable the solver while setting up/chaging the parameters the parameters</param>
         /// <param name="enableMomentum">Apply momentum effect to the movement of the nodes. For simulation of physical motion, this results in more realistic motion. For constraint-based optimization, it often helps the solver to reach the final solution in fewer iteration (i.e. faster), but can sometimes lead to unstable and counter-intuitive solution. In such case, try setting momnentum to False </param>
+        /// <param name="dampingFactor"></param>
         /// <returns></returns>
         [MultiReturn("nodePositions", "goalOutputs", "geometries", "stats")]
         [CanUpdatePeriodically(true)]

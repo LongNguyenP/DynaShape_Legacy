@@ -13,7 +13,7 @@ using Point = Autodesk.DesignScript.Geometry.Point;
 
 namespace DynaSpace
 {
-    public class Engine
+    public class Engine : IDisposable
     {
         #region member variables
 
@@ -316,7 +316,7 @@ namespace DynaSpace
            [DefaultArgument("true")] bool reset,
            [DefaultArgument("true")] bool execute,
            [DefaultArgument("false")] bool enableManipulation,
-           [DefaultArgument("true")] bool showSpaceNames,
+           [DefaultArgument("true")] bool showSpaceIds,
            [DefaultArgument("true")] bool showSpaceAdjacency,
            [DefaultArgument("true")] bool showSpaceDepartmentAdjacency,
            [DefaultArgument("null")] Settings settings)
@@ -349,7 +349,7 @@ namespace DynaSpace
                 engine.Solver.IterationCount = settings.Iterations;
                 engine.Solver.DampingFactor = settings.DampingFactor;
 
-                foreach (var binder in engine.TextBinders) binder.Show = showSpaceNames;
+                foreach (var binder in engine.TextBinders) binder.Show = showSpaceIds;
                 foreach (var binder in engine.SpaceAdjacencyLineBinders) binder.Show = showSpaceAdjacency;
                 foreach (var binder in engine.SpaceDepartmentAdjacencyLineBinders)
                     binder.Show = showSpaceDepartmentAdjacency;
@@ -418,7 +418,7 @@ namespace DynaSpace
                 engine.Solver.IterationCount = settings.Iterations;
                 engine.Solver.DampingFactor = settings.DampingFactor;
 
-                foreach (var binder in engine.TextBinders) binder.Show = showSpaceNames;
+                foreach (var binder in engine.TextBinders) binder.Show = showSpaceIds;
                 foreach (var binder in engine.SpaceAdjacencyLineBinders) binder.Show = showSpaceAdjacency;
                 foreach (var binder in engine.SpaceDepartmentAdjacencyLineBinders)
                     binder.Show = showSpaceDepartmentAdjacency;
@@ -438,6 +438,7 @@ namespace DynaSpace
                 else
                 {
                     engine.Solver.StopBackgroundExecution();
+                    engine.Solver.ClearRender();
                     engine.ComputeScores();
                 }
             }
@@ -466,6 +467,11 @@ namespace DynaSpace
                     {"spaceAdjErrorRatios", engine.SpaceAdjErrorRatios},
                 };
 #endif
+        }
+
+        public void Dispose()
+        {
+            Solver?.Dispose();
         }
     }
 }

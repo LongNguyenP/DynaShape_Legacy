@@ -175,7 +175,7 @@
             <summary>
             
             </summary>
-            <param name="centers"></param>
+            <param name="goal"></param>
             <param name="radii"></param>
             <param name="polygonVertices"></param>
             <param name="weight"></param>
@@ -195,7 +195,7 @@
             <summary>
             
             </summary>
-            <param name="centers"></param>
+            <param name="goal"></param>
             <param name="radii"></param>
             <param name="polygonVertices"></param>
             <param name="weight"></param>
@@ -507,7 +507,8 @@
             <summary>
             Force a set of lines to be parallel.
             </summary>
-            <param name="StartPointsEndPoints">The nodes at the linie start points and end points, in the following order: start1, end1, start2, end2, etc...</param>
+            <param name="lineStartPoints"></param>
+            <param name="lineEndPoints"></param>
             <param name="weight"></param>
             <returns></returns>
         </member>
@@ -581,9 +582,9 @@
             <summary>
             Adjust the goal's parameters while the solver is running.
             </summary>
-            <param name="shapeMatchingGoal"></param>
-            <param name="targetShapePoints"></param>
-            <param name="allowScaling"></param>
+            <param name="goal"></param>
+            <param name="radii"></param>
+            <param name="lines"></param>
             <param name="weight"></param>
             <returns></returns>
         </member>
@@ -649,7 +650,6 @@
             <summary>
             Execute the solver silently and only display the final result.
             </summary>
-            <param name="solver">The solver, which can be obtained from the Solver.Create node</param>
             <param name="goals">The goals/constraints that the solver will solve</param>
             <param name="geometryBinders">The geometry binders</param>
             <param name="nodeMergeThreshold">Before the solver starts to run, nodes that have identical positions (within this threshold) will be merged into one node</param>
@@ -657,6 +657,7 @@
             <param name="terminationThreshold">if the nodes's movement is below this threshold, the solver will stop executing and output the result</param>
             <param name="execute">This allows us to temporarily disable the solver while setting up/chaging the parameters the parameters</param>
             <param name="enableMomentum">Apply momentum effect to the movement of the nodes. For simulation of physical motion, this results in more realistic motion. For constraint-based optimization, it often helps the solver to reach the final solution in fewer iteration (i.e. faster), but can sometimes lead to unstable and counter-intuitive solution. In such case, try setting momnentum to False </param>
+            <param name="dampingFactor"></param>
             <returns></returns>
         </member>
         <member name="M:DynaShape.ZeroTouch.TestingUtilities.WonkyCubes(System.Int32,System.Int32,System.Int32,System.Boolean)">
@@ -666,6 +667,7 @@
             <param name="X">Number of nodes along the X axis, minimum is 2</param>
             <param name="Y">Number of nodes along the Y axis, minimum is 2</param>
             <param name="Z">Number of nodes along the Z axis, minimum is 2</param>
+            <param name="allowScaling"></param>
             <returns>The ShapeMatching goals, Anchor goals, and polyline binders</returns>
         </member>
         <member name="M:DynaShape.Util.ComputeBestFitLine(System.Collections.Generic.List{DynaShape.Triple},DynaShape.Triple@,DynaShape.Triple@,System.Single)">

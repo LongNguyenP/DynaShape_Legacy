@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
   <doc>
     <assembly>
       <name>DynaShape</name>
@@ -6,9 +6,6 @@
     <namespaces>
       <namespace name="DynaShape.ZeroTouch">
         <category>DynaShape</category>
-      </namespace>
-      <namespace name="DynaSpace">
-        <category>DynaSpace</category>
       </namespace>
     </namespaces>
   </doc>
