@@ -7,14 +7,14 @@ namespace DynaShape
     // Computing the Singular Value Decomposition of 3 x 3 matrices with minimal branching and elementary floating point operations
     // Authors: Aleka McAdams, Andrew Selle,  Rasmus Tamstorf, Joseph Teran, Eftychios Sifakis
     // University of Wisconsin
-    
+
     // The implementation below is based on the C++ CUDA implementation found at: https://github.com/ericjang/svd3
 
     public static class FastSvd3x3
     {
-        private const float Gamma = 5.828427124f; // FOUR_GAMMA_SQUARED = sqrt(8)+3;
-        private const float Cstar = 0.923879532f; // cos(pi/8)
-        private const float Sstar = 0.3826834323f; // sin(p/8)
+        private const float Gamma = 5.82842712474619f; // FOUR_GAMMA_SQUARED = sqrt(8)+3;
+        private const float CStar = 0.923879532511287f; // cos(pi/8)
+        private const float SStar = 0.38268343236509f; // sin(p/8)
         private const float Epsilon = 1e-10f;
 
         public static void Compute(
@@ -44,14 +44,14 @@ namespace DynaShape
                     out float ata10, out float ata11, out float ata12,
                     out float ata20, out float ata21, out float ata22);
 
-            JacobiEigenAnalysis(ref ata00, 
-                                ref ata10, ref ata11, 
-                                ref ata20, ref ata21, ref ata22, 
+            JacobiEigenAnalysis(ref ata00,
+                                ref ata10, ref ata11,
+                                ref ata20, ref ata21, ref ata22,
                                 out float x, out float y, out float z, out float w);
-            
-            QuatToMatrix(x, y, z, w, 
-                         out v00, out v01, out v02, 
-                         out v10, out v11, out v12, 
+
+            QuatToMatrix(x, y, z, w,
+                         out v00, out v01, out v02,
+                         out v10, out v11, out v12,
                          out v20, out v21, out v22);
 
             MultAB(a00, a01, a02,
@@ -184,8 +184,8 @@ namespace DynaShape
             sh = a01;
             bool b = Gamma * sh * sh < ch * ch;
             float w = InvSqrt(ch * ch + sh * sh);
-            ch = b ? w * ch : Cstar;
-            sh = b ? w * sh : Sstar;
+            ch = b ? w * ch : CStar;
+            sh = b ? w * sh : SStar;
         }
 
         private static void JacobiConjugation(

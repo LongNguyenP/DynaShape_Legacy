@@ -354,7 +354,7 @@ namespace DynaSpace
                 foreach (var binder in engine.SpaceDepartmentAdjacencyLineBinders)
                     binder.Show = showSpaceDepartmentAdjacency;
 
-                engine.ContainmentGoal.PolygonVertices = boundaryVertices == null ? boundaryVertices.ToTriples() : null;
+                engine.ContainmentGoal.PolygonVertices = boundaryVertices.ToTriples();
                 engine.ContainmentGoal.Weight = settings.BoundaryStrength;
                 engine.OnPlaneGoal.Weight = settings.PlanarConstraintStrength;
 
@@ -366,14 +366,16 @@ namespace DynaSpace
 
                 while (engine.Solver.CurrentIteration < silentModeSettings.MaxIterationCount)
                 {
-                    engine.SphereCollisionGoal.Weight = engine.Solver.CurrentIteration < silentModeSettings.SphereCollisionKickin ? 0 : settings.SphereCollisionStrength;
-                    engine.OnPlaneGoal.Weight = engine.Solver.CurrentIteration < silentModeSettings.PlanarConstraintKickin ? 0 : settings.PlanarConstraintStrength;
+                    engine.SphereCollisionGoal.Weight = engine.Solver.CurrentIteration < silentModeSettings.SphereCollisionKickin ? 0f : settings.SphereCollisionStrength;
+                    engine.OnPlaneGoal.Weight = engine.Solver.CurrentIteration < silentModeSettings.PlanarConstraintKickin ? 0f : settings.PlanarConstraintStrength;
+                    engine.ContainmentGoal.Weight = engine.Solver.CurrentIteration < silentModeSettings.BoundaryKickin ? 0f : settings.BoundaryStrength;
                     engine.Solver.Iterate();
 
                     if (
                         engine.Solver.GetLargestMove() < silentModeSettings.TerminationThreshold &&
                         engine.Solver.CurrentIteration > silentModeSettings.SphereCollisionKickin &&
-                        engine.Solver.CurrentIteration > silentModeSettings.PlanarConstraintKickin)
+                        engine.Solver.CurrentIteration > silentModeSettings.PlanarConstraintKickin &&
+                        engine.Solver.CurrentIteration > silentModeSettings.BoundaryKickin)
 
                         break;
                 }
@@ -471,7 +473,9 @@ namespace DynaSpace
 
         public void Dispose()
         {
+#if !CLI
             Solver?.Dispose();
+#endif
         }
     }
 }

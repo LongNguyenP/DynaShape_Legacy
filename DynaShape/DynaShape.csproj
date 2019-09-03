@@ -18,7 +18,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..bin\_DynaShape\bin\</OutputPath>
+    <OutputPath>..\bin\_DynaShape\bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -31,7 +31,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>..\bin\_DynaShape\bin\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -43,6 +44,30 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UnitTest|x64'">
     <OutputPath>..bin\_DynaShape\bin\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug CLI|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\bin\_DynaShape\bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;#define CLI</DefineConstants>
+    <DocumentationFile>DynaShape.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release CLI|x64'">
+    <OutputPath>..\bin\_DynaShape\bin\</OutputPath>
+    <DefineConstants>#define CLI</DefineConstants>
+    <DocumentationFile>DynaShape.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Optimize>true</Optimize>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Analysis, Version=2.0.2.6986, Culture=neutral, processorArchitecture=MSIL">
@@ -241,14 +266,12 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="sharpdx_direct3d11_effects_x64.dll" />
-    <Content Include="sharpdx_direct3d11_effects_x86.dll" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>Copy "$(TargetDir)\$(TargetName).dll" "%25AppData%25\Dynamo\Dynamo Core\2.3\packages\_DynaShape\bin\$(TargetName).dll"
-Copy "$(TargetDir)\$(TargetName).xml" "%25AppData%25\Dynamo\Dynamo Core\2.3\packages\_DynaShape\bin\$(TargetName).xml"</PostBuildEvent>
+    <PostBuildEvent>
+      Copy "$(TargetDir)\$(TargetName).dll" "%25AppData%25\Dynamo\Dynamo Core\2.3\packages\_DynaShape\bin\$(TargetName).dll"
+      Copy "$(TargetDir)\$(TargetName).xml" "%25AppData%25\Dynamo\Dynamo Core\2.3\packages\_DynaShape\bin\$(TargetName).xml"
+    </PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\SharpDX.2.6.3\build\SharpDX.targets" Condition="Exists('..\packages\SharpDX.2.6.3\build\SharpDX.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

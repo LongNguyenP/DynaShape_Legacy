@@ -19,9 +19,6 @@ namespace DynaShape
 {
     [IsVisibleInDynamoLibrary(false)]
     public class Solver
-#if CLI == false
-        : IDisposable
-#endif
     {
         public bool EnableMouseInteraction = true;
         public bool EnableMomentum = true;
@@ -398,18 +395,6 @@ namespace DynaShape
             Display.DispatcherOperation?.Task.Wait(300);
         }
 
-        public void Dispose()
-        {
-            StopBackgroundExecution();
-            Clear();
-            DynaShapeViewExtension.ViewModel.ViewMouseDown -= ViewportMouseDownHandler;
-            DynaShapeViewExtension.ViewModel.ViewMouseUp -= ViewportMouseUpHandler;
-            DynaShapeViewExtension.ViewModel.ViewMouseMove -= ViewportMouseMoveHandler;
-            DynaShapeViewExtension.ViewModel.ViewCameraChanged -= ViewportCameraChangedHandler;
-            DynaShapeViewExtension.ViewModel.CanNavigateBackgroundPropertyChanged -= ViewportCanNavigateBackgroundPropertyChangedHandler;
-            Display.Dispose();
-        }
-
         internal int FindNearestNodeIndex(float range = 0.03f)
         {
             CameraData cameraData = DynaShapeViewExtension.CameraData;
@@ -483,5 +468,19 @@ namespace DynaShape
             NearestNodeIndex = -1;
         }
 #endif
+
+        public void Dispose()
+        {
+#if !CLI
+            StopBackgroundExecution();
+            Clear();
+            DynaShapeViewExtension.ViewModel.ViewMouseDown -= ViewportMouseDownHandler;
+            DynaShapeViewExtension.ViewModel.ViewMouseUp -= ViewportMouseUpHandler;
+            DynaShapeViewExtension.ViewModel.ViewMouseMove -= ViewportMouseMoveHandler;
+            DynaShapeViewExtension.ViewModel.ViewCameraChanged -= ViewportCameraChangedHandler;
+            DynaShapeViewExtension.ViewModel.CanNavigateBackgroundPropertyChanged -= ViewportCanNavigateBackgroundPropertyChangedHandler;
+            Display.Dispose();
+#endif
+        }
     }
 }
