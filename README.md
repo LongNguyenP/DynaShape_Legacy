@@ -1,4 +1,4 @@
-﻿<img src="https://forum.dynamobim.com/uploads/dynamobim/original/3X/7/4/74bf86e06c2827782a60f4fa54ce1dbd8136fc2a.png" width = "900">
+﻿<img src="https://aws1.discourse-cdn.com/business6/uploads/dynamobim/original/3X/e/4/e48d8015a42758dcbe5a8197a3d199060701b3c7.png" width = "900">
 
 ###
 
@@ -11,12 +11,9 @@
 #### Step 1: Clone source
 Clone the source from GitHub and open in Visual Studio
 
-#### Step 2: Deal with reference files
-After open the source in Visual Studio, You will notice that many of the reference dll files seem to be missing. Most of these will be automatically restored by the NuGet Package Manager when you first build the codes. However the two following dlls will have to be located manualy on your computer
+#### Step 2: Deal with missing references
+After open the source in Visual Studio, You will notice that many of the referenced dll files seem to be missing. However, the NuGet package manager will automatically restore these files the first time you build the codes. So you don't have to worry about them. The only exception is MeshToolkit. To get this file you need to first install the MeshToolkit package using the Dynamo Package Manager, you can then find the *MeshToolkit.dll* typically at *%AppData%\Dynamo\Dynamo Core\2.x\packages\MeshToolkit\bin*
 
-* *MeshToolkit.dll*: To get this file you need to first install the MeshToolkit package using the Dynamo Package Manager, you can then find the *MeshToolkit.dll* typically at *%AppData%\Dynamo\Dynamo Core\2.x\packages\MeshToolkit\bin*
-* *HelixToolkit.Wpf.SharpDX.dll*: This can be found in the main folder of *DynamoCoreRunTime* or *Dynamo Core* (typically located at *Program Files/Dynamo/Dynamo Core/2.x*)
-* 
 #### Step 3: Build and package
 Build the solution and you will get *DynaShape.dll* (along with *DynaShape.xml*) in the build output folder.
 
