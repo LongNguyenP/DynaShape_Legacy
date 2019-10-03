@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Media.Animation;
 using Autodesk.DesignScript.Runtime;
 using SharpDX;
 using Point = Autodesk.DesignScript.Geometry.Point;
@@ -27,7 +25,7 @@ namespace DynaShape
         public static bool IsAlmostZero(this float number, float tolerance = 1E-10f) => -tolerance < number && number < tolerance;
         public static bool IsAlmostZero(this double number, double tolerance = 1E-10) => -tolerance < number && number < tolerance;
 
-        public static SharpDX.Color ToSharpDXColor(this DSCore.Color color) 
+        public static SharpDX.Color ToSharpDXColor(this DSCore.Color color)
             => new SharpDX.Color(color.Red * by255, color.Green * by255, color.Blue * by255, color.Alpha * by255);
 
         public static SharpDX.Color ToSharpDXColor(this System.Drawing.Color color)
@@ -77,8 +75,8 @@ namespace DynaShape
         /// <param name="points">The input points</param>
         /// <param name="lineOrigin">Origin of the best fit line</param>
         /// <param name="lineDirection">Direction of the best fit line</param>
-        /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, colinear, or non-colinear</param>
-        /// <returns>0 if the input points are coincidental; 1 if they are colinear; 2 otherwise</returns>       
+        /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, collinear, or non-collinear</param>
+        /// <returns>0 if the input points are coincidental; 1 if they are collinear; 2 otherwise</returns>
         public static int ComputeBestFitLine(List<Triple> points, out Triple lineOrigin, out Triple lineDirection, float tolerance = 1E-10f)
         {
             Triple centroid = Triple.Zero;
@@ -115,13 +113,13 @@ namespace DynaShape
                 c00, c01, c02,
                 c10, c11, c12,
                 c20, c21, c22,
-                out float u00, out float u01, out float u02,
-                out float u10, out float u11, out float u12,
-                out float u20, out float u21, out float u22,
-                out float s00, out float s11, out float s22,
-                out float v00, out float v01, out float v02,
-                out float v10, out float v11, out float v12,
-                out float v20, out float v21, out float v22);
+                out var u00, out _     , out _,
+                out var u10, out _     , out _,
+                out var u20, out _     , out _,
+                out var s00, out var s11, out _,
+                out _      , out _      , out _,
+                out _      , out _      , out _,
+                out _      , out _      , out _);
 
             lineOrigin = centroid;
 
@@ -135,8 +133,8 @@ namespace DynaShape
             // Case 1: The input points are not coincidental, therefore we pick the dominant eigen vector as the line direction
             lineDirection = new Triple(u00, u10, u20);
             return s11 < tolerance
-                ? 1 // The input points are colinear
-                : 2; // The input points are NOT colinear
+                ? 1 // The input points are collinear
+                : 2; // The input points are NOT collinear
         }
 
         /// <summary>
@@ -145,8 +143,8 @@ namespace DynaShape
         /// <param name="points">The input points</param>
         /// <param name="planeOrigin">Origin of the best fit plane</param>
         /// <param name="planeNormal">Normal of the best fit plane</param>
-        /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, colinear, coplanar, or non-coplanar</param>
-        /// <returns>0 if the input points are coincidental; 1 if they are colinear; 2 if they are coplanar; 3 otherwise</returns>
+        /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, collinear, coplanar, or non-coplanar</param>
+        /// <returns>0 if the input points are coincidental; 1 if they are collinear; 2 if they are coplanar; 3 otherwise</returns>
         public static int ComputeBestFitPlane(List<Triple> points, out Triple planeOrigin, out Triple planeNormal, float tolerance = 1E-10f)
         {
             Triple centroid = Triple.Zero;
@@ -183,17 +181,17 @@ namespace DynaShape
                 c00, c01, c02,
                 c10, c11, c12,
                 c20, c21, c22,
-                out float u00, out float u01, out float u02,
-                out float u10, out float u11, out float u12,
-                out float u20, out float u21, out float u22,
+                out float u00, out float u01, out _        ,
+                out float u10, out float u11, out _        ,
+                out float u20, out float u21, out _        ,
                 out float s00, out float s11, out float s22,
-                out float v00, out float v01, out float v02,
-                out float v10, out float v11, out float v12,
-                out float v20, out float v21, out float v22);
+                out _        , out _        , out _        ,
+                out _        , out _        , out _        ,
+                out _        , out _        , out _         );
 
             planeOrigin = centroid;
 
-           
+
             // Case 0: The input points are coincidental, so we just need to pick an arbitrary normal vector
             if (s00 < tolerance)
             {
@@ -201,14 +199,14 @@ namespace DynaShape
                 return 0;
             }
 
-            // Case 1: The input points are colinear, so we just pick an arbitrary vector perpendicular to the dominant eigenvector
+            // Case 1: The input points are collinear, so we just pick an arbitrary vector perpendicular to the dominant eigenvector
             if (s11 < tolerance)
             {
                 planeNormal = new Triple(u00, u10, u20).GeneratePerpendicular();
                 return 1;
             }
 
-            // Case 2: The input points are neigher coincidental nor colinear, therefore the best fit plane is determined by the two dominant eigenvectors
+            // Case 2: The input points are neighbor coincidental nor collinear, therefore the best fit plane is determined by the two dominant eigenvectors
             planeNormal = new Triple(u00, u10, u20).Cross(new Triple(u01, u11, u21)).Normalise();
 
             return s22 < tolerance
@@ -223,8 +221,8 @@ namespace DynaShape
         /// <param name="circleCenter">Center of the best fit circle</param>
         /// <param name="circleNormal">Normal of the best fit circle</param>
         /// <param name="circleRadius">Radius of the best fit circle</param>
-        /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, colinear, or non-colinear</param>
-        /// <returns>False if the input points are coincidental or colinear; True otherwise</returns>
+        /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, collinear, or non-collinear</param>
+        /// <returns>False if the input points are coincidental or collinear; True otherwise</returns>
         public static bool ComputeBestFitCircle(List<Triple> points, out Triple circleCenter, out Triple circleNormal, out float circleRadius, float tolerance = 1E-10f)
         {
             // The core idea is to project the input points to the best fit plane, then fit a circle through these points via an analytical approach.
@@ -232,15 +230,15 @@ namespace DynaShape
 
             int planeFittingResult = ComputeBestFitPlane(points, out Triple planeOrigin, out Triple planeNormal, tolerance);
 
-            // Case 0: The input points are either coincidental or colinear
-            if (planeFittingResult < 2) 
+            // Case 0: The input points are either coincidental or collinear
+            if (planeFittingResult < 2)
             {
                 circleCenter = circleNormal = new Triple(float.NaN);
                 circleRadius = float.NaN;
                 return false;
             }
 
-            // Case 1: The input points are neither coincidental nor colinear
+            // Case 1: The input points are neither coincidental nor collinear
             Triple planeBasisX = planeNormal.GeneratePerpendicular().Normalise();
             Triple planeBasisY = planeNormal.Cross(planeBasisX);
 
@@ -297,8 +295,8 @@ namespace DynaShape
         /// <param name="points">The input points</param>
         /// <param name="sphereCenter">Center of the best fit sphere</param>
         /// <param name="sphereRadius">Radius of the best fit sphere</param>
-        /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, colinear, coplanar, or non-coplanar</param>
-        /// <returns>False if the input points are coincidental, colinear or coplanar; True otherwise</returns>
+        /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, collinear, coplanar, or non-coplanar</param>
+        /// <returns>False if the input points are coincidental, collinear or coplanar; True otherwise</returns>
         public static bool ComputeBestFitSphere(List<Triple> points, out Triple sphereCenter, out float sphereRadius, float tolerance = 1E-10f)
         {
             // Reference: Sumith YD: Fast Geometric Fit Algorithm for Sphere Using Exact Solution

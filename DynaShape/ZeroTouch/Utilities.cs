@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Runtime;
 using HelixToolkit.Wpf.SharpDX.Core;
 using SharpDX;
+
 using Mesh = Autodesk.Dynamo.MeshToolkit.Mesh;
 using Point = Autodesk.DesignScript.Geometry.Point;
+
 
 namespace DynaShape.ZeroTouch
 {

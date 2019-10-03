@@ -28,7 +28,7 @@ namespace DynaShape
         public List<Node> Nodes = new List<Node>();
         public List<Goal> Goals = new List<Goal>();
         public List<GeometryBinder> GeometryBinders = new List<GeometryBinder>();
-        
+
         internal int HandleNodeIndex = -1;
         internal int NearestNodeIndex = -1;
 
@@ -245,7 +245,7 @@ namespace DynaShape
                     node.Position += node.Velocity;
 
             //=================================================================================
-            // Process each goal indepently, in parallel
+            // Process each goal independently, in parallel
             //=================================================================================
 
             Parallel.ForEach(Goals, goal => goal.Compute(Nodes));

@@ -12,10 +12,10 @@ namespace DynaShape
 
     public static class FastSvd3x3
     {
-        private const float Gamma = 5.82842712474619f; // FOUR_GAMMA_SQUARED = sqrt(8)+3;
-        private const float CStar = 0.923879532511287f; // cos(pi/8)
-        private const float SStar = 0.38268343236509f; // sin(p/8)
-        private const float Epsilon = 1e-10f;
+        private const float gamma = 5.82842712474619f; // FOUR_GAMMA_SQUARED = sqrt(8)+3;
+        private const float cStar = 0.923879532511287f; // cos(pi/8)
+        private const float sStar = 0.38268343236509f; // sin(p/8)
+        private const float epsilon = 1e-10f;
 
         public static void Compute(
             // input A
@@ -40,8 +40,8 @@ namespace DynaShape
                     a00, a01, a02,
                     a10, a11, a12,
                     a20, a21, a22,
-                    out float ata00, out float ata01, out float ata02,
-                    out float ata10, out float ata11, out float ata12,
+                    out float ata00, out _          , out _          ,
+                    out float ata10, out float ata11, out _          ,
                     out float ata20, out float ata21, out float ata22);
 
             JacobiEigenAnalysis(ref ata00,
@@ -79,9 +79,9 @@ namespace DynaShape
                             out u00, out u01, out u02,
                             out u10, out u11, out u12,
                             out u20, out u21, out u22,
-                            out       s00, out float s01, out float s02,
-                            out float s10, out       s11, out float s12,
-                            out float s20, out float s21, out       s22);
+                            out s00, out _  , out _  ,
+                            out _  , out s11, out _  ,
+                            out _  , out _  , out s22);
         }
 
         private static float InvSqrt(float a) => (float)(1.0 / Math.Sqrt(a));
@@ -182,10 +182,10 @@ namespace DynaShape
             //Given givens angle computed by approximateGivensAngles, compute the corresponding rotation quaternion.
             ch = 2 * (a00 - a11);
             sh = a01;
-            bool b = Gamma * sh * sh < ch * ch;
+            bool b = FastSvd3x3.gamma * sh * sh < ch * ch;
             float w = InvSqrt(ch * ch + sh * sh);
-            ch = b ? w * ch : CStar;
-            sh = b ? w * sh : SStar;
+            ch = b ? w * ch : FastSvd3x3.cStar;
+            sh = b ? w * sh : FastSvd3x3.sStar;
         }
 
         private static void JacobiConjugation(
@@ -321,8 +321,8 @@ namespace DynaShape
             // a2 = lower triangular entry we want to annihilate
             float rho = (float)Math.Sqrt(a1 * a1 + a2 * a2);
 
-            sh = rho > Epsilon ? a2 : 0;
-            ch = Math.Abs(a1) + Math.Max(rho, Epsilon);
+            sh = rho > FastSvd3x3.epsilon ? a2 : 0;
+            ch = Math.Abs(a1) + Math.Max(rho, FastSvd3x3.epsilon);
             bool b = a1 < 0;
             Swap(b, ref sh, ref ch);
             float w = InvSqrt(ch * ch + sh * sh);

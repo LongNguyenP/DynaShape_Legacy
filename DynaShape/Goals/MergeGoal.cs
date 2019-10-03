@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Xaml;
-using Autodesk.DesignScript.Geometry;
+﻿using System.Collections.Generic;
 using Autodesk.DesignScript.Runtime;
 
 
