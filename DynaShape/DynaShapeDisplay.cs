@@ -1,17 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Forms;
-using System.Windows.Media.Media3D;
 using System.Windows.Threading;
-using Autodesk.DesignScript.Interfaces;
 using Autodesk.DesignScript.Runtime;
-using Dynamo.Controls;
 using Dynamo.Wpf.ViewModels.Watch3D;
 using DynaShape.GeometryBinders;
 using HelixToolkit.Wpf.SharpDX;
@@ -139,7 +130,7 @@ namespace DynaShape
         {
             if (async)
             {
-                if (DispatcherOperation == null || 
+                if (DispatcherOperation == null ||
                     DispatcherOperation != null && DispatcherOperation.Status == DispatcherOperationStatus.Completed)
                 {
                     DispatcherOperation =

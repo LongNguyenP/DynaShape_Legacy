@@ -7,10 +7,8 @@ using System.Windows.Input;
 using Autodesk.DesignScript.Runtime;
 using Dynamo.Wpf.Extensions;
 using Dynamo.Wpf.ViewModels.Watch3D;
-using Dynamo.Graph.Workspaces;
 using System;
 using Dynamo.Controls;
-using Dynamo.Graph.Nodes;
 using HelixToolkit.Wpf.SharpDX;
 
 
@@ -50,7 +48,7 @@ namespace DynaShape
 
         private void ViewModelRequestViewRefreshHandler()
         {
-            
+
         }
 
 

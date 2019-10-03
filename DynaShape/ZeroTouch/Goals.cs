@@ -212,7 +212,7 @@ namespace DynaShape.ZeroTouch
         //==================================================================
 
         /// <summary>
-        /// Apply a constant directional offset to the specified nodes. 
+        /// Apply a constant directional offset to the specified nodes.
         /// For example, this is useful to simulate gravity
         /// </summary>
         /// <param name="startPositions"></param>
@@ -365,7 +365,7 @@ namespace DynaShape.ZeroTouch
         //==================================================================
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="centers"></param>
         /// <param name="radii"></param>
@@ -388,7 +388,7 @@ namespace DynaShape.ZeroTouch
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="goal"></param>
         /// <param name="radii"></param>
@@ -419,7 +419,7 @@ namespace DynaShape.ZeroTouch
         //==================================================================
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="centers"></param>
         /// <param name="radii"></param>
@@ -435,14 +435,14 @@ namespace DynaShape.ZeroTouch
             if (centers.Count != radii.Count)
                 throw new Exception("Error: centers count is not equal to radii count");
             return new ConvexPolygonContainmentGoal(
-                centers.ToTriples(), 
-                radii, 
-                polygonVertices == null ? new List<Triple>() : polygonVertices.ToTriples(), 
+                centers.ToTriples(),
+                radii,
+                polygonVertices == null ? new List<Triple>() : polygonVertices.ToTriples(),
                 weight);
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="goal"></param>
         /// <param name="radii"></param>
@@ -460,7 +460,7 @@ namespace DynaShape.ZeroTouch
                 if (goal.NodeCount != radii.Count)
                     throw new Exception("Error: radii count is not equal to node count");
                 goal.Radii = radii.ToArray();
-            };
+            }
 
             if (polygonVertices != null) goal.PolygonVertices = polygonVertices.ToTriples();
             if (weight >= 0.0) goal.Weight = weight;
@@ -546,7 +546,7 @@ namespace DynaShape.ZeroTouch
         /// Simulate wind by applying a constant force on the three vertices of a triangle,
         /// scaled by the cosine of the angle between the wind vector and the triangle's normal.
         /// This way, the wind has full effect when it hits the triangle head-on, and zero
-        /// effect if it blows paralell to the triangle.
+        /// effect if it blows parallel to the triangle.
         /// </summary>
         /// <param name="startPosition1"></param>
         /// <param name="startPosition2"></param>
@@ -572,9 +572,9 @@ namespace DynaShape.ZeroTouch
 
         /// <summary>
         /// Simulate wind blowing along a specified direction, by applying a force on the three vertices of a triangle,
-        /// The force magnitude is addtionally scaled by the cosine of the angle between the wind vector and the triangle's normal.
+        /// The force magnitude is additionally scaled by the cosine of the angle between the wind vector and the triangle's normal.
         /// This way, the wind has full effect when it hits the triangle head-on, and zero
-        /// effect if it blows paralell to the triangle.
+        /// effect if it blows parallel to the triangle.
         /// </summary>
         /// <param name="mesh"></param>
         /// <param name="windVector"></param>
@@ -867,7 +867,7 @@ namespace DynaShape.ZeroTouch
         //==================================================================
 
         /// <summary>
-        /// Pull a set of nodes to their center of mass. 
+        /// Pull a set of nodes to their center of mass.
         /// This is useful to force the nodes to have coincident positions.
         /// By default the weight value is set very high to ensure that the nodes really merge together at one position.
         /// </summary>
@@ -941,7 +941,7 @@ namespace DynaShape.ZeroTouch
 
         /// <summary>
         /// Force a set of nodes to lie on the specified line.
-        /// This is different from othe CoLinear goal, where the target line is computed based on the current node positions rather than being defined and fixed in advance.
+        /// This is different from other CoLinear goal, where the target line is computed based on the current node positions rather than being defined and fixed in advance.
         /// </summary>
         /// <param name="startPosition"></param>
         /// <param name="targetLineOrigin"></param>
@@ -964,7 +964,7 @@ namespace DynaShape.ZeroTouch
 
         /// <summary>
         /// Force a set of nodes to lie on the specified line.
-        /// This is different from othe CoLinear goal, where the target line is computed based on the current node positions rather than being defined and fixed in advance.
+        /// This is different from other CoLinear goal, where the target line is computed based on the current node positions rather than being defined and fixed in advance.
         /// </summary>
         /// <param name="startPositions"></param>
         /// <param name="targetLine"></param>
@@ -1031,7 +1031,7 @@ namespace DynaShape.ZeroTouch
 
         /// <summary>
         /// Force a set of nodes to lie on the specified plane.
-        /// This is different from othe CoPlanar goal, where the target plane is computed based on the current node positions rather than being defined and fixed in advance.
+        /// This is different from other CoPlanar goal, where the target plane is computed based on the current node positions rather than being defined and fixed in advance.
         /// </summary>
         /// <param name="startPositions"></param>
         /// <param name="targetPlaneOrigin"></param>
@@ -1053,7 +1053,7 @@ namespace DynaShape.ZeroTouch
 
         /// <summary>
         /// Force a set of nodes to lie on the specified plane.
-        /// This is different from othe CoPlanar goal, where the target plane is computed based on the current node positions rather than being defined and fixed in advance.
+        /// This is different from other CoPlanar goal, where the target plane is computed based on the current node positions rather than being defined and fixed in advance.
         /// </summary>
         /// <param name="startPositions"></param>
         /// <param name="targetPlane"></param>

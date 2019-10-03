@@ -1,11 +1,10 @@
 ﻿using Autodesk.DesignScript.Runtime;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 
-
 using Point = Autodesk.DesignScript.Geometry.Point;
+
 
 namespace DynaSpace
 {
@@ -36,7 +35,6 @@ namespace DynaSpace
             List<List<int>> adjacentDepartments = new List<List<int>>();
 
             int stride = 12;
-            int sheetHeight = data.Count / stride - 1;
 
             Dictionary<string, int> cols = new Dictionary<string, int>();
 
@@ -92,7 +90,7 @@ namespace DynaSpace
             }
 
             //=====================================================================
-            // Clean up inconsitencies and redundancies in ADJACENT SPACES
+            // Clean up inconsistencies and redundancies in ADJACENT SPACES
             //=====================================================================
 
             List<HashSet<int>> hashSets = new List<HashSet<int>>();

@@ -2,8 +2,6 @@
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Runtime;
 using DynaShape.GeometryBinders;
-using HelixToolkit.Wpf.SharpDX.Core;
-using SharpDX;
 using Color = DSCore.Color;
 using Point = Autodesk.DesignScript.Geometry.Point;
 
