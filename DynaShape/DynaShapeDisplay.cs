@@ -57,7 +57,6 @@ namespace DynaShape
                 Colors = new Color4Collection()
             };
 
-
             billboardText = new BillboardText3D();
 
             DynaShapeViewExtension.DynamoWindow.Dispatcher.Invoke(
@@ -70,13 +69,11 @@ namespace DynaShape
                         Color = Color.White,
                     };
 
-
                     lineModel = new LineGeometryModel3D
                     {
                         Thickness = 0.5,
                         Color = Color.White,
                     };
-
 
                     billboardTextModel = new BillboardTextModel3D()
                     {
@@ -84,10 +81,24 @@ namespace DynaShape
                 },
                 DispatcherPriority.Send);
 
-
             DynaShapeViewExtension.ViewModel.RequestViewRefresh += RequestViewRefreshHandler;
-
             DynaShapeViewExtension.DynamoWindow.Closed += (sender, args) => Dispose();
+        }
+
+
+        public void DrawPoint(float x, float y, float z, Color4 color)
+        {
+            pointGeometry.Positions.Add(new Vector3(x, z, -y));
+            pointGeometry.Colors.Add(color);
+            pointGeometry.Indices.Add(pointGeometry.Indices.Count);
+        }
+
+
+        public void DrawPoint(Triple position, Color4 color)
+        {
+            pointGeometry.Positions.Add(new Vector3(position.X, position.Z, -position.Y));
+            pointGeometry.Colors.Add(color);
+            pointGeometry.Indices.Add(pointGeometry.Indices.Count);
         }
 
 
@@ -100,6 +111,7 @@ namespace DynaShape
             lineGeometry.Colors.Add(color);
             lineGeometry.Colors.Add(color);
         }
+
 
         public void DrawPolyline(List<Triple> vertices, Color4 color, bool loop)
         {
@@ -116,15 +128,18 @@ namespace DynaShape
             }
         }
 
+
         public void DrawText(string text, Triple position)
         {
             billboardText.TextInfo.Add(new TextInfo(text, position.ToVector3()));
         }
 
+
         public void AddMeshModel(MeshGeometryModel3D meshModel)
         {
             meshModels.Add(meshModel);
         }
+
 
         internal void Render(bool async = false)
         {
@@ -206,11 +221,12 @@ namespace DynaShape
             // Render nodes as points
             //============================================
 
+            int n = pointGeometry.Indices.Count;
             for (int i = 0; i < solver.Nodes.Count; i++)
             {
                 pointGeometry.Positions.Add(solver.Nodes[i].Position.ToVector3());
                 pointGeometry.Colors.Add(DefaultPointColor);
-                pointGeometry.Indices.Add(i);
+                pointGeometry.Indices.Add(n + i);
             }
 
             //==============================================================

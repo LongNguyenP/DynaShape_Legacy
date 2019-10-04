@@ -102,7 +102,7 @@ namespace DynaShape
         {
             GeometryBinders.Add(geometryBinder);
 
-            if (geometryBinder.StartingPositions == null && geometryBinder.NodeIndices != null) return;
+            if (geometryBinder.StartingPositions == null || geometryBinder.NodeIndices != null) return;
 
             geometryBinder.NodeIndices = new int[geometryBinder.NodeCount];
 
