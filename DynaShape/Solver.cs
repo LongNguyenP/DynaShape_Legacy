@@ -55,11 +55,13 @@ namespace DynaShape
 #endif
         }
 
+
         public void AddGoals(IEnumerable<Goal> goals, double nodeMergeThreshold = 0.0001)
         {
             foreach (Goal goal in goals)
                 AddGoal(goal, nodeMergeThreshold);
         }
+
 
         public void AddGeometryBinders(IEnumerable<GeometryBinder> geometryBinders, double nodeMergeThreshold = 0.0001)
         {
@@ -67,13 +69,14 @@ namespace DynaShape
                 AddGeometryBinder(geometryBinder, nodeMergeThreshold);
         }
 
+
         public void AddGoal(Goal goal, double nodeMergeThreshold = 0.0001)
         {
             if (goal == null) return;
 
             Goals.Add(goal);
 
-            if (goal.StartingPositions == null && goal.NodeIndices != null) return;
+            if (goal.StartingPositions == null || goal.NodeIndices != null) return;
 
             goal.NodeIndices = new int[goal.NodeCount];
 
@@ -97,6 +100,7 @@ namespace DynaShape
                 }
             }
         }
+
 
         public void AddGeometryBinder(GeometryBinder geometryBinder, double nodeMergeThreshold = 0.0001)
         {
@@ -127,6 +131,7 @@ namespace DynaShape
             }
         }
 
+
         public List<Triple> GetNodePositions()
         {
             List<Triple> nodePositions = new List<Triple>(Nodes.Count);
@@ -135,6 +140,7 @@ namespace DynaShape
             return nodePositions;
         }
 
+
         public List<Point> GetNodePositionsAsPoints()
         {
             List<Point> nodePositions = new List<Point>(Nodes.Count);
@@ -142,6 +148,7 @@ namespace DynaShape
                 nodePositions.Add(Nodes[i].Position.ToPoint());
             return nodePositions;
         }
+
 
         public List<List<Triple>> GetStructuredNodePositions()
         {
@@ -156,6 +163,7 @@ namespace DynaShape
             return nodePositions;
         }
 
+
         public List<List<Point>> GetStructuredNodePositionsAsPoints()
         {
             List<List<Point>> nodePositions = new List<List<Point>>(Goals.Count);
@@ -169,6 +177,7 @@ namespace DynaShape
             return nodePositions;
         }
 
+
         public List<Triple> GetNodeVelocities()
         {
             List<Triple> nodeVelocities = new List<Triple>(Nodes.Count);
@@ -177,6 +186,7 @@ namespace DynaShape
             return nodeVelocities;
         }
 
+
         public List<Vector> GetNodeVelocitiesAsVectors()
         {
             List<Vector> nodeVelocities = new List<Vector>(Nodes.Count);
@@ -184,6 +194,7 @@ namespace DynaShape
                 nodeVelocities.Add(node.Velocity.ToVector());
             return nodeVelocities;
         }
+
 
         public List<List<object>> GetGeometries()
         {
@@ -226,11 +237,13 @@ namespace DynaShape
             CurrentIteration = 0;
         }
 
+
         public void Reset()
         {
             CurrentIteration = 0;
             foreach (Node node in Nodes) node.Reset();
         }
+
 
         public void Iterate()
         {
@@ -309,10 +322,12 @@ namespace DynaShape
                 }
         }
 
+
         public void Iterate(int iterationCount)
         {
             for (int i = 0; i < iterationCount; i++) Iterate();
         }
+
 
         public void Iterate(float miliseconds)
         {
@@ -320,6 +335,7 @@ namespace DynaShape
             while (stopwatch.Elapsed.TotalMilliseconds < miliseconds)
                 Iterate();
         }
+
 
         public void Execute(int maxIterationCount, float keThreshold)
         {
@@ -330,6 +346,7 @@ namespace DynaShape
             }
         }
 
+
         public float GetKineticEnergy()
         {
             float ke = 0f;
@@ -339,6 +356,7 @@ namespace DynaShape
 
             return ke;
         }
+
 
         public float GetLargestMove()
         {
@@ -353,12 +371,14 @@ namespace DynaShape
             return largestMove;
         }
 
+
 #if CLI == false
         CancellationTokenSource ctSource;
         internal DynaShapeDisplay Display;
 
         public void ClearRender() { Display.ClearRender(); }
         public void Render() { Display.Render(); }
+
 
         private void BackgroundExecutionAction()
         {
@@ -380,12 +400,14 @@ namespace DynaShape
             }
         }
 
+
         public void StartBackgroundExecution()
         {
             if (backgroundExecutionTask != null && backgroundExecutionTask.Status == TaskStatus.Running) return;
             ctSource = new CancellationTokenSource();
             backgroundExecutionTask = Task.Factory.StartNew(BackgroundExecutionAction, ctSource.Token);
         }
+
 
         public void StopBackgroundExecution()
         {
@@ -394,6 +416,7 @@ namespace DynaShape
             backgroundExecutionTask?.Wait(300);
             Display.DispatcherOperation?.Task.Wait(300);
         }
+
 
         internal int FindNearestNodeIndex(float range = 0.03f)
         {
@@ -437,10 +460,12 @@ namespace DynaShape
             return nearestNodeIndex;
         }
 
+
         private void ViewportCameraChangedHandler(object sender, RoutedEventArgs args)
         {
             NearestNodeIndex = -1;
         }
+
 
         private void ViewportMouseDownHandler(object sender, MouseButtonEventArgs args)
         {
@@ -448,11 +473,13 @@ namespace DynaShape
                 HandleNodeIndex = FindNearestNodeIndex();
         }
 
+
         private void ViewportMouseUpHandler(object sender, MouseButtonEventArgs args)
         {
             HandleNodeIndex = -1;
             NearestNodeIndex = -1;
         }
+
 
         private void ViewportMouseMoveHandler(object sender, MouseEventArgs args)
         {
