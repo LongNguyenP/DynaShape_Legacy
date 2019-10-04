@@ -76,7 +76,7 @@ namespace DynaShape
 
             Goals.Add(goal);
 
-            if (goal.StartingPositions == null || goal.NodeIndices != null) return;
+            if (goal.StartingPositions == null && goal.NodeIndices != null) return;
 
             goal.NodeIndices = new int[goal.NodeCount];
 
@@ -104,9 +104,11 @@ namespace DynaShape
 
         public void AddGeometryBinder(GeometryBinder geometryBinder, double nodeMergeThreshold = 0.0001)
         {
+            if (geometryBinder == null) return;
+
             GeometryBinders.Add(geometryBinder);
 
-            if (geometryBinder.StartingPositions == null || geometryBinder.NodeIndices != null) return;
+            if (geometryBinder.StartingPositions == null && geometryBinder.NodeIndices != null) return;
 
             geometryBinder.NodeIndices = new int[geometryBinder.NodeCount];
 

@@ -97,7 +97,7 @@
         </member>
         <member name="M:DynaShape.ZeroTouch.Goals.ConstantGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},Autodesk.DesignScript.Geometry.Vector,System.Single)">
             <summary>
-            Apply a constant directional offset to the specified nodes.
+            Apply a constant directional offset to the specified nodes. 
             For example, this is useful to simulate gravity
             </summary>
             <param name="startPositions"></param>
@@ -162,44 +162,44 @@
             <returns></returns>
         </member>
         <member name="M:DynaShape.ZeroTouch.Goals.ConvexPolygonCollisionGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Collections.Generic.List{System.Single},System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Single)">
-             <summary>
+            <summary>
             
-             </summary>
-             <param name="centers"></param>
-             <param name="radii"></param>
-             <param name="polygonVertices"></param>
-             <param name="weight"></param>
-             <returns></returns>
+            </summary>
+            <param name="centers"></param>
+            <param name="radii"></param>
+            <param name="polygonVertices"></param>
+            <param name="weight"></param>
+            <returns></returns>
         </member>
         <member name="M:DynaShape.ZeroTouch.Goals.ConvexPolygonCollisionGoal_Change(DynaShape.Goals.ConvexPolygonCollisionGoal,System.Collections.Generic.List{System.Single},System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Single)">
-             <summary>
+            <summary>
             
-             </summary>
-             <param name="goal"></param>
-             <param name="radii"></param>
-             <param name="polygonVertices"></param>
-             <param name="weight"></param>
-             <returns></returns>
+            </summary>
+            <param name="goal"></param>
+            <param name="radii"></param>
+            <param name="polygonVertices"></param>
+            <param name="weight"></param>
+            <returns></returns>
         </member>
         <member name="M:DynaShape.ZeroTouch.Goals.ConvexPolygonContainmentGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Collections.Generic.List{System.Single},System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Single)">
-             <summary>
+            <summary>
             
-             </summary>
-             <param name="centers"></param>
-             <param name="radii"></param>
-             <param name="polygonVertices"></param>
-             <param name="weight"></param>
-             <returns></returns>
+            </summary>
+            <param name="centers"></param>
+            <param name="radii"></param>
+            <param name="polygonVertices"></param>
+            <param name="weight"></param>
+            <returns></returns>
         </member>
         <member name="M:DynaShape.ZeroTouch.Goals.ConvexPolygonContainmentGoal_Change(DynaShape.Goals.ConvexPolygonContainmentGoal,System.Collections.Generic.List{System.Single},System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Single)">
-             <summary>
+            <summary>
             
-             </summary>
-             <param name="goal"></param>
-             <param name="radii"></param>
-             <param name="polygonVertices"></param>
-             <param name="weight"></param>
-             <returns></returns>
+            </summary>
+            <param name="goal"></param>
+            <param name="radii"></param>
+            <param name="polygonVertices"></param>
+            <param name="weight"></param>
+            <returns></returns>
         </member>
         <member name="M:DynaShape.ZeroTouch.Goals.CoPlanarGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Single)">
             <summary>
@@ -241,7 +241,7 @@
             Simulate wind by applying a constant force on the three vertices of a triangle,
             scaled by the cosine of the angle between the wind vector and the triangle's normal.
             This way, the wind has full effect when it hits the triangle head-on, and zero
-            effect if it blows parallel to the triangle.
+            effect if it blows paralell to the triangle.
             </summary>
             <param name="startPosition1"></param>
             <param name="startPosition2"></param>
@@ -253,9 +253,9 @@
         <member name="M:DynaShape.ZeroTouch.Goals.DirectionalWindGoal_Create(Autodesk.Dynamo.MeshToolkit.Mesh,Autodesk.DesignScript.Geometry.Vector,System.Single)">
             <summary>
             Simulate wind blowing along a specified direction, by applying a force on the three vertices of a triangle,
-            The force magnitude is additionally scaled by the cosine of the angle between the wind vector and the triangle's normal.
+            The force magnitude is addtionally scaled by the cosine of the angle between the wind vector and the triangle's normal.
             This way, the wind has full effect when it hits the triangle head-on, and zero
-            effect if it blows parallel to the triangle.
+            effect if it blows paralell to the triangle.
             </summary>
             <param name="mesh"></param>
             <param name="windVector"></param>
@@ -371,7 +371,7 @@
         </member>
         <member name="M:DynaShape.ZeroTouch.Goals.MergeGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Single)">
             <summary>
-            Pull a set of nodes to their center of mass.
+            Pull a set of nodes to their center of mass. 
             This is useful to force the nodes to have coincident positions.
             By default the weight value is set very high to ensure that the nodes really merge together at one position.
             </summary>
@@ -408,7 +408,7 @@
         <member name="M:DynaShape.ZeroTouch.Goals.OnLineGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Vector,System.Single)">
             <summary>
             Force a set of nodes to lie on the specified line.
-            This is different from other CoLinear goal, where the target line is computed based on the current node positions rather than being defined and fixed in advance.
+            This is different from othe CoLinear goal, where the target line is computed based on the current node positions rather than being defined and fixed in advance.
             </summary>
             <param name="startPosition"></param>
             <param name="targetLineOrigin"></param>
@@ -419,7 +419,7 @@
         <member name="M:DynaShape.ZeroTouch.Goals.OnLineGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},Autodesk.DesignScript.Geometry.Line,System.Single)">
             <summary>
             Force a set of nodes to lie on the specified line.
-            This is different from other CoLinear goal, where the target line is computed based on the current node positions rather than being defined and fixed in advance.
+            This is different from othe CoLinear goal, where the target line is computed based on the current node positions rather than being defined and fixed in advance.
             </summary>
             <param name="startPositions"></param>
             <param name="targetLine"></param>
@@ -448,7 +448,7 @@
         <member name="M:DynaShape.ZeroTouch.Goals.OnPlaneGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Vector,System.Single)">
             <summary>
             Force a set of nodes to lie on the specified plane.
-            This is different from other CoPlanar goal, where the target plane is computed based on the current node positions rather than being defined and fixed in advance.
+            This is different from othe CoPlanar goal, where the target plane is computed based on the current node positions rather than being defined and fixed in advance.
             </summary>
             <param name="startPositions"></param>
             <param name="targetPlaneOrigin"></param>
@@ -459,7 +459,7 @@
         <member name="M:DynaShape.ZeroTouch.Goals.OnPlaneGoal_Create(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},Autodesk.DesignScript.Geometry.Plane,System.Single)">
             <summary>
             Force a set of nodes to lie on the specified plane.
-            This is different from other CoPlanar goal, where the target plane is computed based on the current node positions rather than being defined and fixed in advance.
+            This is different from othe CoPlanar goal, where the target plane is computed based on the current node positions rather than being defined and fixed in advance.
             </summary>
             <param name="startPositions"></param>
             <param name="targetPlane"></param>
@@ -597,8 +597,8 @@
             Create a planar mesh
             </summary>
             <param name="cs">The planar mesh will be oriented according to the XY plane of this input coordinate system </param>
-            <param name="lengthX">The X dimension of the planar mesh</param>
-            <param name="lengthY">The Y dimension of the planar mesh</param>
+            <param name="lengthX">The X dimision of the planar mesh</param>
+            <param name="lengthY">The Y dimision of the planar mesh</param>
             <param name="divX">The mesh face division in the X dimension</param>
             <param name="divY">The mesh face division in the Y dimension</param>
             <param name="alternatingDiagons">Alternating the diagonal direction of the triangular faces</param>
@@ -609,8 +609,8 @@
             Create a rectangular grid of points
             </summary>
             <param name="cs">A coordinate system upon which the rectangular grid is based </param>
-            <param name="lengthX">The X dimension of the grid</param>
-            <param name="lengthY">The Y dimension of the grid</param>
+            <param name="lengthX">The X dimision of the grid</param>
+            <param name="lengthY">The Y dimision of the grid</param>
             <param name="divX">The grid division in the X dimension</param>
             <param name="divY">The grid division in the Y dimension</param>
             <returns></returns>
@@ -662,7 +662,7 @@
         </member>
         <member name="M:DynaShape.ZeroTouch.TestingUtilities.WonkyCubes(System.Int32,System.Int32,System.Int32,System.Boolean)">
             <summary>
-            This is a quick test setup for shape matching goals. Here we create a 3D grid of cubes, and apply a shape matching goal on each cube to force them maintain their initial unit-cube shape
+            This is a quick test setup for shape matching goals. Here we create a 3D grid of cubes, and apply a shape matching goal on each cube to force them maintain their intial unit-cube shape
             </summary>
             <param name="X">Number of nodes along the X axis, minimum is 2</param>
             <param name="Y">Number of nodes along the Y axis, minimum is 2</param>
