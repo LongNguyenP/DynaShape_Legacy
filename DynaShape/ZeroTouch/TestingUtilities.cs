@@ -1,6 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+using System.Windows.Controls;
+using System.Windows.Threading;
+using Autodesk.DesignScript.Geometry;
+using Autodesk.DesignScript.Interfaces;
 using Autodesk.DesignScript.Runtime;
+using DynaShape;
 using DynaShape.GeometryBinders;
 using DynaShape.Goals;
 using SharpDX;
@@ -13,7 +21,7 @@ namespace DynaShape.ZeroTouch
     public static class TestingUtilities
     {
         /// <summary>
-        /// This is a quick test setup for shape matching goals. Here we create a 3D grid of cubes, and apply a shape matching goal on each cube to force them maintain their initial unit-cube shape
+        /// This is a quick test setup for shape matching goals. Here we create a 3D grid of cubes, and apply a shape matching goal on each cube to force them maintain their intial unit-cube shape
         /// </summary>
         /// <param name="X">Number of nodes along the X axis, minimum is 2</param>
         /// <param name="Y">Number of nodes along the Y axis, minimum is 2</param>
@@ -165,24 +173,29 @@ namespace DynaShape.ZeroTouch
             for (int j = 0; j < yCount; j++)
             {
                 double k = 0.0;
-                List<Triple> triples
-                    = (i + j) % 2 == 0
-                        ?  new List<Triple>()
-                        {
-                            new Triple(i, j + offset, k),
-                            new Triple(i + 1f - offset, j, k),
-                            new Triple(i + 1f, j + 1f - offset, k),
-                            new Triple(i + offset, j + 1f, k),
-                        }
-                        :  new List<Triple>()
-                        {
-                            new Triple(i + offset, j, k),
-                            new Triple(i + 1f, j + offset, k),
-                            new Triple(i + 1f - offset, j + 1f, k),
-                            new Triple(i, j + 1f - offset, k),
-                        };
+                List<Triple> triples = new List<Triple>();
 
-                if (thickness > 0.0) for (int ii = 0; ii < 4; ii++) triples.Add(triples[ii] + thickness * Triple.BasisZ);
+                if ((i + j) % 2 == 0)
+                    triples = new List<Triple>()
+                    {
+                        new Triple(i, j + offset, k),
+                        new Triple(i + 1f - offset, j, k),
+                        new Triple(i + 1f, j + 1f - offset, k),
+                        new Triple(i + offset, j + 1f, k),
+                    };
+                else
+                {
+                    triples = new List<Triple>()
+                    {
+                        new Triple(i + offset, j, k),
+                        new Triple(i + 1f, j + offset, k),
+                        new Triple(i + 1f - offset, j + 1f, k),
+                        new Triple(i, j + 1f - offset, k),
+                    };
+                }
+
+                if (thickness > 0.0)
+                    for (int ii = 0; ii < 4; ii++) triples.Add(triples[ii] + thickness * Triple.BasisZ);
 
                 shapeMatchingGoals.Add(new ShapeMatchingGoal(triples, triples));
                 //goals.Add(new OnPlaneGoal(triples, Plane.XY()));
@@ -225,8 +238,9 @@ namespace DynaShape.ZeroTouch
 
             meshBinders.Add(new MeshBinder(Mesh.ByVerticesAndIndices(vertices, indices), new Color(.3f, .6f, .8f, 1f)));
 
-//            List<Triple> allTriples = new List<Triple>();
-//            foreach (Point point in vertices) allTriples.Add(point.ToTriple());
+            List<Triple> allTriples = new List<Triple>();
+
+            foreach (Point point in vertices) allTriples.Add(point.ToTriple());
 
             return new Dictionary<string, object>
             {
@@ -320,8 +334,8 @@ namespace DynaShape.ZeroTouch
                 double xOffset = 2 * i + 1;
                 double yOffset = 2 * j * cos30 + cos30;
 
-                Triple M = new Triple(xOffset, yOffset, 0.0);
-
+                Triple M = new Triple(xOffset, yOffset, 0.0); 
+                
                 List<Triple> v = new List<Triple>();
 
                 for (int k = 0; k < 6; k++)
@@ -354,13 +368,15 @@ namespace DynaShape.ZeroTouch
 
             //=======================================================================================
             // Line Binders
-            //=======================================================================================
+            //======================================================================================= 
 
             for (int j = 0; j < yCount; j++)
             for (int i = 0; i < xCount * 2; i++)
             {
                 double xOffset = i;
                 double yOffset = 2 * j * cos30 + cos30;
+
+                Triple M = new Triple(xOffset, yOffset, 0.0);
 
                 List<Triple> v = new List<Triple>();
 
@@ -380,6 +396,8 @@ namespace DynaShape.ZeroTouch
                 double xOffset = i + 0.5;
                 double yOffset = 2 * j * cos30;
 
+                Triple M = new Triple(xOffset, yOffset, 0.0);
+
                 List<Triple> v = new List<Triple>();
 
                 for (int k = 1; k < 6; k += 2)
@@ -392,6 +410,8 @@ namespace DynaShape.ZeroTouch
                 mergeGoals.Add(new MergeGoal(v, 0.1f));
             }
 
+
+
             return new Dictionary<string, object>
             {
                 {"shapeMatchingGoals", shapeMatchingGoals},
@@ -402,18 +422,17 @@ namespace DynaShape.ZeroTouch
         }
 
 
-//        private static ShapeMatchingGoal ProcessQuad(Triple A, Triple B, Triple C, Triple D, List<Point> vertices, List<int> indices)
-//        {
-//            List<Triple> triples = new List<Triple> { A, B, C, D };
-//            vertices.Add(A.ToPoint());
-//            vertices.Add(B.ToPoint());
-//            vertices.Add(C.ToPoint());
-//            vertices.Add(D.ToPoint());
-//            int n = vertices.Count - 4;
-//            indices.AddRange(new[] { n, n + 1, n + 2, n, n + 2, n + 3 });
-//            return new ShapeMatchingGoal(triples, triples);
-//        }
-
+        private static ShapeMatchingGoal ProcessQuad(Triple A, Triple B, Triple C, Triple D, List<Point> vertices, List<int> indices)
+        {
+            List<Triple> triples = new List<Triple> { A, B, C, D };
+            vertices.Add(A.ToPoint());
+            vertices.Add(B.ToPoint());
+            vertices.Add(C.ToPoint());
+            vertices.Add(D.ToPoint());
+            int n = vertices.Count - 4;
+            indices.AddRange(new[] { n, n + 1, n + 2, n, n + 2, n + 3 });
+            return new ShapeMatchingGoal(triples, triples);
+        }
 
         private static ShapeMatchingGoal ProcessTriangle(Triple A, Triple B, Triple C, bool complementary, double offset, double thickness, List<Point> vertices, List<int> indices)
         {
