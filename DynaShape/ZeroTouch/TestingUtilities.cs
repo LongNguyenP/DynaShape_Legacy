@@ -157,26 +157,41 @@ namespace DynaShape.ZeroTouch
             };
         }
 
-        [MultiReturn("shapeMatchingGoals", "lengthGoals", "meshBinders", "lineBinders")]
-        public static Dictionary<string, object> AuxeticRotatingSquares(int xCount = 5, int yCount = 5, double thickness = 0.0)
+
+        [MultiReturn("shapeMatchingGoals", "lengthGoals", "meshBinders", "lineBinders", "onSurfaceGoal")]
+        public static Dictionary<string, object> AuxeticRotatingSquares(int xCount = 5, int yCount = 5, double thickness = 0.0, Surface targetSurface = null)
         {
             List<Goal> shapeMatchingGoals = new List<Goal>();
             List<GeometryBinder> meshBinders = new List<GeometryBinder>();
             List<GeometryBinder> lineBinders = new List<GeometryBinder>();
 
             List<Point> vertices = new List<Point>();
+            List<Triple> bottomVertices = new List<Triple>();
             List<int> indices = new List<int>();
 
             double offset = 0.001;
+
+
+            List<Triple> targetShape = new List<Triple>()
+            {
+                new Triple(0, 0, 0),
+                new Triple(1, 0, 0),
+                new Triple(1, 1, 0),
+                new Triple(0, 1, 0),
+            };
+
+            if (thickness > 0.0)
+                for (int i = 0; i < 4; i++)
+                    targetShape.Add(targetShape[i] + thickness * Triple.BasisZ);
 
             for (int i = 0; i < xCount; i++)
             for (int j = 0; j < yCount; j++)
             {
                 double k = 0.0;
-                List<Triple> triples = new List<Triple>();
+                List<Triple> tileVertices = new List<Triple>();
 
                 if ((i + j) % 2 == 0)
-                    triples = new List<Triple>()
+                    tileVertices = new List<Triple>()
                     {
                         new Triple(i, j + offset, k),
                         new Triple(i + 1f - offset, j, k),
@@ -185,7 +200,7 @@ namespace DynaShape.ZeroTouch
                     };
                 else
                 {
-                    triples = new List<Triple>()
+                    tileVertices = new List<Triple>()
                     {
                         new Triple(i + offset, j, k),
                         new Triple(i + 1f, j + offset, k),
@@ -194,16 +209,18 @@ namespace DynaShape.ZeroTouch
                     };
                 }
 
+                bottomVertices.AddRange(tileVertices);
+
                 if (thickness > 0.0)
-                    for (int ii = 0; ii < 4; ii++) triples.Add(triples[ii] + thickness * Triple.BasisZ);
+                    for (int ii = 0; ii < 4; ii++) tileVertices.Add(tileVertices[ii] + thickness * Triple.BasisZ);
 
-                shapeMatchingGoals.Add(new ShapeMatchingGoal(triples, triples));
-                //goals.Add(new OnPlaneGoal(triples, Plane.XY()));
+                shapeMatchingGoals.Add(new ShapeMatchingGoal(tileVertices, targetShape));
 
-                vertices.Add(triples[0].ToPoint());
-                vertices.Add(triples[1].ToPoint());
-                vertices.Add(triples[2].ToPoint());
-                vertices.Add(triples[3].ToPoint());
+
+                vertices.Add(tileVertices[0].ToPoint());
+                vertices.Add(tileVertices[1].ToPoint());
+                vertices.Add(tileVertices[2].ToPoint());
+                vertices.Add(tileVertices[3].ToPoint());
 
                 int n = vertices.Count - 4;
 
@@ -238,20 +255,122 @@ namespace DynaShape.ZeroTouch
 
             meshBinders.Add(new MeshBinder(Mesh.ByVerticesAndIndices(vertices, indices), new Color(.3f, .6f, .8f, 1f)));
 
-            List<Triple> allTriples = new List<Triple>();
+            return new Dictionary<string, object>
+            {
+                {"shapeMatchingGoals", shapeMatchingGoals},
+                {"lengthGoals", lengthGoals},
+                {"onSurfaceGoal", targetSurface == null ? null : new OnSurfaceGoal(bottomVertices, targetSurface, 1f)},
+                {"meshBinders", meshBinders},
+                {"lineBinders", lineBinders},
+            };
+        }
 
-            foreach (Point point in vertices) allTriples.Add(point.ToTriple());
+
+
+        [MultiReturn("shapeMatchingGoals", "lengthGoals", "meshBinders", "lineBinders")]
+        public static Dictionary<string, object> AuxeticRotatingSquares(int xCount = 5, int yCount = 5, double thickness = 0.0)
+        {
+            List<Goal> shapeMatchingGoals = new List<Goal>();
+            List<GeometryBinder> meshBinders = new List<GeometryBinder>();
+            List<GeometryBinder> lineBinders = new List<GeometryBinder>();
+
+            List<Point> vertices = new List<Point>();
+            List<int> indices = new List<int>();
+
+            double offset = 0.001;
+
+
+            List<Triple> targetShape = new List<Triple>()
+            {
+                new Triple(0, 0, 0),
+                new Triple(1, 0, 0),
+                new Triple(1, 1, 0),
+                new Triple(0, 1, 0),
+            };
+
+            if (thickness > 0.0)
+                for (int i = 0; i < 4; i++)
+                    targetShape.Add(targetShape[i] + thickness * Triple.BasisZ);
+
+            for (int i = 0; i < xCount; i++)
+            for (int j = 0; j < yCount; j++)
+            {
+                double k = 0.0;
+                List<Triple> tileVertices = new List<Triple>();
+
+                if ((i + j) % 2 == 0)
+                    tileVertices = new List<Triple>()
+                    {
+                        new Triple(i, j + offset, k),
+                        new Triple(i + 1f - offset, j, k),
+                        new Triple(i + 1f, j + 1f - offset, k),
+                        new Triple(i + offset, j + 1f, k),
+                    };
+                else
+                {
+                    tileVertices = new List<Triple>()
+                    {
+                        new Triple(i + offset, j, k),
+                        new Triple(i + 1f, j + offset, k),
+                        new Triple(i + 1f - offset, j + 1f, k),
+                        new Triple(i, j + 1f - offset, k),
+                    };
+                }
+
+
+                if (thickness > 0.0)
+                    for (int ii = 0; ii < 4; ii++) tileVertices.Add(tileVertices[ii] + thickness * Triple.BasisZ);
+
+                shapeMatchingGoals.Add(new ShapeMatchingGoal(tileVertices, targetShape));
+
+                vertices.Add(tileVertices[0].ToPoint());
+                vertices.Add(tileVertices[1].ToPoint());
+                vertices.Add(tileVertices[2].ToPoint());
+                vertices.Add(tileVertices[3].ToPoint());
+
+                int n = vertices.Count - 4;
+
+                indices.AddRange(new [] {n, n + 1, n + 2, n, n + 2, n + 3});
+            }
+
+            List<Goal> lengthGoals = new List<Goal>();
+
+            for (int i = 1; i < xCount; i++)
+            for (int j = 0; j <= yCount; j++)
+                if ((i + j) % 2 == 1)
+                {
+                    lengthGoals.Add(new LengthGoal(
+                        new Triple(i - offset, j, 0),
+                        new Triple(i + offset, j, 0)));
+                    lineBinders.Add(new LineBinder(
+                        new Triple(i - offset, j, 0),
+                        new Triple(i + offset, j, 0)));
+                }
+
+            for (int i = 0; i <= xCount; i++)
+            for (int j = 1; j < yCount; j++)
+                if ((i + j) % 2 == 0)
+                {
+                    lengthGoals.Add(new LengthGoal(
+                        new Triple(i, j - offset, 0),
+                        new Triple(i, j + offset, 0)));
+                    lineBinders.Add(new LineBinder(
+                        new Triple(i, j - offset, 0),
+                        new Triple(i, j + offset, 0)));
+                }
+
+            meshBinders.Add(new MeshBinder(Mesh.ByVerticesAndIndices(vertices, indices), new Color(.3f, .6f, .8f, 1f)));
 
             return new Dictionary<string, object>
             {
                 {"shapeMatchingGoals", shapeMatchingGoals},
                 {"lengthGoals", lengthGoals},
-                //{"onSurfaceGoal", surface == null ? null : new OnSurfaceGoal(allTriples, surface, 1f)},
-                {"onSurfaceGoal", null},
                 {"meshBinders", meshBinders},
                 {"lineBinders", lineBinders},
             };
         }
+
+
 
         //[MultiReturn("shapeMatchingGoals", "lengthGoals", "meshBinders", "lineBinders")]
         //public static Dictionary<string, object> AuxeticRotatingCubes(int xCount = 5, int yCount = 5, int zCount = 5)
@@ -334,8 +453,8 @@ namespace DynaShape.ZeroTouch
                 double xOffset = 2 * i + 1;
                 double yOffset = 2 * j * cos30 + cos30;
 
-                Triple M = new Triple(xOffset, yOffset, 0.0); 
-                
+                Triple M = new Triple(xOffset, yOffset, 0.0);
+
                 List<Triple> v = new List<Triple>();
 
                 for (int k = 0; k < 6; k++)
@@ -368,7 +487,7 @@ namespace DynaShape.ZeroTouch
 
             //=======================================================================================
             // Line Binders
-            //======================================================================================= 
+            //=======================================================================================
 
             for (int j = 0; j < yCount; j++)
             for (int i = 0; i < xCount * 2; i++)
@@ -433,6 +552,7 @@ namespace DynaShape.ZeroTouch
             indices.AddRange(new[] { n, n + 1, n + 2, n, n + 2, n + 3 });
             return new ShapeMatchingGoal(triples, triples);
         }
+
 
         private static ShapeMatchingGoal ProcessTriangle(Triple A, Triple B, Triple C, bool complementary, double offset, double thickness, List<Point> vertices, List<int> indices)
         {

@@ -74,13 +74,13 @@
       <HintPath>..\packages\DynamoVisualProgramming.DynamoCoreNodes.2.0.2.6986\lib\net45\Analysis.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="CoreNodeModels, Version=2.0.2.6986, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="CoreNodeModels, Version=2.0.2.6986, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\DynamoVisualProgramming.WpfUILibrary.2.0.2.6986\lib\net45\CoreNodeModels.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="CoreNodeModelsWpf, Version=2.0.2.6986, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="CoreNodeModelsWpf, Version=2.0.2.6986, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\DynamoVisualProgramming.WpfUILibrary.2.0.2.6986\lib\net45\CoreNodeModelsWpf.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Cyotek.Drawing.BitmapFont, Version=1.0.2.0, Culture=neutral, PublicKeyToken=58daa28b0b2de221, processorArchitecture=MSIL">
       <HintPath>..\packages\Cyotek.Drawing.BitmapFont.1.0.2.0\lib\net20\Cyotek.Drawing.BitmapFont.dll</HintPath>
@@ -102,12 +102,12 @@
       <HintPath>..\packages\DynamoVisualProgramming.Core.2.0.2.6986\lib\net45\DynamoApplications.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DynamoCore, Version=2.5.0.5905, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\..\..\..\..\..\Desktop\Dynamo\bin\AnyCPU\Release\DynamoCore.dll</HintPath>
+    <Reference Include="DynamoCore, Version=2.0.2.6986, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\DynamoDS\DynaDiag\packages\DynamoVisualProgramming.Core.2.0.2.6986\lib\net45\DynamoCore.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DynamoCoreWpf, Version=2.0.2.6986, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DynamoVisualProgramming.WpfUILibrary.2.0.2.6986\lib\net45\DynamoCoreWpf.dll</HintPath>
+    <Reference Include="DynamoCoreWpf, Version=2.0.2.6986, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\DynamoDS\DynaDiag\packages\DynamoVisualProgramming.WpfUILibrary.2.0.2.6986\lib\net45\DynamoCoreWpf.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DynamoInstallDetective, Version=2.0.2.6986, Culture=neutral, processorArchitecture=MSIL">
@@ -146,8 +146,8 @@
       <HintPath>..\packages\HelixToolkit.Wpf.SharpDX.2015.1.629\lib\net45\HelixToolkit.Wpf.SharpDX.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="MeshToolkit">
-      <HintPath>..\..\ReferencedAssemblies\MeshToolkit_2.0.1\MeshToolkit.dll</HintPath>
+    <Reference Include="MeshToolkit, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>C:\Users\longn\AppData\Roaming\Dynamo\Dynamo Core\2.3\packages\MeshToolkit\bin\MeshToolkit.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
