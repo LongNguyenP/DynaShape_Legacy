@@ -17,7 +17,7 @@ namespace DynaShape.Goals
             Weights = new float[StartingPositions.Length];
         }
 
-        public override void Compute(List<Node> allNodes)
+        internal override void Compute(List<Node> allNodes)
         {
             List<Triple> points = new List<Triple>(NodeCount);
             for (int i = 0; i < NodeCount; i++)

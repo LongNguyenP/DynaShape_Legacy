@@ -8,6 +8,7 @@ using Autodesk.DesignScript.Interfaces;
 using Autodesk.DesignScript.Runtime;
 using SharpDX;
 
+
 namespace DynaShape.GeometryBinders
 {
     // Each geometry binder allows us to attach a geometry (eg. lines, polylines, meshes) to a subset of nodes in the system
@@ -15,6 +16,7 @@ namespace DynaShape.GeometryBinders
     public abstract class GeometryBinder
     {
         public Color Color;
+        public bool Show = true;
 
         public Triple[] StartingPositions;
         public int[] NodeIndices;
@@ -23,8 +25,10 @@ namespace DynaShape.GeometryBinders
 
         public virtual List<object> CreateGeometryObjects(List<Node> allNodes) => null;
 
+#if CLI == false
         public virtual void CreateDisplayedGeometries(DynaShapeDisplay display, List<Node> allNodes)
         { }
+#endif
 
     }
 }

@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Media.Animation;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Autodesk.DesignScript.Runtime;
 using SharpDX;
 using Point = Autodesk.DesignScript.Geometry.Point;
@@ -13,30 +12,32 @@ namespace DynaShape
     [IsVisibleInDynamoLibrary(false)]
     public static class Util
     {
-        public static Vector ZeroVector => Vector.ByCoordinates(0.0, 0.0, 0.0);
-        public static Point Duplicate(this Point point) => Point.ByCoordinates(point.X, point.Y, point.Z);
-        public static Vector Duplicate(this Vector vector) => Vector.ByCoordinates(vector.X, vector.Y, vector.Z);
+        public static Point ToPoint(this Triple t) => Point.ByCoordinates(t.X, t.Y, t.Z);
+        public static Vector ToVector(this Triple t) => Vector.ByCoordinates(t.X, t.Y, t.Z);
 
         public static Triple ToTriple(this Point point) => new Triple(point.X, point.Y, point.Z);
         public static Triple ToTriple(this Vector vector) => new Triple(vector.X, vector.Y, vector.Z);
 
+        public static Vector ZeroVector => Vector.ByCoordinates(0.0, 0.0, 0.0);
+        public static Point Duplicate(this Point point) => Point.ByCoordinates(point.X, point.Y, point.Z);
+        public static Vector Duplicate(this Vector vector) => Vector.ByCoordinates(vector.X, vector.Y, vector.Z);
+
         public static bool IsAlmostZero(this float number, float tolerance = 1E-10f) => -tolerance < number && number < tolerance;
-        public static bool IsAlmostZero(this double number, double tolerance = 1E-10f) => -tolerance < number && number < tolerance;
+        public static bool IsAlmostZero(this double number, double tolerance = 1E-10) => -tolerance < number && number < tolerance;
 
-        public static bool IsNotAlmostZero(this float number, float tolerance = 1E-10f) => -number < tolerance || tolerance < number;
-        public static bool IsNotAlmostZero(this double number, double tolerance = 1E-10f) => -number < tolerance || tolerance < number;
-
-        public static SharpDX.Color ToSharpDXColor(this DSCore.Color color) 
+        public static SharpDX.Color ToSharpDXColor(this DSCore.Color color)
             => new SharpDX.Color(color.Red * by255, color.Green * by255, color.Blue * by255, color.Alpha * by255);
 
-        public static Vector3 ToVector3(this Triple triple)
-            => new Vector3(triple.X, triple.Z, -triple.Y);
+        public static SharpDX.Color ToSharpDXColor(this System.Drawing.Color color)
+            => new SharpDX.Color(color.R * by255, color.G * by255, color.B * by255, color.A * by255);
+
+        public static Vector3 ToVector3(this Triple triple) => new Vector3(triple.X, triple.Z, -triple.Y);
 
         private static readonly float by255 = 1f / 255f;
 
         public static List<Triple> ToTriples(this IEnumerable<Point> points)
         {
-            List<Triple> triples = new List<Triple>();
+            List<Triple> triples = new List<Triple>(points.Count());
             foreach (Point point in points)
                 triples.Add(new Triple(point.X, point.Y, point.Z));
             return triples;
@@ -44,7 +45,7 @@ namespace DynaShape
 
         public static List<Triple> ToTriples(this IEnumerable<Vector> vectors)
         {
-            List<Triple> triples = new List<Triple>();
+            List<Triple> triples = new List<Triple>(vectors.Count());
             foreach (Vector vector in vectors)
                 triples.Add(new Triple(vector.X, vector.Y, vector.Z));
             return triples;
@@ -74,8 +75,8 @@ namespace DynaShape
         /// <param name="points">The input points</param>
         /// <param name="lineOrigin">Origin of the best fit line</param>
         /// <param name="lineDirection">Direction of the best fit line</param>
-        /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, colinear, or non-colinear</param>
-        /// <returns>0 if the input points are coincidental; 1 if they are colinear; 2 otherwise</returns>       
+        /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, collinear, or non-collinear</param>
+        /// <returns>0 if the input points are coincidental; 1 if they are collinear; 2 otherwise</returns>
         public static int ComputeBestFitLine(List<Triple> points, out Triple lineOrigin, out Triple lineDirection, float tolerance = 1E-10f)
         {
             Triple centroid = Triple.Zero;
@@ -112,13 +113,13 @@ namespace DynaShape
                 c00, c01, c02,
                 c10, c11, c12,
                 c20, c21, c22,
-                out float u00, out float u01, out float u02,
-                out float u10, out float u11, out float u12,
-                out float u20, out float u21, out float u22,
-                out float s00, out float s11, out float s22,
-                out float v00, out float v01, out float v02,
-                out float v10, out float v11, out float v12,
-                out float v20, out float v21, out float v22);
+                out var u00, out _     , out _,
+                out var u10, out _     , out _,
+                out var u20, out _     , out _,
+                out var s00, out var s11, out _,
+                out _      , out _      , out _,
+                out _      , out _      , out _,
+                out _      , out _      , out _);
 
             lineOrigin = centroid;
 
@@ -132,8 +133,8 @@ namespace DynaShape
             // Case 1: The input points are not coincidental, therefore we pick the dominant eigen vector as the line direction
             lineDirection = new Triple(u00, u10, u20);
             return s11 < tolerance
-                ? 1 // The input points are colinear
-                : 2; // The input points are NOT colinear
+                ? 1 // The input points are collinear
+                : 2; // The input points are NOT collinear
         }
 
         /// <summary>
@@ -142,8 +143,8 @@ namespace DynaShape
         /// <param name="points">The input points</param>
         /// <param name="planeOrigin">Origin of the best fit plane</param>
         /// <param name="planeNormal">Normal of the best fit plane</param>
-        /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, colinear, coplanar, or non-coplanar</param>
-        /// <returns>0 if the input points are coincidental; 1 if they are colinear; 2 if they are coplanar; 3 otherwise</returns>
+        /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, collinear, coplanar, or non-coplanar</param>
+        /// <returns>0 if the input points are coincidental; 1 if they are collinear; 2 if they are coplanar; 3 otherwise</returns>
         public static int ComputeBestFitPlane(List<Triple> points, out Triple planeOrigin, out Triple planeNormal, float tolerance = 1E-10f)
         {
             Triple centroid = Triple.Zero;
@@ -180,17 +181,17 @@ namespace DynaShape
                 c00, c01, c02,
                 c10, c11, c12,
                 c20, c21, c22,
-                out float u00, out float u01, out float u02,
-                out float u10, out float u11, out float u12,
-                out float u20, out float u21, out float u22,
+                out float u00, out float u01, out _        ,
+                out float u10, out float u11, out _        ,
+                out float u20, out float u21, out _        ,
                 out float s00, out float s11, out float s22,
-                out float v00, out float v01, out float v02,
-                out float v10, out float v11, out float v12,
-                out float v20, out float v21, out float v22);
+                out _        , out _        , out _        ,
+                out _        , out _        , out _        ,
+                out _        , out _        , out _         );
 
             planeOrigin = centroid;
 
-           
+
             // Case 0: The input points are coincidental, so we just need to pick an arbitrary normal vector
             if (s00 < tolerance)
             {
@@ -198,14 +199,14 @@ namespace DynaShape
                 return 0;
             }
 
-            // Case 1: The input points are colinear, so we just pick an arbitrary vector perpendicular to the dominant eigenvector
+            // Case 1: The input points are collinear, so we just pick an arbitrary vector perpendicular to the dominant eigenvector
             if (s11 < tolerance)
             {
                 planeNormal = new Triple(u00, u10, u20).GeneratePerpendicular();
                 return 1;
             }
 
-            // Case 2: The input points are neigher coincidental nor colinear, therefore the best fit plane is determined by the two dominant eigenvectors
+            // Case 2: The input points are neighbor coincidental nor collinear, therefore the best fit plane is determined by the two dominant eigenvectors
             planeNormal = new Triple(u00, u10, u20).Cross(new Triple(u01, u11, u21)).Normalise();
 
             return s22 < tolerance
@@ -220,8 +221,8 @@ namespace DynaShape
         /// <param name="circleCenter">Center of the best fit circle</param>
         /// <param name="circleNormal">Normal of the best fit circle</param>
         /// <param name="circleRadius">Radius of the best fit circle</param>
-        /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, colinear, or non-colinear</param>
-        /// <returns>False if the input points are coincidental or colinear; True otherwise</returns>
+        /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, collinear, or non-collinear</param>
+        /// <returns>False if the input points are coincidental or collinear; True otherwise</returns>
         public static bool ComputeBestFitCircle(List<Triple> points, out Triple circleCenter, out Triple circleNormal, out float circleRadius, float tolerance = 1E-10f)
         {
             // The core idea is to project the input points to the best fit plane, then fit a circle through these points via an analytical approach.
@@ -229,15 +230,15 @@ namespace DynaShape
 
             int planeFittingResult = ComputeBestFitPlane(points, out Triple planeOrigin, out Triple planeNormal, tolerance);
 
-            // Case 0: The input points are either coincidental or colinear
-            if (planeFittingResult < 2) 
+            // Case 0: The input points are either coincidental or collinear
+            if (planeFittingResult < 2)
             {
                 circleCenter = circleNormal = new Triple(float.NaN);
                 circleRadius = float.NaN;
                 return false;
             }
 
-            // Case 1: The input points are neither coincidental nor colinear
+            // Case 1: The input points are neither coincidental nor collinear
             Triple planeBasisX = planeNormal.GeneratePerpendicular().Normalise();
             Triple planeBasisY = planeNormal.Cross(planeBasisX);
 
@@ -294,8 +295,8 @@ namespace DynaShape
         /// <param name="points">The input points</param>
         /// <param name="sphereCenter">Center of the best fit sphere</param>
         /// <param name="sphereRadius">Radius of the best fit sphere</param>
-        /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, colinear, coplanar, or non-coplanar</param>
-        /// <returns>False if the input points are coincidental, colinear or coplanar; True otherwise</returns>
+        /// <param name="tolerance">The tolerance that is used the determined if the input points are coincidental, collinear, coplanar, or non-coplanar</param>
+        /// <returns>False if the input points are coincidental, collinear or coplanar; True otherwise</returns>
         public static bool ComputeBestFitSphere(List<Triple> points, out Triple sphereCenter, out float sphereRadius, float tolerance = 1E-10f)
         {
             // Reference: Sumith YD: Fast Geometric Fit Algorithm for Sphere Using Exact Solution
@@ -391,6 +392,48 @@ namespace DynaShape
                 (temp - 2f * (x0 * sX + y0 * sY + z0 * sZ)) / N);
 
             return true;
+        }
+
+        public static System.Drawing.Color ColorFromHSL(float h, float s, float l)
+        {
+            float r = 0, g = 0, b = 0;
+            if (l != 0)
+            {
+                if (s == 0)
+                    r = g = b = l;
+                else
+                {
+                    float temp2;
+                    if (l < 0.5f)
+                        temp2 = l * (1f + s);
+                    else
+                        temp2 = l + s - (l * s);
+
+                    float temp1 = 2f * l - temp2;
+
+                    r = GetColorComponent(temp1, temp2, h + 1f / 3f);
+                    g = GetColorComponent(temp1, temp2, h);
+                    b = GetColorComponent(temp1, temp2, h - 1f / 3f);
+                }
+            }
+            return System.Drawing.Color.FromArgb((int)(255 * r), (int)(255 * g), (int)(255 * b));
+        }
+
+        private static float GetColorComponent(float temp1, float temp2, float temp3)
+        {
+            if (temp3 < 0f)
+                temp3 += 1f;
+            else if (temp3 > 1f)
+                temp3 -= 1f;
+
+            if (temp3 < 1f / 6f)
+                return temp1 + (temp2 - temp1) * 6f * temp3;
+            else if (temp3 < 0.5f)
+                return temp2;
+            else if (temp3 < 2f / 3f)
+                return temp1 + ((temp2 - temp1) * ((2f / 3f) - temp3) * 6f);
+            else
+                return temp1;
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2036
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29020.237
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynaShape", "DynaShape\DynaShape.csproj", "{157AD178-EE17-46E9-B6DC-C50EB9DCCA60}"
 EndProject
@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ManifestFiles", "ManifestFi
 	ProjectSection(SolutionItems) = preProject
 		ManifestFiles\DynaShape_DynamoCustomization.xml = ManifestFiles\DynaShape_DynamoCustomization.xml
 		ManifestFiles\DynaShape_ViewExtensionDefinition.xml = ManifestFiles\DynaShape_ViewExtensionDefinition.xml
+		ManifestFiles\DynaSpace_DynamoCustomization.xml = ManifestFiles\DynaSpace_DynamoCustomization.xml
 		ManifestFiles\pkg.json = ManifestFiles\pkg.json
 	EndProjectSection
 EndProject
@@ -19,19 +20,32 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Misc", "Misc", "{2765222E-C
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynaSpace", "DynaSpace\DynaSpace.csproj", "{50C21246-A074-46A9-9F57-531F780D76BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug CLI|x64 = Debug CLI|x64
 		Debug|x64 = Debug|x64
+		Release CLI|x64 = Release CLI|x64
 		Release|x64 = Release|x64
-		UnitTest|x64 = UnitTest|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{157AD178-EE17-46E9-B6DC-C50EB9DCCA60}.Debug CLI|x64.ActiveCfg = Debug CLI|x64
+		{157AD178-EE17-46E9-B6DC-C50EB9DCCA60}.Debug CLI|x64.Build.0 = Debug CLI|x64
 		{157AD178-EE17-46E9-B6DC-C50EB9DCCA60}.Debug|x64.ActiveCfg = Debug|x64
 		{157AD178-EE17-46E9-B6DC-C50EB9DCCA60}.Debug|x64.Build.0 = Debug|x64
+		{157AD178-EE17-46E9-B6DC-C50EB9DCCA60}.Release CLI|x64.ActiveCfg = Release CLI|x64
+		{157AD178-EE17-46E9-B6DC-C50EB9DCCA60}.Release CLI|x64.Build.0 = Release CLI|x64
 		{157AD178-EE17-46E9-B6DC-C50EB9DCCA60}.Release|x64.ActiveCfg = Release|x64
 		{157AD178-EE17-46E9-B6DC-C50EB9DCCA60}.Release|x64.Build.0 = Release|x64
-		{157AD178-EE17-46E9-B6DC-C50EB9DCCA60}.UnitTest|x64.ActiveCfg = UnitTest|x64
-		{157AD178-EE17-46E9-B6DC-C50EB9DCCA60}.UnitTest|x64.Build.0 = UnitTest|x64
+		{50C21246-A074-46A9-9F57-531F780D76BD}.Debug CLI|x64.ActiveCfg = Debug CLI|x64
+		{50C21246-A074-46A9-9F57-531F780D76BD}.Debug CLI|x64.Build.0 = Debug CLI|x64
+		{50C21246-A074-46A9-9F57-531F780D76BD}.Debug|x64.ActiveCfg = Debug|x64
+		{50C21246-A074-46A9-9F57-531F780D76BD}.Debug|x64.Build.0 = Debug|x64
+		{50C21246-A074-46A9-9F57-531F780D76BD}.Release CLI|x64.ActiveCfg = Release CLI|x64
+		{50C21246-A074-46A9-9F57-531F780D76BD}.Release CLI|x64.Build.0 = Release CLI|x64
+		{50C21246-A074-46A9-9F57-531F780D76BD}.Release|x64.ActiveCfg = Release|x64
+		{50C21246-A074-46A9-9F57-531F780D76BD}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

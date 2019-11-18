@@ -34,7 +34,7 @@ namespace DynaShape.Goals
         }
 
 
-        public override void Compute(List<Node> allNodes)
+        internal override void Compute(List<Node> allNodes)
         {
             Triple A = allNodes[NodeIndices[0]].Position;
             Triple B = allNodes[NodeIndices[1]].Position;

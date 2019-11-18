@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Runtime;
 using Mesh = Autodesk.Dynamo.MeshToolkit.Mesh;
+
 
 namespace DynaShape.Goals
 {
@@ -15,10 +13,10 @@ namespace DynaShape.Goals
         public float VolumePressureConstant;
         public Mesh Mesh;
 
-        private List<int> faces;
+        private readonly List<int> faces;
         private float currentVolumeInversed;
-            
-        public ConstantVolumePressureGoal(Mesh mesh, float volumePressureConsntant, float weight = 1f)
+
+        public ConstantVolumePressureGoal(Mesh mesh, float volumePressureConstant, float weight = 1f)
         {
             try
             {
@@ -32,7 +30,7 @@ namespace DynaShape.Goals
             Mesh = mesh;
             faces = Mesh.VertexIndicesByTri();
             Weight = weight;
-            VolumePressureConstant = volumePressureConsntant;
+            VolumePressureConstant = volumePressureConstant;
             List<Point> vertices = mesh.Vertices();
                 StartingPositions = new Triple[mesh.VertexCount];
             for (int i = 0; i < mesh.VertexCount; i++)
@@ -43,7 +41,7 @@ namespace DynaShape.Goals
         }
 
 
-        public override void Compute(List<Node> allNodes)
+        internal override void Compute(List<Node> allNodes)
         {
             List<Point> vertices = new List<Point>();
             foreach (int i in NodeIndices)
@@ -53,7 +51,7 @@ namespace DynaShape.Goals
 
             for (int i = 0; i < NodeCount; i++)
                 Moves[i] = Triple.Zero;
-            
+
             int faceCount = faces.Count / 3;
 
 
@@ -62,10 +60,10 @@ namespace DynaShape.Goals
                 float currentVolume = (float)Mesh.Volume;
                 currentVolumeInversed = 1f / currentVolume;
             }
-            catch (Exception) 
+            catch (Exception)
             {
             }
-            
+
 
             for (int i = 0; i < faceCount; i++)
             {

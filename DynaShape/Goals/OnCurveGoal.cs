@@ -23,7 +23,7 @@ namespace DynaShape.Goals
         }
 
 
-        public override void Compute(List<Node> allNodes)
+        internal override void Compute(List<Node> allNodes)
         {
             if (TargetCurve == null) throw new Exception("OnCurveGoal: The target curve has not been set");
             for (int i = 0; i < NodeCount; i++)

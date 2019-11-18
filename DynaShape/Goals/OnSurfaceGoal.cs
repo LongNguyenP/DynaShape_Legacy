@@ -23,7 +23,7 @@ namespace DynaShape.Goals
         }
 
 
-        public override void Compute(List<Node> allNodes)
+        internal override void Compute(List<Node> allNodes)
         {
             if (TargetSurface == null) throw new Exception("OnSurfaceGoal: The target surface has not been set");
             for (int i = 0; i < NodeCount; i++)

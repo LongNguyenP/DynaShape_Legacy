@@ -1,6 +1,6 @@
 ﻿using System;
-using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Runtime;
+
 
 namespace DynaShape
 {
@@ -64,17 +64,6 @@ namespace DynaShape
         public static Triple BasisZ => new Triple(0f, 0f, 1f);
 
 
-        public static Triple FromPoint(Point p) => new Triple((float)p.X, (float)p.Y, (float)p.Z);
-        public static Triple FromVector(Point v) => new Triple((float)v.X, (float)v.Y, (float)v.Z);
-
-
-        public Point ToPoint() => Point.ByCoordinates(X, Y, Z);
-        public Vector ToVector() => Vector.ByCoordinates(X, Y, Z);
-
-
-        public Triple Duplicate(Triple a) => new Triple(a.X, a.Y, a.Z);
-
-
         public static Triple operator +(Triple a, Triple b) => new Triple(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
         public static Triple operator -(Triple a, Triple b) => new Triple(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
         public static Triple operator -(Triple a) => new Triple(-a.X, -a.Y, -a.Z);
@@ -115,7 +104,7 @@ namespace DynaShape
 
         public Triple TryGeneratePerpendicular()
         {
-            if (X == 0f && Y == 0f && Z == 0f) throw new Exception("Cannot genernate perpendicular vector for a zero vector");
+            if (X == 0f && Y == 0f && Z == 0f) throw new Exception("Cannot generate a perpendicular vector for a zero vector");
             return
                 Math.Abs(X) < Math.Abs(Y)
                     ? Math.Abs(X) < Math.Abs(Z)

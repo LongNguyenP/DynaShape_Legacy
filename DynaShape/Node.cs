@@ -1,5 +1,4 @@
-﻿using Autodesk.DesignScript.Geometry;
-using Autodesk.DesignScript.Runtime;
+﻿using Autodesk.DesignScript.Runtime;
 
 
 namespace DynaShape
@@ -10,6 +9,8 @@ namespace DynaShape
         public Triple StartingPosition;
         public Triple Position;
         public Triple Velocity;
+
+        internal Triple Move;
 
         public Node(Triple startingPosition)
         {
