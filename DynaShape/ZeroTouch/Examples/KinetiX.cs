@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Windows.Controls;
-using System.Windows.Threading;
-using Autodesk.DesignScript.Geometry;
-using Autodesk.DesignScript.Interfaces;
+﻿using System.Collections.Generic;
 using Autodesk.DesignScript.Runtime;
-using DynaShape;
 using DynaShape.GeometryBinders;
 using DynaShape.Goals;
 using SharpDX;
@@ -16,7 +7,7 @@ using Mesh = Autodesk.Dynamo.MeshToolkit.Mesh;
 using Point = Autodesk.DesignScript.Geometry.Point;
 
 
-namespace DynaShape.ZeroTouch
+namespace DynaShape.ZeroTouch.Examples
 {
     public static class KinetiX
     {
@@ -125,9 +116,6 @@ namespace DynaShape.ZeroTouch
                     }
                 }
             }
-
-
-
 
             return new Dictionary<string, object>
             {
