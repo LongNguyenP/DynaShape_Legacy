@@ -263,6 +263,7 @@
     <Compile Include="Goals\OnCurveGoal.cs" />
     <Compile Include="Goals\OnPlaneGoal.cs" />
     <Compile Include="Goals\DirectionalWindGoal.cs" />
+    <Compile Include="ZeroTouch\Examples\TestingUtilities.cs" />
     <Compile Include="ZeroTouch\GeometryBinders.cs" />
     <Compile Include="ZeroTouch\Goals.cs" />
     <Compile Include="ZeroTouch\Utilities.cs" />

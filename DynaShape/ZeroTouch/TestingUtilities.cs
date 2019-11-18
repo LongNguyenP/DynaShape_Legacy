@@ -587,5 +587,6 @@ namespace DynaShape.ZeroTouch
 
             return new ShapeMatchingGoal(triples, triples);
         }
+
     }
 }
