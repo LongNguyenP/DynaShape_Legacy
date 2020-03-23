@@ -74,11 +74,11 @@
       <HintPath>..\packages\DynamoVisualProgramming.DynamoCoreNodes.2.0.2.6986\lib\net45\Analysis.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="CoreNodeModels, Version=2.0.2.6986, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="CoreNodeModels, Version=2.0.2.6986, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\DynamoVisualProgramming.WpfUILibrary.2.0.2.6986\lib\net45\CoreNodeModels.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="CoreNodeModelsWpf, Version=2.0.2.6986, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="CoreNodeModelsWpf, Version=2.0.2.6986, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\DynamoVisualProgramming.WpfUILibrary.2.0.2.6986\lib\net45\CoreNodeModelsWpf.dll</HintPath>
       <Private>False</Private>
     </Reference>
@@ -86,7 +86,7 @@
       <HintPath>..\packages\Cyotek.Drawing.BitmapFont.1.0.2.0\lib\net20\Cyotek.Drawing.BitmapFont.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DesignScriptBuiltin, Version=2.0.2.6986, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="DesignScriptBuiltin, Version=2.0.2.6986, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\DynamoVisualProgramming.Core.2.0.2.6986\lib\net45\DesignScriptBuiltin.dll</HintPath>
       <Private>False</Private>
     </Reference>
@@ -94,23 +94,23 @@
       <HintPath>..\packages\DynamoVisualProgramming.DynamoCoreNodes.2.0.2.6986\lib\net45\DSCoreNodes.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DSIronPython, Version=2.0.2.6986, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="DSIronPython, Version=2.0.2.6986, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\DynamoVisualProgramming.Core.2.0.2.6986\lib\net45\DSIronPython.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DynamoApplications, Version=2.0.2.6986, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="DynamoApplications, Version=2.0.2.6986, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\DynamoVisualProgramming.Core.2.0.2.6986\lib\net45\DynamoApplications.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DynamoCore, Version=2.5.0.5905, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\..\..\..\..\..\Desktop\Dynamo\bin\AnyCPU\Release\DynamoCore.dll</HintPath>
+    <Reference Include="DynamoCore, Version=2.0.2.6986, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\DynamoVisualProgramming.Core.2.0.2.6986\lib\net45\DynamoCore.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DynamoCoreWpf, Version=2.0.2.6986, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="DynamoCoreWpf, Version=2.0.2.6986, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\DynamoVisualProgramming.WpfUILibrary.2.0.2.6986\lib\net45\DynamoCoreWpf.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DynamoInstallDetective, Version=2.0.2.6986, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="DynamoInstallDetective, Version=2.0.2.6986, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\DynamoVisualProgramming.Core.2.0.2.6986\lib\net45\DynamoInstallDetective.dll</HintPath>
       <Private>False</Private>
     </Reference>
@@ -118,7 +118,7 @@
       <HintPath>..\packages\DynamoVisualProgramming.DynamoServices.2.0.2.6986\lib\net45\DynamoServices.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DynamoShapeManager, Version=2.0.2.6986, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="DynamoShapeManager, Version=2.0.2.6986, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\DynamoVisualProgramming.Core.2.0.2.6986\lib\net45\DynamoShapeManager.dll</HintPath>
       <Private>False</Private>
     </Reference>
@@ -126,7 +126,7 @@
       <HintPath>..\packages\DynamoVisualProgramming.ZeroTouchLibrary.2.0.2.6986\lib\net45\DynamoUnits.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DynamoUtilities, Version=2.0.2.6986, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="DynamoUtilities, Version=2.0.2.6986, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\DynamoVisualProgramming.Core.2.0.2.6986\lib\net45\DynamoUtilities.dll</HintPath>
       <Private>False</Private>
     </Reference>
@@ -146,8 +146,8 @@
       <HintPath>..\packages\HelixToolkit.Wpf.SharpDX.2015.1.629\lib\net45\HelixToolkit.Wpf.SharpDX.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="MeshToolkit">
-      <HintPath>..\..\ReferencedAssemblies\MeshToolkit_2.0.1\MeshToolkit.dll</HintPath>
+    <Reference Include="MeshToolkit, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>C:\Users\longn\AppData\Roaming\Dynamo\Dynamo Core\2.3\packages\MeshToolkit\bin\MeshToolkit.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -176,7 +176,7 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="ProtoCore, Version=2.0.2.6986, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ProtoCore, Version=2.0.2.6986, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\DynamoVisualProgramming.Core.2.0.2.6986\lib\net45\ProtoCore.dll</HintPath>
       <Private>False</Private>
     </Reference>
@@ -235,7 +235,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="VMDataBridge, Version=2.0.2.6986, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="VMDataBridge, Version=2.0.2.6986, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\DynamoVisualProgramming.Core.2.0.2.6986\lib\net45\VMDataBridge.dll</HintPath>
       <Private>False</Private>
     </Reference>
