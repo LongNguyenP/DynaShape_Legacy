@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Autodesk.DesignScript.Runtime;
+
 
 namespace DynaShape.Goals
 {

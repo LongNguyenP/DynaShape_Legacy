@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Runtime;
