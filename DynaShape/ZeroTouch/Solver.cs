@@ -143,10 +143,12 @@ namespace DynaShape.ZeroTouch
                 { "goalOutputs", solver.GetGoalOutputs() },
                 { "geometries", solver.GetGeometries() },
                 { "stats", String.Concat(
-                    "Computation Time: " + computationTime,
-                    "\nData Output Time: " + stopwatch.Elapsed,
-                    "\nIterations      : " + solver.CurrentIteration,
-                    "\nMovement        : " + solver.GetKineticEnergy())}};
+                    "Computation Time         : " + computationTime,
+                    "\nData Output Time         : " + stopwatch.Elapsed,
+                    "\nNo. of Iterations Spent  : " + solver.CurrentIteration,
+                    "\nLargest Movement Sqr.    : " + solver.GetKineticEnergy())
+                }
+            };
         }
     }
 }
