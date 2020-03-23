@@ -8,6 +8,7 @@ using Autodesk.DesignScript.Interfaces;
 using Autodesk.DesignScript.Runtime;
 using SharpDX;
 
+
 namespace DynaShape.GeometryBinders
 {
     // Each geometry binder allows us to attach a geometry (eg. lines, polylines, meshes) to a subset of nodes in the system
