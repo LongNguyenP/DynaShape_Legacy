@@ -18,7 +18,7 @@ namespace DynaShape.Goals
         }
 
 
-        public override void Compute(List<Node> allNodes)
+        internal override void Compute(List<Node> allNodes)
         {
             int segmentCount = NodeCount / 2;
             float totalLength = 0f;

@@ -25,7 +25,7 @@ namespace DynaShape.Goals
         }
 
 
-        public override void Compute(List<Node> allNodes)
+        internal override void Compute(List<Node> allNodes)
         {
             Moves[0] = Anchor - allNodes[NodeIndices[0]].Position;
             Weights[0] = Weight;

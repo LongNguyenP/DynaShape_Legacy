@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Forms;
-using System.Windows.Media.Media3D;
 using System.Windows.Threading;
-using Autodesk.DesignScript.Interfaces;
 using Autodesk.DesignScript.Runtime;
-using Dynamo.Controls;
 using Dynamo.Wpf.ViewModels.Watch3D;
 using DynaShape.GeometryBinders;
 using HelixToolkit.Wpf.SharpDX;
@@ -21,19 +15,26 @@ using Model3D = HelixToolkit.Wpf.SharpDX.Model3D;
 namespace DynaShape
 {
     [IsVisibleInDynamoLibrary(false)]
-    public class DynaShapeDisplay : IDisposable
+    public class DynaShapeDisplay
+#if CLI == false
+        : IDisposable
+#endif
     {
-        public static Color DefaultPointColor = new Color(0.8f, 0.2f, 0.2f, 1f);
-        public static Color DefaultLineColor = new Color(0.3f, 0.7f, 0.8f, 1f);
-        public static Color DefaultMeshFaceColor = new Color(0, 0.7f, 1f, 0.3f);
+        public static readonly Color DefaultPointColor = new Color(0.8f, 0.2f, 0.2f, 1f);
+        public static readonly Color DefaultLineColor = new Color(0.3f, 0.7f, 0.8f, 1f);
+        public static readonly Color DefaultMeshFaceColor = new Color(0f, 0.7f, 1f, 0.3f);
+        public static readonly Color DefaultTextColor = new Color(0f, 0f, 10f, 0f);
 
+#if CLI == false
         private readonly Solver solver;
 
         private PointGeometryModel3D pointModel;
         private LineGeometryModel3D lineModel;
+        private BillboardTextModel3D billboardTextModel;
 
         private PointGeometry3D pointGeometry;
         private LineGeometry3D lineGeometry;
+        private BillboardText3D billboardText;
 
         private List<MeshGeometryModel3D> meshModels = new List<MeshGeometryModel3D>();
 
@@ -57,6 +58,8 @@ namespace DynaShape
                 Colors = new Color4Collection()
             };
 
+            billboardText = new BillboardText3D();
+
             DynaShapeViewExtension.DynamoWindow.Dispatcher.Invoke(
                 () =>
                 {
@@ -67,19 +70,38 @@ namespace DynaShape
                         Color = Color.White,
                     };
 
-
                     lineModel = new LineGeometryModel3D
                     {
                         Thickness = 0.5,
                         Color = Color.White,
                     };
+
+                    billboardTextModel = new BillboardTextModel3D()
+                    {
+                    };
                 },
                 DispatcherPriority.Send);
 
             DynaShapeViewExtension.ViewModel.RequestViewRefresh += RequestViewRefreshHandler;
-
             DynaShapeViewExtension.DynamoWindow.Closed += (sender, args) => Dispose();
         }
+
+
+        public void DrawPoint(float x, float y, float z, Color4 color)
+        {
+            pointGeometry.Positions.Add(new Vector3(x, z, -y));
+            pointGeometry.Colors.Add(color);
+            pointGeometry.Indices.Add(pointGeometry.Indices.Count);
+        }
+
+
+        public void DrawPoint(Triple position, Color4 color)
+        {
+            pointGeometry.Positions.Add(new Vector3(position.X, position.Z, -position.Y));
+            pointGeometry.Colors.Add(color);
+            pointGeometry.Indices.Add(pointGeometry.Indices.Count);
+        }
+
 
         public void DrawLine(Triple start, Triple end, Color4 color)
         {
@@ -90,6 +112,7 @@ namespace DynaShape
             lineGeometry.Colors.Add(color);
             lineGeometry.Colors.Add(color);
         }
+
 
         public void DrawPolyline(List<Triple> vertices, Color4 color, bool loop)
         {
@@ -106,29 +129,70 @@ namespace DynaShape
             }
         }
 
+
+        public void DrawText(string text, Triple position)
+        {
+            billboardText.TextInfo.Add(new TextInfo(text, position.ToVector3()));
+        }
+
+
         public void AddMeshModel(MeshGeometryModel3D meshModel)
         {
             meshModels.Add(meshModel);
         }
 
+
         internal void Render(bool async = false)
         {
             if (async)
             {
-                if (DispatcherOperation != null && DispatcherOperation.Status == DispatcherOperationStatus.Completed)
+                if (DispatcherOperation == null ||
+                    DispatcherOperation != null && DispatcherOperation.Status == DispatcherOperationStatus.Completed)
+                {
                     DispatcherOperation =
                         DynaShapeViewExtension.DynamoWindow.Dispatcher.InvokeAsync(
-                            RenderAction, DispatcherPriority.Render);
+                            RenderAction, DispatcherPriority.Send);
+                }
             }
-            else
-                DynaShapeViewExtension.DynamoWindow.Dispatcher.Invoke(RenderAction, DispatcherPriority.Render);
+            else DynaShapeViewExtension.DynamoWindow.Dispatcher.Invoke(RenderAction, DispatcherPriority.Send);
         }
 
 
+        internal void ClearRender()
+        {
+            DynaShapeViewExtension.ViewModel.RequestViewRefresh -= RequestViewRefreshHandler;
+            DynaShapeViewExtension.DynamoWindow.Dispatcher.Invoke(() =>
+            {
+                List<Model3D> sceneItems = DynaShapeViewExtension.GetSceneItems();
+
+                if (sceneItems.Contains(pointModel)) sceneItems.Remove(pointModel);
+                pointModel.Detach();
+                pointModel.Dispose();
+
+                if (sceneItems.Contains(lineModel)) sceneItems.Remove(lineModel);
+                lineModel.Detach();
+                lineModel.Dispose();
+
+                if (sceneItems.Contains(billboardTextModel)) sceneItems.Remove(billboardTextModel);
+                billboardTextModel.Detach();
+                billboardTextModel.Dispose();
+
+                foreach (MeshGeometryModel3D meshModel in meshModels)
+                {
+                    if (sceneItems.Contains(meshModel)) sceneItems.Remove(meshModel);
+                    meshModel.Detach();
+                    meshModel.Dispose();
+                }
+            });
+        }
+
+        Stopwatch sw = new Stopwatch();
+
         private void RenderAction()
         {
-            Viewport3DX viewport = DynaShapeViewExtension.GetViewport();
-            List<Model3D> sceneItems = viewport.ItemsSource as List<Model3D>;
+            IRenderHost renderHost = DynaShapeViewExtension.GetViewport().RenderHost;
+            List<Model3D> sceneItems = DynaShapeViewExtension.GetSceneItems();
+
 
             pointGeometry = new PointGeometry3D
             {
@@ -145,28 +209,26 @@ namespace DynaShape
             };
 
 
+            billboardText = new BillboardText3D();
+
             foreach (MeshGeometryModel3D meshModel in meshModels)
             {
                 meshModel.Detach();
                 if (sceneItems.Contains(meshModel)) sceneItems.Remove(meshModel);
             }
 
-            meshModels = new List<MeshGeometryModel3D>();
+            meshModels.Clear();
 
             //============================================
             // Render nodes as points
             //============================================
 
+            int n = pointGeometry.Indices.Count;
             for (int i = 0; i < solver.Nodes.Count; i++)
             {
-                pointGeometry.Positions.Add(
-                    new Vector3(
-                        solver.Nodes[i].Position.X,
-                        solver.Nodes[i].Position.Z,
-                        -solver.Nodes[i].Position.Y));
-
+                pointGeometry.Positions.Add(solver.Nodes[i].Position.ToVector3());
                 pointGeometry.Colors.Add(DefaultPointColor);
-                pointGeometry.Indices.Add(i);
+                pointGeometry.Indices.Add(n + i);
             }
 
             //==============================================================
@@ -174,7 +236,8 @@ namespace DynaShape
             //==============================================================
 
             foreach (GeometryBinder geometryBinder in solver.GeometryBinders)
-                geometryBinder.CreateDisplayedGeometries(this, solver.Nodes);
+                if (geometryBinder.Show)
+                    geometryBinder.CreateDisplayedGeometries(this, solver.Nodes);
 
             //============================================================================
             // Render GUI elements
@@ -189,34 +252,52 @@ namespace DynaShape
             if (pointGeometry.Positions.Count >= 1)
             {
                 pointModel.Geometry = pointGeometry;
-                if (!pointModel.IsAttached) pointModel.Attach(viewport.RenderHost);
                 if (!sceneItems.Contains(pointModel)) sceneItems.Add(pointModel);
+                if (!pointModel.IsAttached) pointModel.Attach(renderHost);
+//                sceneItems.Remove(pointModel);
+//                pointModel.Detach();
+//                sceneItems.Add(pointModel);
+//                sw.Restart();
+//                pointModel.Attach(renderHost);
+//                DynamoLogger.Instance.Log(sw.Elapsed.TotalMilliseconds + "ms (Attach)");
             }
             else
             {
-                pointModel.Detach();
                 if (sceneItems.Contains(pointModel)) sceneItems.Remove(pointModel);
+                pointModel.Detach();
             }
 
             if (lineGeometry.Positions.Count >= 2)
             {
                 lineModel.Geometry = lineGeometry;
-                if (!lineModel.IsAttached) lineModel.Attach(viewport.RenderHost);
                 if (!sceneItems.Contains(lineModel)) sceneItems.Add(lineModel);
+                if (!lineModel.IsAttached) lineModel.Attach(renderHost);
             }
             else
             {
-                lineModel.Detach();
                 if (sceneItems.Contains(lineModel)) sceneItems.Remove(lineModel);
+                lineModel.Detach();
             }
 
             foreach (MeshGeometryModel3D meshModel in meshModels)
-                if (meshModel.Geometry.Positions.Count >= 3)
-                {
-                    meshModel.Attach(viewport.RenderHost);
-                    sceneItems.Add(meshModel);
-                }
+            {
+                sceneItems.Add(meshModel);
+                meshModel.Attach(renderHost);
+            }
+
+            if (billboardText.TextInfo.Count >= 1)
+            {
+                billboardTextModel.Geometry = billboardText;
+                if (!sceneItems.Contains(billboardTextModel)) sceneItems.Add(billboardTextModel);
+                if (!billboardTextModel.IsAttached) billboardTextModel.Attach(renderHost);
+            }
+            else
+            {
+                if (sceneItems.Contains(billboardTextModel)) sceneItems.Remove(billboardTextModel);
+                billboardTextModel.Detach();
+            }
         }
+
 
         private void RenderGUI()
         {
@@ -275,41 +356,25 @@ namespace DynaShape
             }
         }
 
+
         public void Dispose()
         {
-            DynaShapeViewExtension.ViewModel.RequestViewRefresh -= RequestViewRefreshHandler;
-
-            DynaShapeViewExtension.DynamoWindow.Dispatcher.Invoke(() =>
-            {
-                List<Model3D> sceneItems = DynaShapeViewExtension.GetViewport().ItemsSource as List<Model3D>;
-
-                if (sceneItems.Contains(pointModel)) sceneItems.Remove(pointModel);
-                pointModel.Detach();
-                pointModel.Dispose();
-
-                if (sceneItems.Contains(lineModel)) sceneItems.Remove(lineModel);
-                lineModel.Detach();
-                lineModel.Dispose();
-
-                foreach (MeshGeometryModel3D meshModel in meshModels)
-                {
-                    if (sceneItems.Contains(meshModel)) sceneItems.Remove(meshModel);
-                    meshModel.Detach();
-                    meshModel.Dispose();
-                }
-            });
+            ClearRender();
         }
 
         // This handler prevents flickering when geometries other than DynaShape ones exist in the viewport
         private void RequestViewRefreshHandler()
         {
-            List<Model3D> sceneItems = DynaShapeViewExtension.ViewModel.SceneItems as List<Model3D>;
-
+            List<Model3D> sceneItems = DynaShapeViewExtension.GetSceneItems();
             if (pointGeometry.Positions.Count >= 1 && !sceneItems.Contains(pointModel)) sceneItems.Add(pointModel);
             if (lineGeometry.Positions.Count >= 2 && !sceneItems.Contains(lineModel)) sceneItems.Add(lineModel);
+            if (billboardText.TextInfo.Count >= 1 && !sceneItems.Contains(billboardTextModel)) sceneItems.Add(billboardTextModel);
             foreach (MeshGeometryModel3D meshModel in meshModels)
-                if (meshModel.Geometry.Positions.Count >= 3 && !sceneItems.Contains(meshModel))
+                if (!sceneItems.Contains(meshModel))
                     sceneItems.Add(meshModel);
         }
+
+#endif
     }
 }
+

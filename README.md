@@ -1,34 +1,44 @@
-﻿<img src="https://forum.dynamobim.com/uploads/dynamobim/original/3X/7/4/74bf86e06c2827782a60f4fa54ce1dbd8136fc2a.png" width = "900">
+﻿<img src="https://aws1.discourse-cdn.com/business6/uploads/dynamobim/original/3X/e/4/e48d8015a42758dcbe5a8197a3d199060701b3c7.png" width = "900">
+
+###
+
+##### The information below is mainly intended for those who are interested in working with DynaShape's source code.
+
+##### If you want to use DynaShape in Dynamo directly, visit the [DynaShape Thread on Dynamo forum](https://rebrand.ly/ds0) for how-to-install and other information.
 
 ## How to build, package and install
 
 #### Step 1: Clone source
 Clone the source from GitHub and open in Visual Studio
 
-#### Step 2: Deal with reference files
-After open the source in Visual Studio, you may notice that some reference dll files are missing. Most of these can be found in the Dynamo Core main folder on your computer (e.g. *C:\Program Files\Dynamo\Dynamo Core\1.x*), except *MeshToolkit.dll*. To get this file you need to first install the MeshToolkit package using the Dynamo Package Manager, you can then find the *MeshToolkit.dll* typically at *%AppData\Dynamo\Dynamo Core\1.x\packages\MeshToolkit\bin*
+#### Step 2: Deal with missing references
+After open the source in Visual Studio, You will notice that many of the referenced dll files seem to be missing. However, the NuGet package manager will automatically restore these files the first time you build the codes. So you don't have to worry about them. The only exception is MeshToolkit. To get this file you need to first install the MeshToolkit package using the Dynamo Package Manager, you can then find the *MeshToolkit.dll* typically at *%AppData%\Dynamo\Dynamo Core\2.x\packages\MeshToolkit\bin*
 
 #### Step 3: Build and package
 Build the solution and you will get *DynaShape.dll* (along with *DynaShape.xml*) in the build output folder.
 
 You can now assemble the DynaShape package folder according to the following structure:
 
+
+
 <pre>
+(The files marked with * are included in the visual studio solution, under the "ManifestFiles" folder)
+
 _DynaShape
-├── pkg.json (provided with the Visual Studio solution)
+├── pkg.json *
 └── bin
     ├── DynaShape.dll
     ├── DynaShape.xml
-    └── DynaShape_DynamoCustomization.xml (provided with the Visual Studio solution)
+    └── DynaShape_DynamoCustomization.xml *
+└── extra
+    └── DynaShape_ViewExtensionDefinition.xml *
 </pre>
 
-***Very Important:*** Notice that there is an underscore character in the *"_DynaShape"* folder name as shown above. This is to ensure that Dynamo will load the DynaShape package alphabetically AFTER the MeshToolkit package. Otherwise, DynaShape will NOT be loaded correctly
 
-#### Step 4a: Install the package into Dynamo
+***Very Important:*** Notice that there is an underscore character in the *"_DynaShape"* folder name as shown above. This is to ensure that Dynamo will load the DynaShape package alphabetically AFTER the MeshToolkit package, which is a MUST.
+
+#### Step 4: Install the package into Dynamo
 Once the DynaShape package folder has been assembled, you can "install" the package to Dynamo by to *Dynamo-Main-Menu > Settings > Manage Node and Package Paths...*, and add a path to the package folder.
-
-#### Step 4b: Extra one-time setup for mouse manipulation to work
-You will need to manually edit the *AssemblyPath* inside the *DynaShape_ViewExtensionDefinition.xml* file (provided with the Visual Studio solution) so that it points correctly to the *DynaShape.dll* file inside the package folder, and then place this xml into *[DynamoCoreMainFolder]\viewExtensions*, and restart Dynamo Studio and/or Revit
 
 Once the package has been installed, you can start playing with these [Dynamo sample scripts](https://drive.google.com/drive/folders/0B8GXDbjowDN_ZHZ0ZWZaSWIwMzA?usp=sharing) to see how DynaShape works.
 

@@ -26,7 +26,7 @@ namespace DynaShape.Goals
         }
 
 
-        public override void Compute(List<Node> allNodes)
+        internal override void Compute(List<Node> allNodes)
         {
             Triple v = allNodes[NodeIndices[1]].Position - allNodes[NodeIndices[0]].Position;
             Moves[0] = 0.5f * (v - v.Dot(TargetDirection) * TargetDirection);

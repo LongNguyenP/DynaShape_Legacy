@@ -1,15 +1,16 @@
-﻿using System.Collections.Generic;
+﻿#if CLI == false
+
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Autodesk.DesignScript.Runtime;
 using Dynamo.Wpf.Extensions;
 using Dynamo.Wpf.ViewModels.Watch3D;
-using Dynamo.Graph.Workspaces;
 using System;
 using Dynamo.Controls;
-using Dynamo.Graph.Nodes;
 using HelixToolkit.Wpf.SharpDX;
+
 
 
 namespace DynaShape
@@ -26,6 +27,8 @@ namespace DynaShape
 
 
         public void Dispose() { }
+
+
         public void Startup(ViewStartupParams parameters) { }
 
 
@@ -45,6 +48,7 @@ namespace DynaShape
 
         private void ViewModelRequestViewRefreshHandler()
         {
+
         }
 
 
@@ -63,6 +67,12 @@ namespace DynaShape
                         .Children[2])
                     .Children[1])
                 .View;
+        }
+
+
+        internal static List<Model3D> GetSceneItems()
+        {
+            return (List<Model3D>)ViewModel.SceneItems;
         }
 
 
@@ -93,3 +103,5 @@ namespace DynaShape
         public string Name => "DynaShapeViewExtension";
     }
 }
+
+#endif

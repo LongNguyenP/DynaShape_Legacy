@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Runtime;
 using HelixToolkit.Wpf.SharpDX.Core;
 using SharpDX;
+
 using Mesh = Autodesk.Dynamo.MeshToolkit.Mesh;
 using Point = Autodesk.DesignScript.Geometry.Point;
+
 
 namespace DynaShape.ZeroTouch
 {
@@ -29,8 +30,8 @@ namespace DynaShape.ZeroTouch
         /// Create a planar mesh
         /// </summary>
         /// <param name="cs">The planar mesh will be oriented according to the XY plane of this input coordinate system </param>
-        /// <param name="lengthX">The X dimision of the planar mesh</param>
-        /// <param name="lengthY">The Y dimision of the planar mesh</param>
+        /// <param name="lengthX">The X dimension of the planar mesh</param>
+        /// <param name="lengthY">The Y dimension of the planar mesh</param>
         /// <param name="divX">The mesh face division in the X dimension</param>
         /// <param name="divY">The mesh face division in the Y dimension</param>
         /// <param name="alternatingDiagons">Alternating the diagonal direction of the triangular faces</param>
@@ -51,14 +52,14 @@ namespace DynaShape.ZeroTouch
 
             for (int j = 0; j <= divY; j++)
                 for (int i = 0; i <= divX; i++)
-                { 
+                {
                     vertices.Add(
                         Point.ByCartesianCoordinates(
                             cs,
                             ((double)i / divX - 0.5f) * lengthX,
                             ((double)j / divY - 0.5f) * lengthY));
 
-                    textureCoordinates.Add(new Vector2((float)i / (float)(divX), 1f - (float)j / (float)(divY)));
+                    textureCoordinates.Add(new Vector2((float)i / divX, 1f - (float)j / divY));
                 }
 
             List<int> indices = new List<int>();
@@ -119,8 +120,8 @@ namespace DynaShape.ZeroTouch
         /// Create a rectangular grid of points
         /// </summary>
         /// <param name="cs">A coordinate system upon which the rectangular grid is based </param>
-        /// <param name="lengthX">The X dimision of the grid</param>
-        /// <param name="lengthY">The Y dimision of the grid</param>
+        /// <param name="lengthX">The X dimension of the grid</param>
+        /// <param name="lengthY">The Y dimension of the grid</param>
         /// <param name="divX">The grid division in the X dimension</param>
         /// <param name="divY">The grid division in the Y dimension</param>
         /// <returns></returns>
