@@ -60,8 +60,9 @@ namespace DynaShape.Goals
                 float currentVolume = (float)Mesh.Volume;
                 currentVolumeInversed = 1f / currentVolume;
             }
-            catch (Exception)
+            catch
             {
+                // ignored
             }
 
 
