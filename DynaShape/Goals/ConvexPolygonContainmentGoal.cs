@@ -43,6 +43,7 @@ namespace DynaShape.Goals
         private List<Triple> polygonVertices;
         private Triple planeNormal;
 
+
         public ConvexPolygonContainmentGoal(
             List<Triple> centers,
             List<float> radii,
@@ -64,9 +65,6 @@ namespace DynaShape.Goals
             Weights = new float[NodeCount];
 
             if (polygonVertices == null || polygonVertices.Count <=3) return;
-
-            Moves = new Triple[NodeCount];
-            Weights = new float[NodeCount];
 
             int[] moveCounts = new int[NodeCount];
 
