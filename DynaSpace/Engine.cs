@@ -27,7 +27,6 @@ namespace DynaSpace
 
         internal ConvexPolygonContainmentGoal ContainmentGoal;
         internal OnPlaneGoal OnPlaneGoal;
-        internal DirectionGoal GlobalDirectionGoal;
         internal List<AnchorGoal> DepartmentAnchorGoals = new List<AnchorGoal>();
 
         internal SphereCollisionGoal SphereCollisionGoal;
@@ -123,7 +122,7 @@ namespace DynaSpace
 
 
             //===========================================================================
-            // Read spaces 
+            // Read spaces
             //===========================================================================
 
             List<string> spaceNames = new List<string>();
@@ -146,7 +145,7 @@ namespace DynaSpace
 
                 quantities.Add(int.Parse(texts[i + 4]));
                 areas.Add(double.Parse(texts[i + 7]));
-                preferences.Add(double.Parse(texts[i + 9]));
+                preferences.Add(texts[i + 9] == null ? 0.0 : double.Parse(texts[i + 9]));
 
                 List<int> adjacentSpaceIds_ = new List<int>();
                 if (texts[i + 10] != null)
@@ -222,9 +221,9 @@ namespace DynaSpace
             }
 
             engine.OnPlaneGoal = new OnPlaneGoal(spaceCentersFlattened, new Triple(0f, 0f, 0.001f), Triple.BasisZ, 1.0f);
-            engine.GlobalDirectionGoal = new DirectionGoal(departmentCenters[0], departmentCenters[1], Triple.BasisX, 1.0f);
             engine.SphereCollisionGoal = new SphereCollisionGoal(spaceCentersFlattened, spaceRadiiFlattened, 0.5f);
             engine.ContainmentGoal = new ConvexPolygonContainmentGoal(spaceCentersFlattened, spaceRadiiFlattened, new List<Triple>(), 1f);
+
 
             //===================================================================================
             // Space Adjacency
