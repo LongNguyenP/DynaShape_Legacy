@@ -12,6 +12,16 @@ namespace DynaShape
     [IsVisibleInDynamoLibrary(false)]
     public static class Util
     {
+        private const float by255 = 1f / 255f;
+
+        public static SharpDX.Color ToColor4(this DSCore.Color color)
+            => new SharpDX.Color(color.Red * by255, color.Green * by255, color.Blue * by255, color.Alpha * by255);
+
+        public static SharpDX.Color ToColor4(this System.Drawing.Color color)
+            => new SharpDX.Color(color.R * by255, color.G * by255, color.B * by255, color.A * by255);
+
+        public static Vector3 ToVector3(this Triple triple) => new Vector3(triple.X, triple.Z, -triple.Y);
+
         public static Point ToPoint(this Triple t) => Point.ByCoordinates(t.X, t.Y, t.Z);
         public static Vector ToVector(this Triple t) => Vector.ByCoordinates(t.X, t.Y, t.Z);
 
@@ -24,16 +34,6 @@ namespace DynaShape
 
         public static bool IsAlmostZero(this float number, float tolerance = 1E-10f) => -tolerance < number && number < tolerance;
         public static bool IsAlmostZero(this double number, double tolerance = 1E-10) => -tolerance < number && number < tolerance;
-
-        public static SharpDX.Color ToSharpDXColor(this DSCore.Color color)
-            => new SharpDX.Color(color.Red * by255, color.Green * by255, color.Blue * by255, color.Alpha * by255);
-
-        public static SharpDX.Color ToSharpDXColor(this System.Drawing.Color color)
-            => new SharpDX.Color(color.R * by255, color.G * by255, color.B * by255, color.A * by255);
-
-        public static Vector3 ToVector3(this Triple triple) => new Vector3(triple.X, triple.Z, -triple.Y);
-
-        private static readonly float by255 = 1f / 255f;
 
         public static List<Triple> ToTriples(this IEnumerable<Point> points)
         {

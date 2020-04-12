@@ -43,7 +43,7 @@ namespace DynaShape.GeometryBinders
 
         private Triple xAxis, yAxis, zAxis;
 
-        public CircleBinder(Triple center, float radius, Triple planeNormal, Color color)
+        public CircleBinder(Triple center, float radius, Triple planeNormal, Color4 color)
         {
             StartingPositions = new[] { center };
             Radius = radius;
@@ -75,7 +75,7 @@ namespace DynaShape.GeometryBinders
 
             for (int i = 0; i < segmentCount; i++)
                 vertices.Add(center + xAxis * Radius * cosValues[i] + yAxis * Radius * sinValues[i]);
-            
+
             display.DrawPolyline(vertices, Color, true);
         }
 #endif

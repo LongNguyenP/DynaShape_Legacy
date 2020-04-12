@@ -12,7 +12,7 @@ namespace DynaShape.GeometryBinders
     {
         public string Text;
 
-        public TextBinder(Triple center, string text, Color color)
+        public TextBinder(Triple center, string text, Color4 color)
         {
             StartingPositions = new[] { center };
             Text = text;

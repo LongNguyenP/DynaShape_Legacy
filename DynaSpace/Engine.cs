@@ -118,7 +118,7 @@ namespace DynaSpace
             List<Color> departmentColors = new List<Color>();
 
             for (int i = 0; i < engine.DepartmentNames.Count; i++)
-                departmentColors.Add(DynaShape.Util.ColorFromHSL((float)i / (float)engine.DepartmentNames.Count, 1.0f, 0.4f).ToSharpDXColor());
+                departmentColors.Add(DynaShape.Util.ColorFromHSL((float)i / (float)engine.DepartmentNames.Count, 1.0f, 0.4f).ToColor4());
 
 
             //===========================================================================

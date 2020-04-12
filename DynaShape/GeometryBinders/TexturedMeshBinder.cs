@@ -21,7 +21,7 @@ namespace DynaShape.GeometryBinders
         private BitmapImage diffuseMap;
         private Vector2Collection textureCoordinates;
 
-        public TexturedMeshBinder(Autodesk.Dynamo.MeshToolkit.Mesh mesh, Color color, string textureFileName, Vector2Collection textureCoordinates)
+        public TexturedMeshBinder(Autodesk.Dynamo.MeshToolkit.Mesh mesh, Color4 color, string textureFileName, Vector2Collection textureCoordinates)
         {
             StartingPositions = mesh.Vertices().ToTriples().ToArray();
             Color = color;

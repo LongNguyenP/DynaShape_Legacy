@@ -20,7 +20,7 @@ namespace DynaShape.ZeroTouch
                 center.ToTriple(),
                 radius,
                 planeNormal.ToTriple(),
-                color?.ToSharpDXColor() ?? DynaShapeDisplay.DefaultLineColor);
+                color?.ToColor4() ?? DynaShapeDisplay.DefaultLineColor);
         }
 
 
@@ -31,7 +31,7 @@ namespace DynaShape.ZeroTouch
             return new LineBinder(
                 line.StartPoint.ToTriple(),
                 line.EndPoint.ToTriple(),
-                color?.ToSharpDXColor() ?? DynaShapeDisplay.DefaultLineColor);
+                color?.ToColor4() ?? DynaShapeDisplay.DefaultLineColor);
         }
 
 
@@ -43,7 +43,7 @@ namespace DynaShape.ZeroTouch
             return new LineBinder(
                 startPoint.ToTriple(),
                 endPoint.ToTriple(),
-                color?.ToSharpDXColor() ?? DynaShapeDisplay.DefaultLineColor);
+                color?.ToColor4() ?? DynaShapeDisplay.DefaultLineColor);
         }
 
 
@@ -54,7 +54,7 @@ namespace DynaShape.ZeroTouch
         {
             return new PolylineBinder(
                 vertices.ToTriples(),
-                color?.ToSharpDXColor() ?? DynaShapeDisplay.DefaultLineColor,
+                color?.ToColor4() ?? DynaShapeDisplay.DefaultLineColor,
                 loop);
         }
 
@@ -65,7 +65,7 @@ namespace DynaShape.ZeroTouch
         {
             return new MeshBinder(
                 mesh,
-                color?.ToSharpDXColor() ?? DynaShapeDisplay.DefaultMeshFaceColor);
+                color?.ToColor4() ?? DynaShapeDisplay.DefaultMeshFaceColor);
         }
 
 
@@ -75,7 +75,7 @@ namespace DynaShape.ZeroTouch
         {
             return new MeshBinder(
                 toolkitMesh,
-                color?.ToSharpDXColor() ?? DynaShapeDisplay.DefaultMeshFaceColor);
+                color?.ToColor4() ?? DynaShapeDisplay.DefaultMeshFaceColor);
         }
 
 
@@ -87,7 +87,7 @@ namespace DynaShape.ZeroTouch
         {
             return new TexturedMeshBinder(
                 toolkitMesh,
-                color?.ToSharpDXColor() ?? DynaShapeDisplay.DefaultMeshFaceColor,
+                color?.ToColor4() ?? DynaShapeDisplay.DefaultMeshFaceColor,
                 textureFileName,
                 textureCoordinates.Content);
         }
@@ -97,12 +97,12 @@ namespace DynaShape.ZeroTouch
             string text,
             [DefaultArgument("null")] Color color)
         {
-            return new TextBinder(position.ToTriple(), text, color?.ToSharpDXColor() ?? DynaShapeDisplay.DefaultLineColor);
+            return new TextBinder(position.ToTriple(), text, color?.ToColor4() ?? DynaShapeDisplay.DefaultLineColor);
         }
 
         public static GeometryBinder ChangeColor(GeometryBinder geometryBinder, Color color)
         {
-            geometryBinder.Color = color.ToSharpDXColor();
+            geometryBinder.Color = color.ToColor4();
             return geometryBinder;
         }
 

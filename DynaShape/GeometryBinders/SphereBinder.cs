@@ -31,7 +31,7 @@ namespace DynaShape.GeometryBinders
         public float Radius;
 
 
-        public SphereBinder(Triple center, float radius, Color color)
+        public SphereBinder(Triple center, float radius, Color4 color)
         {
             StartingPositions = new[] { center };
             Radius = radius;
