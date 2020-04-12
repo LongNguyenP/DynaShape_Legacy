@@ -115,10 +115,10 @@ namespace DynaSpace
                 engine.CircleBinders.Add(new List<CircleBinder>());
             }
 
-            List<Color> departmentColors = new List<Color>();
+            List<Color4> departmentColors = new List<Color4>();
 
             for (int i = 0; i < engine.DepartmentNames.Count; i++)
-                departmentColors.Add(DynaShape.Util.ColorFromHSL((float)i / (float)engine.DepartmentNames.Count, 1.0f, 0.4f).ToColor4());
+                departmentColors.Add(DynaShape.Util.ColorFromHSL((float)i / (float)engine.DepartmentNames.Count, 1.0f, 0.4f));
 
 
             //===========================================================================

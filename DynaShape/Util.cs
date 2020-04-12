@@ -17,9 +17,6 @@ namespace DynaShape
         public static SharpDX.Color ToColor4(this DSCore.Color color)
             => new SharpDX.Color(color.Red * by255, color.Green * by255, color.Blue * by255, color.Alpha * by255);
 
-        public static SharpDX.Color ToColor4(this System.Drawing.Color color)
-            => new SharpDX.Color(color.R * by255, color.G * by255, color.B * by255, color.A * by255);
-
         public static Vector3 ToVector3(this Triple triple) => new Vector3(triple.X, triple.Z, -triple.Y);
 
         public static Point ToPoint(this Triple t) => Point.ByCoordinates(t.X, t.Y, t.Z);
@@ -394,7 +391,7 @@ namespace DynaShape
             return true;
         }
 
-        public static System.Drawing.Color ColorFromHSL(float h, float s, float l)
+        public static SharpDX.Color4 ColorFromHSL(float h, float s, float l)
         {
             float r = 0, g = 0, b = 0;
             if (l != 0)
@@ -416,7 +413,7 @@ namespace DynaShape
                     b = GetColorComponent(temp1, temp2, h - 1f / 3f);
                 }
             }
-            return System.Drawing.Color.FromArgb((int)(255 * r), (int)(255 * g), (int)(255 * b));
+            return new SharpDX.Color4(r, g, b, 1f);
         }
 
         private static float GetColorComponent(float temp1, float temp2, float temp3)
