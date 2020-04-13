@@ -121,6 +121,7 @@ namespace DynaShape.GeometryBinders
                 meshGeometry.Normals.Add(vertexNormals[i].ToVector3());
             }
 
+
             display.AddMeshModel(
                 new MeshGeometryModel3D
                 {
@@ -128,7 +129,7 @@ namespace DynaShape.GeometryBinders
                     Material = new PhongMaterial
                     {
                         DiffuseColor = new Color(1.0f, 1.0f, 1f, 1.0f),
-                        DiffuseMap = this.diffuseMap
+                        DiffuseMap = this.diffuseMap.StreamSource
                     }
                 });
         }

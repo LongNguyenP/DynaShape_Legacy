@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Runtime;
+using HelixToolkit.Wpf.SharpDX;
 using HelixToolkit.Wpf.SharpDX.Core;
 using SharpDX;
 
@@ -11,17 +12,6 @@ using Point = Autodesk.DesignScript.Geometry.Point;
 
 namespace DynaShape.ZeroTouch
 {
-    [IsVisibleInDynamoLibrary(false)]
-    public class TextureCoordinateSet
-    {
-        public Vector2Collection Content;
-
-        public TextureCoordinateSet(Vector2Collection content)
-        {
-            Content = content;
-        }
-    }
-
     /// <summary>
     /// </summary>
     public static class Utilities
@@ -111,7 +101,7 @@ namespace DynaShape.ZeroTouch
             {
                 { "mesh", Mesh.ByVerticesAndIndices(vertices, indices) },
                 { "quadFaceVertexIndices", quadFaceVertexIndices },
-                { "textureCoordinates", new TextureCoordinateSet(textureCoordinates) },
+                { "textureCoordinates", textureCoordinates },
             };
         }
 

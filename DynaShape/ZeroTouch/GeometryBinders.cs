@@ -2,6 +2,7 @@
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Runtime;
 using DynaShape.GeometryBinders;
+using HelixToolkit.Wpf.SharpDX;
 using Color = DSCore.Color;
 using Point = Autodesk.DesignScript.Geometry.Point;
 
@@ -83,13 +84,13 @@ namespace DynaShape.ZeroTouch
             Autodesk.Dynamo.MeshToolkit.Mesh toolkitMesh,
             [DefaultArgument("null")] Color color,
             string textureFileName,
-            TextureCoordinateSet textureCoordinates)
+            Vector2Collection textureCoordinates)
         {
             return new TexturedMeshBinder(
                 toolkitMesh,
                 color?.ToColor4() ?? DynaShapeDisplay.DefaultMeshFaceColor,
                 textureFileName,
-                textureCoordinates.Content);
+                textureCoordinates);
         }
 
         public static TextBinder TextBinder(

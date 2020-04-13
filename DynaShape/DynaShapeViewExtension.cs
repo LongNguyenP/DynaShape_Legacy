@@ -48,7 +48,6 @@ namespace DynaShape
 
         private void ViewModelRequestViewRefreshHandler()
         {
-
         }
 
 
@@ -70,10 +69,8 @@ namespace DynaShape
         }
 
 
-        internal static List<Model3D> GetSceneItems()
-        {
-            return (List<Model3D>)ViewModel.SceneItems;
-        }
+        internal static ObservableElement3DCollection GetSceneItems()
+            => (ObservableElement3DCollection)ViewModel.SceneItems;
 
 
         public void Shutdown()
