@@ -249,12 +249,6 @@ namespace DynaShape
                 pointModel.Geometry = pointGeometry;
                 if (!sceneItems.Contains(pointModel)) sceneItems.Add(pointModel);
                 if (!pointModel.IsAttached) pointModel.Attach(renderHost);
-//                sceneItems.Remove(pointModel);
-//                pointModel.Detach();
-//                sceneItems.Add(pointModel);
-//                sw.Restart();
-//                pointModel.Attach(renderHost);
-//                DynamoLogger.Instance.Log(sw.Elapsed.TotalMilliseconds + "ms (Attach)");
             }
             else
             {
