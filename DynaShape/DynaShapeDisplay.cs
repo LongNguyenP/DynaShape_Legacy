@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Threading;
 using Autodesk.DesignScript.Runtime;
@@ -76,9 +75,7 @@ namespace DynaShape
                         Color = Color.White,
                     };
 
-                    billboardTextModel = new BillboardTextModel3D()
-                    {
-                    };
+                    billboardTextModel = new BillboardTextModel3D();
                 },
                 DispatcherPriority.Send);
 
@@ -186,13 +183,11 @@ namespace DynaShape
             });
         }
 
-        Stopwatch sw = new Stopwatch();
 
         private void RenderAction()
         {
             IRenderHost renderHost = DynaShapeViewExtension.GetViewport().RenderHost;
             List<Model3D> sceneItems = DynaShapeViewExtension.GetSceneItems();
-
 
             pointGeometry = new PointGeometry3D
             {
