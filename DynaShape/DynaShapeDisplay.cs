@@ -7,7 +7,6 @@ using Autodesk.DesignScript.Runtime;
 using Dynamo.Wpf.ViewModels.Watch3D;
 using DynaShape.GeometryBinders;
 using HelixToolkit.Wpf.SharpDX;
-using HelixToolkit.Wpf.SharpDX.Core;
 using SharpDX;
 using Color = System.Windows.Media.Color;
 
@@ -78,9 +77,7 @@ namespace DynaShape
                         Color = Color.FromArgb(255, 255, 255, 255)
                     };
 
-                    billboardTextModel = new BillboardTextModel3D()
-                    {
-                    };
+                    billboardTextModel = new BillboardTextModel3D();
                 },
                 DispatcherPriority.Send);
 
@@ -184,13 +181,10 @@ namespace DynaShape
             });
         }
 
-        Stopwatch sw = new Stopwatch();
 
         private void RenderAction()
         {
-            IRenderHost renderHost = DynaShapeViewExtension.GetViewport().RenderHost;
             ObservableElement3DCollection sceneItems = DynaShapeViewExtension.GetSceneItems();
-
 
             pointGeometry = new PointGeometry3D
             {
