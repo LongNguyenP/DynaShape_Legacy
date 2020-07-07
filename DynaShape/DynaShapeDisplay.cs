@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Threading;
 using Autodesk.DesignScript.Runtime;
@@ -24,7 +23,7 @@ namespace DynaShape
         public static readonly Color4 DefaultMeshFaceColor = new Color4(0.0f, 0.7f, 1.0f, 0.3f);
         public static readonly Color4 DefaultTextColor = new Color4(0.0f, 0.0f, 0.0f, 1.0f);
 
-        private static readonly Color4 HandleColor = new Color4(1.0f, 0.5f, 0.0f, 1.0f);
+        public static readonly Color4 HandleColor = new Color4(1.0f, 0.5f, 0.0f, 1.0f);
 
 #if CLI == false
         private readonly Solver solver;
@@ -44,22 +43,6 @@ namespace DynaShape
         public DynaShapeDisplay(Solver solver)
         {
             this.solver = solver;
-
-            pointGeometry = new PointGeometry3D
-            {
-                Positions = new Vector3Collection(),
-                Indices = new IntCollection(),
-                Colors = new Color4Collection()
-            };
-
-            lineGeometry = new LineGeometry3D()
-            {
-                Positions = new Vector3Collection(),
-                Indices = new IntCollection(),
-                Colors = new Color4Collection()
-            };
-
-            billboardText = new BillboardText3D();
 
             DynaShapeViewExtension.DynamoWindow.Dispatcher.Invoke(
                 () =>
@@ -213,12 +196,11 @@ namespace DynaShape
             // Render nodes as points
             //============================================
 
-            int n = pointGeometry.Indices.Count;
             for (int i = 0; i < solver.Nodes.Count; i++)
             {
                 pointGeometry.Positions.Add(solver.Nodes[i].Position.ToVector3());
                 pointGeometry.Colors.Add(DefaultPointColor);
-                pointGeometry.Indices.Add(n + i);
+                pointGeometry.Indices.Add(i);
             }
 
             //==============================================================
