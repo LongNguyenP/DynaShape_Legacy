@@ -4,7 +4,6 @@ using System.IO;
 using System.Windows.Media.Imaging;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Runtime;
-using Autodesk.Dynamo.MeshToolkit;
 using HelixToolkit.Wpf.SharpDX;
 using HelixToolkit.Wpf.SharpDX.Core;
 using SharpDX;
