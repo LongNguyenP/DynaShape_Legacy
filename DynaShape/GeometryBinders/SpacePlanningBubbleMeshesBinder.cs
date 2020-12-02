@@ -46,7 +46,7 @@ namespace DynaShape.GeometryBinders
 //            this.radii = radii;
 //            this.colors = colors;
 
-            
+
 //        }
 
 
@@ -91,7 +91,7 @@ namespace DynaShape.GeometryBinders
 //                    meshGeometry.Indices.Add(baseIndex);
 //                    meshGeometry.Indices.Add(baseIndex + j + 1);
 //                    meshGeometry.Indices.Add(baseIndex + j + 2);
-                    
+
 //                }
 
 //                meshGeometry.Indices.Add(baseIndex);

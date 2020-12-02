@@ -36,7 +36,6 @@ namespace DynaSpace
             List<List<int>> adjacentDepartments = new List<List<int>>();
 
             int stride = 12;
-            int sheetHeight = data.Count / stride - 1;
 
             Dictionary<string, int> cols = new Dictionary<string, int>();
 
@@ -92,7 +91,7 @@ namespace DynaSpace
             }
 
             //=====================================================================
-            // Clean up inconsitencies and redundancies in ADJACENT SPACES
+            // Clean up inconsistencies and redundancies in ADJACENT SPACES
             //=====================================================================
 
             List<HashSet<int>> hashSets = new List<HashSet<int>>();
@@ -163,6 +162,21 @@ namespace DynaSpace
                 positions.Add(Point.ByCoordinates(r * Math.Cos((float)i / n * Math.PI * 2f), r * Math.Sin((float)i / n * Math.PI * 2f), 0f));
 
             return positions;
+        }
+
+
+        public static List<double> RandomNumbers(
+            double min = 0.0,
+            double max = 1.0,
+            int count = 10,
+            int seed = -1)
+        {
+            Random random = seed < 0 ? new Random() : new Random(seed);
+            double intervalSize = max - min;
+            List<double> results = new List<double>();
+            for (int i = 0; i < count; i++)
+                results.Add(random.NextDouble() * intervalSize + min);
+            return results;
         }
     }
 }
