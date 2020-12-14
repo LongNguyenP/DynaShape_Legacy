@@ -15,7 +15,7 @@
     "repository_url": "https://github.com/LongNguyenP/DynaShape",
     "contains_binaries": true,
     "node_libraries": [
-        "DynaShape, Version=0.6.2.0, Culture=neutral, PublicKeyToken=null",
-        "DynaSpace, Version=0.6.2.0, Culture=neutral, PublicKeyToken=null"
+        "DynaShape, Version=0.7.0.0, Culture=neutral, PublicKeyToken=null",
+        "DynaSpace, Version=0.7.0.0, Culture=neutral, PublicKeyToken=null"
     ]
 }
