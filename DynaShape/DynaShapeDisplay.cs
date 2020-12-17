@@ -325,9 +325,9 @@ namespace DynaShape
         private void RequestViewRefreshHandler()
         {
             ObservableElement3DCollection sceneItems = DynaShapeViewExtension.GetSceneItems();
-            if (pointGeometry.Positions.Count >= 1 && !sceneItems.Contains(pointModel)) sceneItems.Add(pointModel);
-            if (lineGeometry.Positions.Count >= 2 && !sceneItems.Contains(lineModel)) sceneItems.Add(lineModel);
-            if (billboardText.TextInfo.Count >= 1 && !sceneItems.Contains(billboardTextModel)) sceneItems.Add(billboardTextModel);
+            if (pointGeometry?.Positions.Count >= 1 && !sceneItems.Contains(pointModel)) sceneItems.Add(pointModel);
+            if (lineGeometry?.Positions.Count >= 2 && !sceneItems.Contains(lineModel)) sceneItems.Add(lineModel);
+            if (billboardText?.TextInfo.Count >= 1 && !sceneItems.Contains(billboardTextModel)) sceneItems.Add(billboardTextModel);
             foreach (MeshGeometryModel3D meshModel in meshModels)
                 if (!sceneItems.Contains(meshModel))
                     sceneItems.Add(meshModel);
