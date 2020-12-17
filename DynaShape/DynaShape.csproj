@@ -50,7 +50,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug CLI|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\bin\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;#define CLI</DefineConstants>
+    <DefineConstants>TRACE; DEBUG; CLI</DefineConstants>
     <DocumentationFile>DynaShape.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <DebugType>full</DebugType>
@@ -60,7 +60,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release CLI|x64'">
     <OutputPath>..\bin\_DynaShape\bin\</OutputPath>
-    <DefineConstants>#define CLI</DefineConstants>
+    <DefineConstants>CLI</DefineConstants>
     <DocumentationFile>DynaShape.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <DebugType>full</DebugType>
