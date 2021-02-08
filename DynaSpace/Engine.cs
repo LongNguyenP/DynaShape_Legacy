@@ -325,11 +325,11 @@ namespace DynaSpace
                 {
                     DampingFactor = 0f,
                     Iterations = 0,
-                    BoundaryStrength = 200f,
-                    PlanarConstraintStrength = 10f,
+                    BoundaryStrength = 1000f,
+                    PlanarConstraintStrength = 200,
                     SphereCollisionStrength = 100f,
-                    DepartmentCohesionStrength = 0.5f,
-                    SpaceAdjacencyStrength = 0.5f,
+                    DepartmentCohesionStrength = 1,
+                    SpaceAdjacencyStrength = 1,
                     SpaceDepartmentAdjacencyStrength = 0f
                 };
 
