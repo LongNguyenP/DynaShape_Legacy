@@ -14,17 +14,14 @@ using Model3D = HelixToolkit.Wpf.SharpDX.Model3D;
 namespace DynaShape
 {
     [IsVisibleInDynamoLibrary(false)]
-    public class DynaShapeDisplay
-#if CLI == false
-        : IDisposable
-#endif
+    public class DynaShapeDisplay : IDisposable
+
     {
         public static readonly Color4 DefaultPointColor    = new Color4(0.8f, 0.2f, 0.2f, 1.0f);
         public static readonly Color4 DefaultLineColor     = new Color4(0.3f, 0.7f, 0.8f, 1.0f);
         public static readonly Color4 DefaultMeshFaceColor = new Color4(0.0f, 0.7f, 1.0f, 0.3f);
         public static readonly Color4 DefaultTextColor     = new Color4(0.0f, 0.0f, 0.0f, 1.0f);
 
-#if CLI == false
         private readonly Solver solver;
 
         private PointGeometryModel3D pointModel;
@@ -362,8 +359,6 @@ namespace DynaShape
                 if (!sceneItems.Contains(meshModel))
                     sceneItems.Add(meshModel);
         }
-
-#endif
     }
 }
 

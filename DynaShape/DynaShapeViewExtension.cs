@@ -1,6 +1,4 @@
-﻿#if CLI == false
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,7 +8,6 @@ using Dynamo.Wpf.ViewModels.Watch3D;
 using System;
 using Dynamo.Controls;
 using HelixToolkit.Wpf.SharpDX;
-
 
 
 namespace DynaShape
@@ -48,7 +45,6 @@ namespace DynaShape
 
         private void ViewModelRequestViewRefreshHandler()
         {
-
         }
 
 
@@ -103,5 +99,3 @@ namespace DynaShape
         public string Name => "DynaShapeViewExtension";
     }
 }
-
-#endif

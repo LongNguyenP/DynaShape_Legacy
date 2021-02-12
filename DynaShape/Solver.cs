@@ -44,15 +44,16 @@ namespace DynaShape
         {
             TimeCreated = DateTime.Now;
             CurrentIteration = 0;
-#if CLI == false
-            if (DynaShapeViewExtension.ViewModel == null) throw new Exception("Oh no, DynaShape could not get access to the Helix ViewModel. Sad!");
-            Display = new DynaShapeDisplay(this);
-            DynaShapeViewExtension.ViewModel.ViewMouseDown += ViewportMouseDownHandler;
-            DynaShapeViewExtension.ViewModel.ViewMouseUp += ViewportMouseUpHandler;
-            DynaShapeViewExtension.ViewModel.ViewMouseMove += ViewportMouseMoveHandler;
-            DynaShapeViewExtension.ViewModel.ViewCameraChanged += ViewportCameraChangedHandler;
-            DynaShapeViewExtension.ViewModel.CanNavigateBackgroundPropertyChanged += ViewportCanNavigateBackgroundPropertyChangedHandler;
-#endif
+
+            if (DynaShapeViewExtension.ViewModel != null)
+            {
+                Display = new DynaShapeDisplay(this);
+                DynaShapeViewExtension.ViewModel.ViewMouseDown += ViewportMouseDownHandler;
+                DynaShapeViewExtension.ViewModel.ViewMouseUp += ViewportMouseUpHandler;
+                DynaShapeViewExtension.ViewModel.ViewMouseMove += ViewportMouseMoveHandler;
+                DynaShapeViewExtension.ViewModel.ViewCameraChanged += ViewportCameraChangedHandler;
+                DynaShapeViewExtension.ViewModel.CanNavigateBackgroundPropertyChanged += ViewportCanNavigateBackgroundPropertyChangedHandler;
+            }
         }
 
 
