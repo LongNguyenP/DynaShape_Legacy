@@ -338,10 +338,8 @@ namespace DynaSpace
             {
                 Stopwatch stopwatch = Stopwatch.StartNew();
 
-#if CLI == false
                 engine.Solver.StopBackgroundExecution();
                 engine.Solver.ClearRender();
-#endif
 
                 engine.Solver.Reset();
                 engine.Solver.EnableMouseInteraction = enableManipulation;
@@ -403,9 +401,6 @@ namespace DynaSpace
                 };
             }
 
-#if CLI
-            throw new Exception("You are currently running the CLI-Compatible version of DynaShape, which only supports silent execution mode");
-#else
 
             if (reset)
             {
@@ -467,14 +462,12 @@ namespace DynaSpace
                     {"spaceAdjErrors", engine.SpaceAdjErrors},
                     {"spaceAdjErrorRatios", engine.SpaceAdjErrorRatios},
                 };
-#endif
         }
+
 
         public void Dispose()
         {
-#if !CLI
             Solver?.Dispose();
-#endif
         }
     }
 }

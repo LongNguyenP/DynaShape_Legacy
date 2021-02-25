@@ -59,7 +59,6 @@ namespace DynaShape.GeometryBinders
 //            return circles;
 //        }
 
-//#if CLI == false
 //        public override void CreateDisplayedGeometries(DynaShapeDisplay display, List<Node> allNodes)
 //        {
 //            MeshGeometry3D meshGeometry = new MeshGeometry3D()
@@ -106,6 +105,5 @@ namespace DynaShape.GeometryBinders
 //                    });
 //            }
 //        }
-//#endif
 //    }
 }

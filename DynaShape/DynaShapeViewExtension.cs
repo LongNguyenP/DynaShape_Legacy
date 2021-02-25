@@ -22,6 +22,9 @@ namespace DynaShape
         public static Triple MouseRayOrigin;
         public static Triple MouseRayDirection;
 
+        public string UniqueId => "{DC7A6415-8512-423B-9BC3-1A1C1AEE5145}";
+        public string Name => "DynaShapeViewExtension";
+
 
         public void Dispose() { }
 
@@ -43,13 +46,36 @@ namespace DynaShape
         }
 
 
-        private void ViewModelRequestViewRefreshHandler()
+        public void Shutdown()
         {
+            ViewModel.ViewCameraChanged -= ViewModelViewCameraChangedHandler;
+            ViewModel.ViewMouseDown -= ViewModelViewMouseDownHandler;
+            ViewModel.ViewMouseMove -= ViewModelViewMouseMoveHandler;
+            ViewModel.RequestViewRefresh -= ViewModelRequestViewRefreshHandler;
+        }
+
+
+        private void ViewModelViewCameraChangedHandler(object sender, RoutedEventArgs e)
+        {
+            CameraData = ViewModel.GetCameraInformation();
         }
 
 
         private void ViewModelViewMouseDownHandler(object sender, MouseButtonEventArgs e)
         {
+        }
+
+
+        private void ViewModelRequestViewRefreshHandler()
+        {
+        }
+
+
+        private void ViewModelViewMouseMoveHandler(object sender, MouseEventArgs e)
+        {
+            IRay clickRay = ViewModel.GetClickRay(e);
+            MouseRayOrigin = new Triple(clickRay.Origin.X, clickRay.Origin.Y, clickRay.Origin.Z);
+            MouseRayDirection = new Triple(clickRay.Direction.X, clickRay.Direction.Y, clickRay.Direction.Z);
         }
 
 
@@ -70,32 +96,5 @@ namespace DynaShape
         {
             return (List<Model3D>)ViewModel.SceneItems;
         }
-
-
-        public void Shutdown()
-        {
-            ViewModel.ViewCameraChanged -= ViewModelViewCameraChangedHandler;
-            ViewModel.ViewMouseDown -= ViewModelViewMouseDownHandler;
-            ViewModel.ViewMouseMove -= ViewModelViewMouseMoveHandler;
-            ViewModel.RequestViewRefresh -= ViewModelRequestViewRefreshHandler;
-        }
-
-
-        private void ViewModelViewCameraChangedHandler(object sender, RoutedEventArgs e)
-        {
-            CameraData = ViewModel.GetCameraInformation();
-        }
-
-
-        private void ViewModelViewMouseMoveHandler(object sender, MouseEventArgs e)
-        {
-            IRay clickRay = ViewModel.GetClickRay(e);
-            MouseRayOrigin = new Triple(clickRay.Origin.X, clickRay.Origin.Y, clickRay.Origin.Z);
-            MouseRayDirection = new Triple(clickRay.Direction.X, clickRay.Direction.Y, clickRay.Direction.Z);
-        }
-
-
-        public string UniqueId => "{DC7A6415-8512-423B-9BC3-1A1C1AEE5145}";
-        public string Name => "DynaShapeViewExtension";
     }
 }

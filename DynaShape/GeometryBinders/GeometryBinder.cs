@@ -23,12 +23,11 @@ namespace DynaShape.GeometryBinders
 
         public int NodeCount => StartingPositions.Length;
 
+
         public virtual List<object> CreateGeometryObjects(List<Node> allNodes) => null;
 
-#if CLI == false
+
         public virtual void CreateDisplayedGeometries(DynaShapeDisplay display, List<Node> allNodes)
         { }
-#endif
-
     }
 }

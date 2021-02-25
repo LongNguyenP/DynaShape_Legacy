@@ -2,11 +2,17 @@
     "license": "MIT License",
     "file_hash": null,
     "name": "DynaShape",
-    "version": "0.6.1.0",
+    "version": "0.6.9.0",
     "description": "",
     "group": "DynaShape",
     "keywords": [],
-    "dependencies": [],
+    "dependencies":
+    [
+      {
+        "name": "MeshToolkit",
+        "version": "3.0.0"
+      }
+    ],
     "contents": "",
     "engine_version": "2.0.0",
     "engine": "dynamo",
@@ -14,8 +20,9 @@
     "site_url": "",
     "repository_url": "https://github.com/LongNguyenP/DynaShape",
     "contains_binaries": true,
-    "node_libraries": [
-        "DynaShape, Version=0.6.2.0, Culture=neutral, PublicKeyToken=null",
-        "DynaSpace, Version=0.6.2.0, Culture=neutral, PublicKeyToken=null"
+    "node_libraries":
+    [
+        "DynaShape, Version=0.6.9.0, Culture=neutral, PublicKeyToken=null",
+        "DynaSpace, Version=0.6.9.0, Culture=neutral, PublicKeyToken=null"
     ]
 }

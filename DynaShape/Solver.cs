@@ -24,21 +24,20 @@ namespace DynaShape
         public bool EnableMomentum = true;
         public bool EnableFastDisplay = true;
         public float DampingFactor = 0.98f;
-
+        public int IterationCount = 0;
+        public int CurrentIteration { get; private set; }
+        public readonly DateTime TimeCreated;
         public List<Node> Nodes = new List<Node>();
         public List<Goal> Goals = new List<Goal>();
         public List<GeometryBinder> GeometryBinders = new List<GeometryBinder>();
 
+        internal DynaShapeDisplay Display;
         internal int HandleNodeIndex = -1;
         internal int NearestNodeIndex = -1;
 
         private Task backgroundExecutionTask;
+        private CancellationTokenSource ctSource;
 
-        public int IterationCount = 0;
-
-        public int CurrentIteration { get; private set; }
-
-        public readonly DateTime TimeCreated;
 
         public Solver()
         {
@@ -232,6 +231,7 @@ namespace DynaShape
             return goalOutputs;
         }
 
+
         public void Clear()
         {
             Nodes.Clear();
@@ -283,11 +283,11 @@ namespace DynaShape
                 }
             }
 
+
             //=================================================================================
             // Move the manipulated node toward the mouse ray
             //=================================================================================
 
-#if CLI == false
             if (HandleNodeIndex != -1)
             {
                 float manipulationWeight = 30f;
@@ -297,7 +297,7 @@ namespace DynaShape
                 Triple mouseRayPull = v.Dot(DynaShapeViewExtension.MouseRayDirection) * DynaShapeViewExtension.MouseRayDirection - v;
                 nodeMoveSums[HandleNodeIndex] += manipulationWeight * mouseRayPull;
             }
-#endif
+
 
             //=============================================================================================
             // Move the nodes to their new positions
@@ -374,10 +374,6 @@ namespace DynaShape
             return largestMove;
         }
 
-
-#if CLI == false
-        CancellationTokenSource ctSource;
-        internal DynaShapeDisplay Display;
 
         public void ClearRender() { Display.ClearRender(); }
         public void Render() { Display.Render(); }
@@ -497,11 +493,10 @@ namespace DynaShape
             HandleNodeIndex = -1;
             NearestNodeIndex = -1;
         }
-#endif
+
 
         public void Dispose()
         {
-#if !CLI
             StopBackgroundExecution();
             Clear();
             DynaShapeViewExtension.ViewModel.ViewMouseDown -= ViewportMouseDownHandler;
@@ -510,7 +505,6 @@ namespace DynaShape
             DynaShapeViewExtension.ViewModel.ViewCameraChanged -= ViewportCameraChangedHandler;
             DynaShapeViewExtension.ViewModel.CanNavigateBackgroundPropertyChanged -= ViewportCanNavigateBackgroundPropertyChangedHandler;
             Display.Dispose();
-#endif
         }
     }
 }

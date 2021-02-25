@@ -47,28 +47,6 @@
     <DefineConstants>
     </DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug CLI|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\bin\</OutputPath>
-    <DefineConstants>TRACE; DEBUG; CLI</DefineConstants>
-    <DocumentationFile>DynaShape.xml</DocumentationFile>
-    <NoWarn>1591</NoWarn>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release CLI|x64'">
-    <OutputPath>..\bin\_DynaShape\bin\</OutputPath>
-    <DefineConstants>CLI</DefineConstants>
-    <DocumentationFile>DynaShape.xml</DocumentationFile>
-    <NoWarn>1591</NoWarn>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Optimize>true</Optimize>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Analysis, Version=2.3.0.5885, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\DynamoVisualProgramming.DynamoCoreNodes.2.3.0.5885\lib\net47\Analysis.dll</HintPath>
@@ -147,7 +125,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="MeshToolkit, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>C:\Users\longn\AppData\Roaming\Dynamo\Dynamo Core\2.6\packages\MeshToolkit\bin\MeshToolkit.dll</HintPath>
+      <HintPath>..\..\MeshToolkit\bin\MeshToolkit.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">

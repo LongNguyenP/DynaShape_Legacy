@@ -38,12 +38,12 @@ namespace DynaShape.GeometryBinders
             Color = color;
         }
 
-#if CLI == false
+
         public SphereBinder(Triple center, float radius, Triple planeNormal)
             : this(center, radius, DynaShapeDisplay.DefaultMeshFaceColor)
         {
         }
-#endif
+
 
         public override List<object> CreateGeometryObjects(List<Node> allNodes)
         {
@@ -53,11 +53,10 @@ namespace DynaShape.GeometryBinders
             };
         }
 
-#if CLI == false
+
         public override void CreateDisplayedGeometries(DynaShapeDisplay display, List<Node> allNodes)
         {
             Triple center = allNodes[NodeIndices[0]].Position;
         }
-#endif
     }
 }
