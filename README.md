@@ -24,7 +24,7 @@ You can now assemble the DynaShape package folder according to the following str
 <pre>
 (The files marked with * are included in the visual studio solution, under the "ManifestFiles" folder)
 
-_DynaShape
+DynaShape
 ├── pkg.json *
 └── bin
     ├── DynaShape.dll
@@ -34,8 +34,6 @@ _DynaShape
     └── DynaShape_ViewExtensionDefinition.xml *
 </pre>
 
-
-***Very Important:*** Notice that there is an underscore character in the *"_DynaShape"* folder name as shown above. This is to ensure that Dynamo will load the DynaShape package alphabetically AFTER the MeshToolkit package, which is a MUST.
 
 #### Step 4: Install the package into Dynamo
 Once the DynaShape package folder has been assembled, you can "install" the package to Dynamo by to *Dynamo-Main-Menu > Settings > Manage Node and Package Paths...*, and add a path to the package folder.
