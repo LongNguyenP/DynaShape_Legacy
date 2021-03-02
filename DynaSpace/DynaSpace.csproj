@@ -227,8 +227,8 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
-      Copy "$(TargetDir)$(TargetName).dll" "$(SolutionDir)DynamoPackage\_DynaShape\bin\$(TargetName).dll"
-      Copy "$(TargetDir)$(TargetName).xml" "$(SolutionDir)DynamoPackage\_DynaShape\bin\$(TargetName).xml"
-      Copy "$(SolutionDir)ManifestFiles\DynaSpace_DynamoCustomization.xml" "$(SolutionDir)DynamoPackage\_DynaShape\bin\DynaSpace_DynamoCustomization.xml"</PostBuildEvent>
+      Copy "$(TargetDir)$(TargetName).dll" "$(SolutionDir)DynamoPackage\DynaShape\bin\$(TargetName).dll"
+      Copy "$(TargetDir)$(TargetName).xml" "$(SolutionDir)DynamoPackage\DynaShape\bin\$(TargetName).xml"
+      Copy "$(SolutionDir)ManifestFiles\DynaSpace_DynamoCustomization.xml" "$(SolutionDir)DynamoPackage\DynaShape\bin\DynaSpace_DynamoCustomization.xml"</PostBuildEvent>
   </PropertyGroup>
 </Project>

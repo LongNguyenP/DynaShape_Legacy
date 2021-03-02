@@ -13,10 +13,7 @@ using Color = System.Windows.Media.Color;
 namespace DynaShape
 {
     [IsVisibleInDynamoLibrary(false)]
-    public class DynaShapeDisplay
-#if CLI == false
-        : IDisposable
-#endif
+    public class DynaShapeDisplay : IDisposable
     {
         public static readonly Color4 DefaultPointColor = new Color4(0.8f, 0.2f, 0.2f, 1.0f);
         public static readonly Color4 DefaultLineColor = new Color4(0.3f, 0.7f, 0.8f, 1.0f);
