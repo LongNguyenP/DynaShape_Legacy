@@ -395,7 +395,7 @@ namespace DynaShape
                 }
 
                 if (IterationCount > 0) Iterate(IterationCount);
-                else Iterate(25);
+                else Iterate(25f);
 
                 if (EnableFastDisplay) Display.Render();
 
