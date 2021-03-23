@@ -1,8 +1,8 @@
 {
     "license": "MIT License",
     "file_hash": null,
-    "name": "DynaShape",
-    "version": "0.6.9.0",
+    "name": "DynaShape (for Dynamo 2.6)",
+    "version": "0.7.0.0",
     "description": "",
     "group": "DynaShape",
     "keywords": [],
@@ -22,7 +22,7 @@
     "contains_binaries": true,
     "node_libraries":
     [
-        "DynaShape, Version=0.6.9.0, Culture=neutral, PublicKeyToken=null",
-        "DynaSpace, Version=0.6.9.0, Culture=neutral, PublicKeyToken=null"
+        "DynaShape, Version=0.7.0.0, Culture=neutral, PublicKeyToken=null",
+        "DynaSpace, Version=0.7.0.0, Culture=neutral, PublicKeyToken=null"
     ]
 }
