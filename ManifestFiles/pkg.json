@@ -1,7 +1,7 @@
 {
     "license": "MIT License",
     "file_hash": null,
-    "name": "DynaShape",
+    "name": "DynaShape (for Dynamo 2.7 or newer)",
     "version": "0.7.0.0",
     "description": "",
     "group": "DynaShape",
