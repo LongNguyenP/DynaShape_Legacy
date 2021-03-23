@@ -22,7 +22,6 @@ namespace DynaShape
 
         public static readonly Color4 HandleColor = new Color4(1.0f, 0.5f, 0.0f, 1.0f);
 
-#if CLI == false
         private readonly Solver solver;
 
         private PointGeometryModel3D pointModel;
@@ -329,7 +328,5 @@ namespace DynaShape
                 if (!sceneItems.Contains(meshModel))
                     sceneItems.Add(meshModel);
         }
-
-#endif
     }
 }

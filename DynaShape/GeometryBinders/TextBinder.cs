@@ -5,6 +5,7 @@ using Autodesk.DesignScript.Interfaces;
 using Autodesk.DesignScript.Runtime;
 using SharpDX;
 
+
 namespace DynaShape.GeometryBinders
 {
     [IsVisibleInDynamoLibrary(false)]
@@ -31,11 +32,10 @@ namespace DynaShape.GeometryBinders
             return new List<object>();
         }
 
-#if CLI == false
+
         public override void CreateDisplayedGeometries(DynaShapeDisplay display, List<Node> allNodes)
         {
             display.DrawText(Text, allNodes[NodeIndices[0]].Position);
         }
-#endif
     }
 }

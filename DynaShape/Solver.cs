@@ -44,15 +44,16 @@ namespace DynaShape
         {
             TimeCreated = DateTime.Now;
             CurrentIteration = 0;
-#if CLI == false
-            if (DynaShapeViewExtension.ViewModel == null) throw new Exception("Oh no, DynaShape could not get access to the Helix ViewModel. Sad!");
-            Display = new DynaShapeDisplay(this);
-            DynaShapeViewExtension.ViewModel.ViewMouseDown += ViewportMouseDownHandler;
-            DynaShapeViewExtension.ViewModel.ViewMouseUp += ViewportMouseUpHandler;
-            DynaShapeViewExtension.ViewModel.ViewMouseMove += ViewportMouseMoveHandler;
-            DynaShapeViewExtension.ViewModel.ViewCameraChanged += ViewportCameraChangedHandler;
-            DynaShapeViewExtension.ViewModel.CanNavigateBackgroundPropertyChanged += ViewportCanNavigateBackgroundPropertyChangedHandler;
-#endif
+
+            if (DynaShapeViewExtension.ViewModel != null)
+            {
+                Display = new DynaShapeDisplay(this);
+                DynaShapeViewExtension.ViewModel.ViewMouseDown += ViewportMouseDownHandler;
+                DynaShapeViewExtension.ViewModel.ViewMouseUp += ViewportMouseUpHandler;
+                DynaShapeViewExtension.ViewModel.ViewMouseMove += ViewportMouseMoveHandler;
+                DynaShapeViewExtension.ViewModel.ViewCameraChanged += ViewportCameraChangedHandler;
+                DynaShapeViewExtension.ViewModel.CanNavigateBackgroundPropertyChanged += ViewportCanNavigateBackgroundPropertyChangedHandler;
+            }
         }
 
 
@@ -286,7 +287,7 @@ namespace DynaShape
             // Move the manipulated node toward the mouse ray
             //=================================================================================
 
-#if CLI == false
+
             if (HandleNodeIndex != -1)
             {
                 float manipulationWeight = 30f;
@@ -296,7 +297,7 @@ namespace DynaShape
                 Triple mouseRayPull = v.Dot(DynaShapeViewExtension.MouseRayDirection) * DynaShapeViewExtension.MouseRayDirection - v;
                 nodeMoveSums[HandleNodeIndex] += manipulationWeight * mouseRayPull;
             }
-#endif
+
 
             //=============================================================================================
             // Move the nodes to their new positions
@@ -374,7 +375,6 @@ namespace DynaShape
         }
 
 
-#if CLI == false
         CancellationTokenSource ctSource;
         internal DynaShapeDisplay Display;
 
@@ -496,11 +496,10 @@ namespace DynaShape
             HandleNodeIndex = -1;
             NearestNodeIndex = -1;
         }
-#endif
+
 
         public void Dispose()
         {
-#if !CLI
             StopBackgroundExecution();
             Clear();
             DynaShapeViewExtension.ViewModel.ViewMouseDown -= ViewportMouseDownHandler;
@@ -509,7 +508,6 @@ namespace DynaShape
             DynaShapeViewExtension.ViewModel.ViewCameraChanged -= ViewportCameraChangedHandler;
             DynaShapeViewExtension.ViewModel.CanNavigateBackgroundPropertyChanged -= ViewportCanNavigateBackgroundPropertyChangedHandler;
             Display.Dispose();
-#endif
         }
     }
 }
