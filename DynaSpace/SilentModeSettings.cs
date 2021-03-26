@@ -10,7 +10,12 @@
 
         internal SilentModeSettings() { }
 
-        public static SilentModeSettings Create(int maxIterationCount, float terminationThreshold, int sphereCollisionKickin = 10000, int planarConstraintKickin = 20000, int boundaryKickin = 30000)
+        public static SilentModeSettings Create(
+            int maxIterationCount = 200000,
+            float terminationThreshold = 0.0001f,
+            int sphereCollisionKickin = 10000,
+            int planarConstraintKickin = 20000,
+            int boundaryKickin = 30000)
         {
             return new SilentModeSettings()
             {
