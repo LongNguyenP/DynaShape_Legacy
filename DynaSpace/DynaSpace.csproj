@@ -222,13 +222,18 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="DynamoDocumentation\DynaSpace.Engine.Execute.md" />
+    <Content Include="DynamoDocumentation\DynaSpace.Settings.Create.md" />
+    <Content Include="DynamoDocumentation\DynaSpace.SilentModeSettings.Create.md" />
     <Content Include="images\logo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
-      Copy "$(TargetDir)$(TargetName).dll" "$(SolutionDir)DynamoPackage\DynaShape\bin\$(TargetName).dll"
-      Copy "$(TargetDir)$(TargetName).xml" "$(SolutionDir)DynamoPackage\DynaShape\bin\$(TargetName).xml"
-      Copy "$(SolutionDir)ManifestFiles\DynaSpace_DynamoCustomization.xml" "$(SolutionDir)DynamoPackage\DynaShape\bin\DynaSpace_DynamoCustomization.xml"</PostBuildEvent>
+        Copy "$(TargetDir)$(TargetName).dll" "$(SolutionDir)\dist\DynaShape\bin\$(TargetName).dll"
+        Copy "$(TargetDir)$(TargetName).xml" "$(SolutionDir)\dist\DynaShape\bin\$(TargetName).xml"
+        Copy "$(SolutionDir)\ManifestFiles\DynaSpace_DynamoCustomization.xml" "$(SolutionDir)\dist\DynaShape\bin\DynaSpace_DynamoCustomization.xml"
+        Copy "$(ProjectDir)\DynamoDocumentation" "$(SolutionDir)\dist\DynaShape\doc"
+</PostBuildEvent>
   </PropertyGroup>
 </Project>

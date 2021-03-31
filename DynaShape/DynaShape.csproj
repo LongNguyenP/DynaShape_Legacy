@@ -305,11 +305,11 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
-      Copy "$(TargetDir)$(TargetName).dll" "$(SolutionDir)DynamoPackage\DynaShape\bin\$(TargetName).dll"
-      Copy "$(TargetDir)$(TargetName).xml" "$(SolutionDir)DynamoPackage\DynaShape\bin\$(TargetName).xml"
-      Copy "$(SolutionDir)ManifestFiles\DynaShape_DynamoCustomization.xml" "$(SolutionDir)DynamoPackage\DynaShape\bin\DynaShape_DynamoCustomization.xml"
-      Copy "$(SolutionDir)ManifestFiles\pkg.json" "$(SolutionDir)DynamoPackage\DynaShape\pkg.json"
-      Copy "$(SolutionDir)ManifestFiles\DynaShape_ViewExtensionDefinition.xml" "$(SolutionDir)DynamoPackage\DynaShape\extra\DynaShape_ViewExtensionDefinition.xml"
+      Copy "$(TargetDir)$(TargetName).dll" "$(SolutionDir)\dist\DynaShape\bin\$(TargetName).dll"
+      Copy "$(TargetDir)$(TargetName).xml" "$(SolutionDir)\dist\DynaShape\bin\$(TargetName).xml"
+      Copy "$(SolutionDir)\ManifestFiles\DynaShape_DynamoCustomization.xml" "$(SolutionDir)\dist\DynaShape\bin\DynaShape_DynamoCustomization.xml"
+      Copy "$(SolutionDir)\ManifestFiles\pkg.json" "$(SolutionDir)\dist\DynaShape\pkg.json"
+      Copy "$(SolutionDir)\ManifestFiles\DynaShape_ViewExtensionDefinition.xml" "$(SolutionDir)\dist\DynaShape\extra\DynaShape_ViewExtensionDefinition.xml"
 </PostBuildEvent>
   </PropertyGroup>
 </Project>
