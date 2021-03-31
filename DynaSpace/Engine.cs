@@ -80,12 +80,23 @@ namespace DynaSpace
         }
 
 
+        /// <summary>
+        /// Create a new DynaSpace engine
+        /// </summary>
+        /// <param name="data">Space specification data</param>
+        /// <returns></returns>
         public static Engine Create(List<object> data)
         {
             return CreateWithInitialPositions(data, null);
         }
 
 
+        /// <summary>
+        /// Create a new DynaSpace engine
+        /// </summary>
+        /// <param name="data">Space specification data</param>
+        /// <param name="initialPositions">The initial position of each space bubble</param>
+        /// <returns></returns>
         public static Engine CreateWithInitialPositions(List<object> data, List<Point> initialPositions = null)
         {
             Engine engine = new Engine();
@@ -299,7 +310,20 @@ namespace DynaSpace
             return lines;
         }
 
-
+        /// <summary>
+        /// Run the DynaSpace engine
+        /// </summary>
+        /// <param name="engine">The DynaSpace engine (from Engine.Create node)</param>
+        /// <param name="boundaryVertices">The vertices of the boundary polygon</param>
+        /// <param name="silentModeSettings">Only used when you want to run the engine in silent mode. To do this, create a silentModeSettings (using SilentModeSettings.Create node) and input it here</param>
+        /// <param name="reset">Reset the engine to the initial state</param>
+        /// <param name="execute">Run the engine to iteratively solve the space constraints</param>
+        /// <param name="enableManipulation">Enable mouse manipulation of the space bubbles</param>
+        /// <param name="showSpaceIds">Display the ID of each space bubble</param>
+        /// <param name="showSpaceAdjacency">Display the adjacency indicator lines between the space bubbles</param>
+        /// <param name="showSpaceDepartmentAdjacency">Display the adjacency indicator lines between the space bubbles</param>
+        /// <param name="settings">You can supply customized settings to fine-tune the engine's execution. To do this, you will need the output from the Settings.Create node</param>
+        /// <returns></returns>
         [MultiReturn(
            "stats",
            "departmentNames",
