@@ -45,7 +45,7 @@ namespace DynaShape
             TimeCreated = DateTime.Now;
             CurrentIteration = 0;
 
-            if (DynaShapeViewExtension.ViewModel != null)
+            if (DynaShapeViewExtension.ViewModel != null) // This check is important in case ViewModel is null (e.g. in Refinery mode)
             {
                 Display = new DynaShapeDisplay(this);
                 DynaShapeViewExtension.ViewModel.ViewMouseDown += ViewportMouseDownHandler;
@@ -378,7 +378,8 @@ namespace DynaShape
         CancellationTokenSource ctSource;
         internal DynaShapeDisplay Display;
 
-        public void ClearRender() { Display.ClearRender(); }
+        public void ClearRender() { Display?.ClearRender(); }
+
         public void Render() { Display.Render(); }
 
 
@@ -502,12 +503,16 @@ namespace DynaShape
         {
             StopBackgroundExecution();
             Clear();
-            DynaShapeViewExtension.ViewModel.ViewMouseDown -= ViewportMouseDownHandler;
-            DynaShapeViewExtension.ViewModel.ViewMouseUp -= ViewportMouseUpHandler;
-            DynaShapeViewExtension.ViewModel.ViewMouseMove -= ViewportMouseMoveHandler;
-            DynaShapeViewExtension.ViewModel.ViewCameraChanged -= ViewportCameraChangedHandler;
-            DynaShapeViewExtension.ViewModel.CanNavigateBackgroundPropertyChanged -= ViewportCanNavigateBackgroundPropertyChangedHandler;
-            Display.Dispose();
+
+            if (DynaShapeViewExtension.ViewModel != null) // This check is important in case ViewModel is null (e.g. in Refinery mode)
+            {
+                DynaShapeViewExtension.ViewModel.ViewMouseDown -= ViewportMouseDownHandler;
+                DynaShapeViewExtension.ViewModel.ViewMouseUp -= ViewportMouseUpHandler;
+                DynaShapeViewExtension.ViewModel.ViewMouseMove -= ViewportMouseMoveHandler;
+                DynaShapeViewExtension.ViewModel.ViewCameraChanged -= ViewportCameraChangedHandler;
+                DynaShapeViewExtension.ViewModel.CanNavigateBackgroundPropertyChanged -= ViewportCanNavigateBackgroundPropertyChangedHandler;
+                Display.Dispose();
+            }
         }
     }
 }
