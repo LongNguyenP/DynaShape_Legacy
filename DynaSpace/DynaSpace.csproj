@@ -230,9 +230,9 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
-      Copy "$(TargetDir)$(TargetName).dll" "$(SolutionDir)DynamoPackage\DynaShape\bin\$(TargetName).dll"
-      Copy "$(TargetDir)$(TargetName).xml" "$(SolutionDir)DynamoPackage\DynaShape\bin\$(TargetName).xml"
-      Copy "$(SolutionDir)ManifestFiles\DynaSpace_DynamoCustomization.xml" "$(SolutionDir)DynamoPackage\DynaShape\bin\DynaSpace_DynamoCustomization.xml"</PostBuildEvent>
+      Copy "$(TargetDir)$(TargetName).dll" "$(SolutionDir)\dist\DynaShape\bin\$(TargetName).dll"
+      Copy "$(TargetDir)$(TargetName).xml" "$(SolutionDir)\dist\DynaShape\bin\$(TargetName).xml"
+      Copy "$(SolutionDir)\ManifestFiles\DynaSpace_DynamoCustomization.xml" "$(SolutionDir)\dist\DynaShape\bin\DynaSpace_DynamoCustomization.xml"</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\SharpDX.2.6.3\build\SharpDX.targets" Condition="Exists('..\packages\SharpDX.2.6.3\build\SharpDX.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

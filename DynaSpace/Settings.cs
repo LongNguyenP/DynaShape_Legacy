@@ -29,14 +29,14 @@ namespace DynaSpace
         /// <param name="spaceDepartmentAdjacencyStrength">Control the degree to which an adjacent pair of space bubbles stay close together.</param>
         /// <returns>All the setting values grouped together as a single item, which can be input into the Engine.Execute node</returns>
         public static Settings Create(
-        [DefaultArgument("0.95")] float dampingFactor,
-        [DefaultArgument("0")] int iterations,
-        [DefaultArgument("1.0")] float boundaryStrength,
-        [DefaultArgument("1.0")] float planarConstraintStrength,
-        [DefaultArgument("30.0")] float sphereCollisionStrength,
-        [DefaultArgument("0.02")] float departmentCohesionStrength,
-        [DefaultArgument("0.1")] float spaceAdjacencyStrength,
-        [DefaultArgument("0.1")] float spaceDepartmentAdjacencyStrength)
+            [DefaultArgument("0.0")] float dampingFactor,
+            [DefaultArgument("0")] int iterations,
+            [DefaultArgument("200.0")] float boundaryStrength,
+            [DefaultArgument("10.0")] float planarConstraintStrength,
+            [DefaultArgument("100.0")] float sphereCollisionStrength,
+            [DefaultArgument("0.5")] float departmentCohesionStrength,
+            [DefaultArgument("0.5")] float spaceAdjacencyStrength,
+            [DefaultArgument("0.0")] float spaceDepartmentAdjacencyStrength)
         {
             return new Settings()
             {
