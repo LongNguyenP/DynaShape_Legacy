@@ -323,16 +323,21 @@ namespace DynaSpace
         /// <param name="showSpaceAdjacency">Display the adjacency indicator lines between the space bubbles</param>
         /// <param name="showSpaceDepartmentAdjacency">Display the adjacency indicator lines between the space bubbles</param>
         /// <param name="settings">You can supply customized settings to fine-tune the engine's execution. To do this, you will need the output from the Settings.Create node</param>
-        /// <returns></returns>
+        /// <returns name="departmentNames">The name of each department</returns>
+        /// <returns name="spaceIds">The ID of each space bubble</returns>
+        /// <returns name="spaceNames">The name of each space bubble </returns>
+        /// <returns name="spaceCircles">the circle that represents each space bubble</returns>
+        /// <returns name="spaceAdjLines">each line represents a space-space adjacency relationships</returns>
+        /// <returns name="spaceAdjErrors">The error for the adjacency requirement between two space bubbles of radii R1 and R2 is measured as "D - (R1 + R2)", where D is the distance between the two bubble's centers. If the adjacency requirement is fully satisfied, the two bubbles should touch each other and hence the error will be 0. If the two bubbles are far apart, the error will become positive. If the bubbles are too close (in which case they overlap), the error will become negative</returns>
+        /// <returns name="spaceAdjErrorRatios">Similar to space adjacency errors, but measured as fractions rather than distance values. It is defined as "D / (R1 + R2"), where R1 and R2 are the bubbles' radii and D is the distance between the two bubbles' centers. We want the error ratio to be as close to 1.0 as possible. Error larger than 1.0 means the bubbles are far apart and error smaller than 1.0 means the bubbles are too close and overlapping with each other</returns>
         [MultiReturn(
-           "stats",
-           "departmentNames",
-           "spaceIds",
-           "spaceNames",
-           "spaceCircles",
-           "spaceAdjLines",
-           "spaceAdjErrors",
-           "spaceAdjErrorRatios")]
+            "departmentNames",
+            "spaceIds",
+            "spaceNames",
+            "spaceCircles",
+            "spaceAdjLines",
+            "spaceAdjErrors",
+            "spaceAdjErrorRatios")]
         public static Dictionary<string, object> Execute(
            Engine engine,
            [DefaultArgument("null")] List<Point> boundaryVertices,
@@ -409,13 +414,6 @@ namespace DynaSpace
 
                 return new Dictionary<string, object>
                 {
-                    {
-                        "stats", String.Concat(
-                            "Computation Time: " + computationTime,
-                            "\nData Output Time: " + stopwatch.Elapsed,
-                            "\nIterations Used : " + engine.Solver.CurrentIteration,
-                            "\nLargest Movement: " + engine.Solver.GetLargestMove())
-                    },
                     {"departmentNames", engine.DepartmentNames},
                     {"spaceIds", engine.SpaceIds},
                     {"spaceNames", engine.SpaceNames},
