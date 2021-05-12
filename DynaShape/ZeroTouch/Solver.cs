@@ -100,7 +100,10 @@ namespace DynaShape.ZeroTouch
         /// <param name="execute">This allows us to temporarily disable the solver while setting up/changing the parameters the parameters</param>
         /// <param name="enableMomentum">Apply momentum effect to the movement of the nodes. For simulation of physical motion, this results in more realistic motion. For constraint-based optimization, it often helps the solver to reach the final solution in fewer iteration (i.e. faster), but can sometimes lead to unstable and counter-intuitive solution. In such case, try setting momentum to False </param>
         /// <param name="dampingFactor"></param>
-        /// <returns></returns>
+        /// <returns name="nodePositions"></returns>
+        /// <returns name="goalOutputs"></returns>
+        /// <returns name="geometries"></returns>
+        /// <returns name="stats"></returns>
         [MultiReturn("nodePositions", "goalOutputs", "geometries", "stats")]
         [CanUpdatePeriodically(true)]
         public static Dictionary<string, object> ExecuteSilently(
