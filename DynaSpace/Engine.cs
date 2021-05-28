@@ -320,14 +320,13 @@ namespace DynaSpace
         /// <returns name="spaceAdjErrors">The error for the adjacency requirement between two space bubbles of radii R1 and R2 is measured as "D - (R1 + R2)", where D is the distance between the two bubble's centers. If the adjacency requirement is fully satisfied, the two bubbles should touch each other and hence the error will be 0. If the two bubbles are too far apart, the error will become positive. If the bubbles are too close (in which case they overlap), the error will become negative.</returns>
         /// <returns name="spaceAdjErrorRatios">Similar to space adjacency errors, but measured as fractions rather than distance values. It is defined as "D / (R1 + R2"), where R1 and R2 are the bubbles' radii and D is the distance between the two bubbles' centers. We want the error ratio to be as close to 1.0 as possible. Error larger than 1.0 means the bubbles are too far apart and error smaller than 1.0 means the bubbles are too close and overlapping with each other</returns>
         [MultiReturn(
-           "stats",
-           "departmentNames",
-           "spaceIds",
-           "spaceNames",
-           "spaceCircles",
-           "spaceAdjLines",
-           "spaceAdjErrors",
-           "spaceAdjErrorRatios")]
+            "departmentNames",
+            "spaceIds",
+            "spaceNames",
+            "spaceCircles",
+            "spaceAdjLines",
+            "spaceAdjErrors",
+            "spaceAdjErrorRatios")]
         public static Dictionary<string, object> Execute(
            Engine engine,
            [DefaultArgument("null")] List<Point> boundaryVertices,
@@ -462,7 +461,6 @@ namespace DynaSpace
             return execute
                 ? new Dictionary<string, object>
                 {
-                    {"stats", null},
                     {"departmentNames", null},
                     {"spaceIds", null},
                     {"spaceNames", null},
@@ -473,7 +471,6 @@ namespace DynaSpace
                 }
                 : new Dictionary<string, object>
                 {
-                    {"stats", null},
                     {"departmentNames", engine.DepartmentNames},
                     {"spaceIds", engine.SpaceIds},
                     {"spaceNames", engine.SpaceNames},
