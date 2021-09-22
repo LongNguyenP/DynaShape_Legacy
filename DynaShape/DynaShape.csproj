@@ -125,7 +125,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="MeshToolkit, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\MeshToolkit\bin\MeshToolkit.dll</HintPath>
+      <HintPath>C:\Users\longn\AppData\Roaming\Dynamo\Dynamo Core\2.6\packages\MeshToolkit\bin\MeshToolkit.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
