@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Autodesk.DesignScript.Runtime;
 
 
@@ -27,6 +28,7 @@ namespace DynaShape.Goals
                 }
 
                 polygonVertices = value;
+                if (polygonVertices.Count < 3) throw new Exception("Polygon must has at least 3 vertices");
                 planeNormal = Triple.Zero;
                 for (int i = 0; i < polygonVertices.Count; i++)
                 {
