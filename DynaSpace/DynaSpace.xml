@@ -19,12 +19,13 @@
             <param name="initialPositions">The initial position of each space bubble</param>
             <returns></returns>
         </member>
-        <member name="M:DynaSpace.Engine.Execute(DynaSpace.Engine,System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},DynaSpace.SilentModeSettings,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean,DynaSpace.Settings)">
+        <member name="M:DynaSpace.Engine.Execute(DynaSpace.Engine,System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Collections.Generic.List{System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point}},DynaSpace.SilentModeSettings,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean,DynaSpace.Settings)">
             <summary>
             Run the DynaSpace engine
             </summary>
             <param name="engine">The DynaSpace engine (from Engine.Create node)</param>
-            <param name="boundaryVertices">The vertices of the boundary polygon</param>
+            <param name="boundaryVertices">The vertices of the boundary polygon (must be a convex polygon)</param>
+            <param name="clearancePolygonVertices">The vertices of the clearance polygons (must be convex polygons)</param>
             <param name="silentModeSettings">Only used when you want to run the engine in silent mode. To do this, create a silentModeSettings (using SilentModeSettings.Create node) and input it here</param>
             <param name="reset">Reset the engine to the initial state</param>
             <param name="execute">Run the engine to iteratively solve the space constraints</param>

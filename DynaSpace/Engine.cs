@@ -27,6 +27,8 @@ namespace DynaSpace
         internal List<List<int>> SpaceIds = new List<List<int>>();
 
         internal ConvexPolygonContainmentGoal ContainmentGoal;
+        internal List<ConvexPolygonCollisionGoal> ClearanceGoals;
+        internal int ClearanceGoalCount = 2;
         internal OnPlaneGoal OnPlaneGoal;
         internal List<AnchorGoal> DepartmentAnchorGoals = new List<AnchorGoal>();
 
@@ -67,6 +69,9 @@ namespace DynaSpace
             Goals.AddRange(DepartmentCohesionGoals);
             Goals.AddRange(SpaceAdjacencyGoals);
             Goals.AddRange(SpaceDepartmentAdjacencyGoals);
+
+            // ClearanceGoals needed to be added last so that we can can remove efficiently removed them from Goals later if neccesary
+            Goals.AddRange(ClearanceGoals);
 
             foreach (var circleBinderList in CircleBinders) GeometryBinders.AddRange(circleBinderList);
             GeometryBinders.AddRange(SpaceAdjacencyLineBinders);
@@ -236,6 +241,12 @@ namespace DynaSpace
             engine.SphereCollisionGoal = new SphereCollisionGoal(spaceCentersFlattened, spaceRadiiFlattened, 0.5f);
             engine.ContainmentGoal = new ConvexPolygonContainmentGoal(spaceCentersFlattened, spaceRadiiFlattened, new List<Triple>(), 1f);
 
+            engine.ClearanceGoals = new List<ConvexPolygonCollisionGoal>();
+            for (int i = 0; i < engine.ClearanceGoalCount; i++)
+                engine.ClearanceGoals.Add(new ConvexPolygonCollisionGoal(spaceCentersFlattened, spaceRadiiFlattened, null, 1000f));
+
+
+
 
             //===================================================================================
             // Space Adjacency
@@ -314,7 +325,8 @@ namespace DynaSpace
         /// Run the DynaSpace engine
         /// </summary>
         /// <param name="engine">The DynaSpace engine (from Engine.Create node)</param>
-        /// <param name="boundaryVertices">The vertices of the boundary polygon</param>
+        /// <param name="boundaryVertices">The vertices of the boundary polygon (must be a convex polygon)</param>
+        /// <param name="clearancePolygonVertices">The vertices of the clearance polygons (must be convex polygons)</param>
         /// <param name="silentModeSettings">Only used when you want to run the engine in silent mode. To do this, create a silentModeSettings (using SilentModeSettings.Create node) and input it here</param>
         /// <param name="reset">Reset the engine to the initial state</param>
         /// <param name="execute">Run the engine to iteratively solve the space constraints</param>
@@ -341,6 +353,7 @@ namespace DynaSpace
         public static Dictionary<string, object> Execute(
            Engine engine,
            [DefaultArgument("null")] List<Point> boundaryVertices,
+           [DefaultArgument("null")] List<List<Point>> clearancePolygonVertices,
            [DefaultArgument("null")] SilentModeSettings silentModeSettings,
            [DefaultArgument("true")] bool reset,
            [DefaultArgument("true")] bool execute,
@@ -381,9 +394,13 @@ namespace DynaSpace
                 foreach (var binder in engine.SpaceDepartmentAdjacencyLineBinders)
                     binder.Show = showSpaceDepartmentAdjacency;
 
+                engine.OnPlaneGoal.Weight = settings.PlanarConstraintStrength;
+
                 engine.ContainmentGoal.PolygonVertices = boundaryVertices.ToTriples();
                 engine.ContainmentGoal.Weight = settings.BoundaryStrength;
-                engine.OnPlaneGoal.Weight = settings.PlanarConstraintStrength;
+
+                for (int i = 0; i < engine.ClearanceGoalCount; i++)
+                    engine.ClearanceGoals[i].PolygonVertices = clearancePolygonVertices[i].ToTriples();
 
                 foreach (var goal in engine.DepartmentCohesionGoals) goal.Weight = settings.DepartmentCohesionStrength;
                 foreach (var goal in engine.SpaceAdjacencyGoals) goal.Weight = settings.SpaceAdjacencyStrength;
@@ -442,9 +459,13 @@ namespace DynaSpace
                 foreach (var binder in engine.SpaceDepartmentAdjacencyLineBinders)
                     binder.Show = showSpaceDepartmentAdjacency;
 
+                engine.OnPlaneGoal.Weight = settings.PlanarConstraintStrength;
+
                 engine.ContainmentGoal.PolygonVertices = boundaryVertices.ToTriples();
                 engine.ContainmentGoal.Weight = settings.BoundaryStrength;
-                engine.OnPlaneGoal.Weight = settings.PlanarConstraintStrength;
+
+                for (int i = 0; i < engine.ClearanceGoalCount; i++)
+                    engine.ClearanceGoals[i].PolygonVertices = clearancePolygonVertices[i].ToTriples();
 
                 engine.SphereCollisionGoal.Weight = settings.SphereCollisionStrength;
 
