@@ -28,7 +28,7 @@ namespace DynaSpace
 
         internal ConvexPolygonContainmentGoal ContainmentGoal;
         internal List<ConvexPolygonCollisionGoal> ClearanceGoals;
-        internal int ClearanceGoalCount = 2;
+        internal int ClearanceGoalActiveCount = 0;
         internal OnPlaneGoal OnPlaneGoal;
         internal List<AnchorGoal> DepartmentAnchorGoals = new List<AnchorGoal>();
 
@@ -57,32 +57,6 @@ namespace DynaSpace
 
         [IsVisibleInDynamoLibrary(false)]
         public Engine() { }
-
-
-        internal void SetUp()
-        {
-            Goals.Add(ContainmentGoal);
-            Goals.Add(OnPlaneGoal);
-            Goals.Add(SphereCollisionGoal);
-            //Goals.Add(GlobalDirectionGoal);
-            //Goals.AddRange(DepartmentAnchorGoals);
-            Goals.AddRange(DepartmentCohesionGoals);
-            Goals.AddRange(SpaceAdjacencyGoals);
-            Goals.AddRange(SpaceDepartmentAdjacencyGoals);
-
-            // ClearanceGoals needed to be added last so that we can can remove efficiently removed them from Goals later if neccesary
-            Goals.AddRange(ClearanceGoals);
-
-            foreach (var circleBinderList in CircleBinders) GeometryBinders.AddRange(circleBinderList);
-            GeometryBinders.AddRange(SpaceAdjacencyLineBinders);
-            GeometryBinders.AddRange(SpaceDepartmentAdjacencyLineBinders);
-            GeometryBinders.AddRange(TextBinders);
-            //GeometryBinders.Add(BubbleMeshesBinder);
-
-            Solver = new DynaShape.Solver();
-            Solver.AddGoals(Goals);
-            Solver.AddGeometryBinders(GeometryBinders);
-        }
 
 
         /// <summary>
@@ -241,12 +215,6 @@ namespace DynaSpace
             engine.SphereCollisionGoal = new SphereCollisionGoal(spaceCentersFlattened, spaceRadiiFlattened, 0.5f);
             engine.ContainmentGoal = new ConvexPolygonContainmentGoal(spaceCentersFlattened, spaceRadiiFlattened, new List<Triple>(), 1f);
 
-            engine.ClearanceGoals = new List<ConvexPolygonCollisionGoal>();
-            for (int i = 0; i < engine.ClearanceGoalCount; i++)
-                engine.ClearanceGoals.Add(new ConvexPolygonCollisionGoal(spaceCentersFlattened, spaceRadiiFlattened, null, 1000f));
-
-
-
 
             //===================================================================================
             // Space Adjacency
@@ -279,6 +247,21 @@ namespace DynaSpace
             //===================================================================================
 
             engine.SetUp();
+
+
+            // Prepare 100 ClearanceGoals for future on-demand usage------------------------------
+            ConvexPolygonCollisionGoal clearanceGoal = new ConvexPolygonCollisionGoal(spaceCentersFlattened, spaceRadiiFlattened, null);
+            engine.Solver.AddGoal(clearanceGoal);
+            engine.Solver.RemoveGoal(clearanceGoal);
+            int[] clearanceGoalNodeIndices = clearanceGoal.NodeIndices;
+            engine.ClearanceGoals = new List<ConvexPolygonCollisionGoal>(100);
+            for (int i = 0; i < 100; i++)
+            {
+                engine.ClearanceGoals.Add(new ConvexPolygonCollisionGoal(spaceCentersFlattened, spaceRadiiFlattened, null));
+                engine.ClearanceGoals[i].NodeIndices = clearanceGoalNodeIndices;
+            }
+            //---------------------------------------------------------------------------------------
+
 
             return engine;
         }
@@ -399,8 +382,8 @@ namespace DynaSpace
                 engine.ContainmentGoal.PolygonVertices = boundaryVertices.ToTriples();
                 engine.ContainmentGoal.Weight = settings.BoundaryStrength;
 
-                for (int i = 0; i < engine.ClearanceGoalCount; i++)
-                    engine.ClearanceGoals[i].PolygonVertices = clearancePolygonVertices[i].ToTriples();
+                // Dynamically add or remove and/or update clearance goals
+                UpdateClearanceGoals(engine, clearancePolygonVertices);
 
                 foreach (var goal in engine.DepartmentCohesionGoals) goal.Weight = settings.DepartmentCohesionStrength;
                 foreach (var goal in engine.SpaceAdjacencyGoals) goal.Weight = settings.SpaceAdjacencyStrength;
@@ -412,7 +395,21 @@ namespace DynaSpace
                 {
                     engine.SphereCollisionGoal.Weight = engine.Solver.CurrentIteration < silentModeSettings.SphereCollisionKickin ? 0f : settings.SphereCollisionStrength;
                     engine.OnPlaneGoal.Weight = engine.Solver.CurrentIteration < silentModeSettings.PlanarConstraintKickin ? 0f : settings.PlanarConstraintStrength;
-                    engine.ContainmentGoal.Weight = engine.Solver.CurrentIteration < silentModeSettings.BoundaryKickin ? 0f : settings.BoundaryStrength;
+
+                    if (engine.Solver.CurrentIteration < silentModeSettings.BoundaryKickin)
+                    {
+                        engine.ContainmentGoal.Weight = 0;
+                        for (int i = 0; i < engine.ClearanceGoalActiveCount; i++)
+                            engine.ClearanceGoals[i].Weight = 0;
+                    }
+                    else
+                    {
+                        engine.ContainmentGoal.Weight = settings.BoundaryStrength;
+                        for (int i = 0; i < engine.ClearanceGoalActiveCount; i++)
+                            engine.ClearanceGoals[i].Weight = settings.BoundaryStrength;
+                    }
+
+
                     engine.Solver.Iterate();
 
                     if (
@@ -464,8 +461,8 @@ namespace DynaSpace
                 engine.ContainmentGoal.PolygonVertices = boundaryVertices.ToTriples();
                 engine.ContainmentGoal.Weight = settings.BoundaryStrength;
 
-                for (int i = 0; i < engine.ClearanceGoalCount; i++)
-                    engine.ClearanceGoals[i].PolygonVertices = clearancePolygonVertices[i].ToTriples();
+                // Dynamically add or remove and/or update clearance goals
+                UpdateClearanceGoals(engine, clearancePolygonVertices);
 
                 engine.SphereCollisionGoal.Weight = settings.SphereCollisionStrength;
 
@@ -508,9 +505,61 @@ namespace DynaSpace
                 };
         }
 
+
         public void Dispose()
         {
             Solver?.Dispose();
+        }
+
+
+        internal void SetUp()
+        {
+            Goals.Add(ContainmentGoal);
+            Goals.Add(OnPlaneGoal);
+            Goals.Add(SphereCollisionGoal);
+            //Goals.Add(GlobalDirectionGoal);
+            //Goals.AddRange(DepartmentAnchorGoals);
+            Goals.AddRange(DepartmentCohesionGoals);
+            Goals.AddRange(SpaceAdjacencyGoals);
+            Goals.AddRange(SpaceDepartmentAdjacencyGoals);
+
+            foreach (var circleBinderList in CircleBinders) GeometryBinders.AddRange(circleBinderList);
+            GeometryBinders.AddRange(SpaceAdjacencyLineBinders);
+            GeometryBinders.AddRange(SpaceDepartmentAdjacencyLineBinders);
+            GeometryBinders.AddRange(TextBinders);
+            //GeometryBinders.Add(BubbleMeshesBinder);
+
+            Solver = new DynaShape.Solver();
+            Solver.AddGoals(Goals);
+            Solver.AddGeometryBinders(GeometryBinders);
+        }
+
+
+        private static void UpdateClearanceGoals(Engine engine, List<List<Point>> clearancePolygonVertices)
+        {
+            if (clearancePolygonVertices == null)
+            {
+                if (engine.ClearanceGoalActiveCount > 0)
+                    engine.Solver.Goals.RemoveRange(engine.Solver.Goals.Count - engine.ClearanceGoalActiveCount, engine.ClearanceGoalActiveCount);
+                engine.ClearanceGoalActiveCount = 0;
+            }
+            else
+            {
+                int extraCount = clearancePolygonVertices.Count - engine.ClearanceGoalActiveCount;
+                if (extraCount > 0)
+                    for (int i = 0; i < extraCount; i++)
+                        engine.Solver.Goals.Add(engine.ClearanceGoals[engine.ClearanceGoalActiveCount + i]);
+                else if (extraCount < 0)
+                    engine.Solver.Goals.RemoveRange(engine.Solver.Goals.Count + extraCount, -extraCount);
+
+                engine.ClearanceGoalActiveCount = clearancePolygonVertices.Count;
+                for (int i = 0; i < engine.ClearanceGoalActiveCount; i++)
+                {
+                    engine.ClearanceGoals[i].PolygonVertices = clearancePolygonVertices[i].ToTriples();
+                    engine.ClearanceGoals[i].Weight = 1000f;
+                }
+            }
+            // -------------------------------------------------------------------------------------
         }
     }
 }

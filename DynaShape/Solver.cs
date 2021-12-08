@@ -64,6 +64,12 @@ namespace DynaShape
         }
 
 
+        public void RemoveGoal(Goal goal)
+        {
+            Goals.Remove(goal);
+        }
+
+
         public void AddGeometryBinders(IEnumerable<GeometryBinder> geometryBinders, double nodeMergeThreshold = 0.0001)
         {
             foreach (GeometryBinder geometryBinder in geometryBinders)
@@ -77,7 +83,7 @@ namespace DynaShape
 
             Goals.Add(goal);
 
-            if (goal.StartingPositions == null && goal.NodeIndices != null) return;
+            if (goal.NodeIndices != null) return;
 
             goal.NodeIndices = new int[goal.NodeCount];
 
