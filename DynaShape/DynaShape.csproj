@@ -142,9 +142,8 @@
       <HintPath>..\packages\HelixToolkit.Wpf.SharpDX.2.11.0\lib\net45\HelixToolkit.Wpf.SharpDX.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MeshToolkit, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>C:\Users\longn\AppData\Roaming\Dynamo\Dynamo Core\2.7\packages\MeshToolkit\bin\MeshToolkit.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="MeshToolkit">
+      <HintPath>..\packages-static\MeshToolkit\MeshToolkit.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Prism.4.1.0.0\lib\NET40\Microsoft.Expression.Interactions.dll</HintPath>
