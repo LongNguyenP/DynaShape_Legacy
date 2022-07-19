@@ -502,7 +502,6 @@ namespace DynaShape
         private void ParametersOnCurrentWorkspaceCleared(IWorkspaceModel obj)
         {
             Dispose();
-            DynaShapeViewExtension.Parameters.CurrentWorkspaceCleared -= ParametersOnCurrentWorkspaceCleared;
         }
 
 
@@ -520,6 +519,8 @@ namespace DynaShape
                 DynaShapeViewExtension.ViewModel.CanNavigateBackgroundPropertyChanged -= ViewportCanNavigateBackgroundPropertyChangedHandler;
                 Display.Dispose();
             }
+
+            DynaShapeViewExtension.Parameters.CurrentWorkspaceCleared -= ParametersOnCurrentWorkspaceCleared;
         }
     }
 }
