@@ -510,7 +510,7 @@ namespace DynaShape
             StopBackgroundExecution();
             Clear();
 
-            if (DynaShapeViewExtension.ViewModel != null) // This check is important in case ViewModel is null (e.g. in Refinery mode)
+            if (DynaShapeViewExtension.ViewModel != null) // This check is important in case ViewModel is null (e.g. running in CLI mode)
             {
                 DynaShapeViewExtension.ViewModel.ViewMouseDown -= ViewportMouseDownHandler;
                 DynaShapeViewExtension.ViewModel.ViewMouseUp -= ViewportMouseUpHandler;
