@@ -251,7 +251,7 @@ namespace DynaSpace
 
             // Prepare 100 ClearanceGoals for future on-demand usage------------------------------
             ConvexPolygonCollisionGoal clearanceGoal = new ConvexPolygonCollisionGoal(spaceCentersFlattened, spaceRadiiFlattened, null);
-            engine.Solver.AddGoal(clearanceGoal);
+            engine.Solver.RegisterGoal(clearanceGoal);
             engine.Solver.RemoveGoal(clearanceGoal);
             int[] clearanceGoalNodeIndices = clearanceGoal.NodeIndices;
             engine.ClearanceGoals = new List<ConvexPolygonCollisionGoal>(100);
@@ -530,8 +530,8 @@ namespace DynaSpace
             //GeometryBinders.Add(BubbleMeshesBinder);
 
             Solver = new DynaShape.Solver();
-            Solver.AddGoals(Goals);
-            Solver.AddGeometryBinders(GeometryBinders);
+            Solver.RegisterGoals(Goals);
+            Solver.RegisterGeometryBinders(GeometryBinders);
         }
 
 

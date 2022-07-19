@@ -54,14 +54,13 @@ namespace DynaShape.ZeroTouch
             {
                 solver.StopBackgroundExecution();
                 solver.Clear();
-                solver.AddGoals(goals);
+                solver.RegisterGoals(goals);
                 if (geometryBinders != null)
-                    solver.AddGeometryBinders(geometryBinders, nodeMergeThreshold);
+                    solver.RegisterGeometryBinders(geometryBinders, nodeMergeThreshold);
                 solver.Render();
             }
             else
             {
-
                 solver.EnableMouseInteraction = enableManipulation;
                 solver.EnableMomentum = enableMomentum;
                 solver.EnableFastDisplay = enableFastDisplay;
@@ -124,8 +123,8 @@ namespace DynaShape.ZeroTouch
             stopwatch.Start();
 
             DynaShape.Solver solver = new DynaShape.Solver();
-            solver.AddGoals(goals, nodeMergeThreshold);
-            if (geometryBinders != null) solver.AddGeometryBinders(geometryBinders, nodeMergeThreshold);
+            solver.RegisterGoals(goals, nodeMergeThreshold);
+            if (geometryBinders != null) solver.RegisterGeometryBinders(geometryBinders, nodeMergeThreshold);
             solver.EnableMomentum = enableMomentum;
             solver.DampingFactor = dampingFactor;
             solver.Execute(iterations, terminationThreshold);

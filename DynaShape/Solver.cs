@@ -57,10 +57,10 @@ namespace DynaShape
         }
 
 
-        public void AddGoals(IEnumerable<Goal> goals, double nodeMergeThreshold = 0.0001)
+        public void RegisterGoals(IEnumerable<Goal> goals, double nodeMergeThreshold = 0.0001, bool keepExistingNodeIndices = false)
         {
             foreach (Goal goal in goals)
-                AddGoal(goal, nodeMergeThreshold);
+                RegisterGoal(goal, nodeMergeThreshold, keepExistingNodeIndices);
         }
 
 
@@ -70,20 +70,20 @@ namespace DynaShape
         }
 
 
-        public void AddGeometryBinders(IEnumerable<GeometryBinder> geometryBinders, double nodeMergeThreshold = 0.0001)
+        public void RegisterGeometryBinders(IEnumerable<GeometryBinder> geometryBinders, double nodeMergeThreshold = 0.0001, bool keepExistingNodeIndices = false)
         {
             foreach (GeometryBinder geometryBinder in geometryBinders)
-                AddGeometryBinder(geometryBinder, nodeMergeThreshold);
+                RegisterGeometryBinder(geometryBinder, nodeMergeThreshold, keepExistingNodeIndices);
         }
 
 
-        public void AddGoal(Goal goal, double nodeMergeThreshold = 0.0001)
+        public void RegisterGoal(Goal goal, double nodeMergeThreshold = 0.0001, bool keepExistingNodeIndices = false)
         {
             if (goal == null) return;
 
             Goals.Add(goal);
 
-            if (goal.NodeIndices != null) return;
+            if (keepExistingNodeIndices) return;
 
             goal.NodeIndices = new int[goal.NodeCount];
 
@@ -109,13 +109,13 @@ namespace DynaShape
         }
 
 
-        public void AddGeometryBinder(GeometryBinder geometryBinder, double nodeMergeThreshold = 0.0001)
+        public void RegisterGeometryBinder(GeometryBinder geometryBinder, double nodeMergeThreshold = 0.0001, bool keepExistingNodeIndices = false)
         {
             if (geometryBinder == null) return;
 
             GeometryBinders.Add(geometryBinder);
 
-            if (geometryBinder.StartingPositions == null && geometryBinder.NodeIndices != null) return;
+            if (keepExistingNodeIndices) return;
 
             geometryBinder.NodeIndices = new int[geometryBinder.NodeCount];
 
@@ -405,7 +405,6 @@ namespace DynaShape
                 else Iterate(25f);
 
                 if (EnableFastDisplay) Display.Render();
-
             }
         }
 
