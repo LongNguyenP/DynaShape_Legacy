@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Autodesk.DesignScript.Runtime;
+using Dynamo.Graph.Workspaces;
 using Dynamo.Wpf.ViewModels.Watch3D;
 using DynaShape.Goals;
 using DynaShape.GeometryBinders;
@@ -18,7 +19,7 @@ using Vector = Autodesk.DesignScript.Geometry.Vector;
 namespace DynaShape
 {
     [IsVisibleInDynamoLibrary(false)]
-    public class Solver
+    public class Solver : IDisposable
     {
         public bool EnableMouseInteraction = true;
         public bool EnableMomentum = true;
@@ -54,6 +55,8 @@ namespace DynaShape
                 DynaShapeViewExtension.ViewModel.ViewCameraChanged += ViewportCameraChangedHandler;
                 DynaShapeViewExtension.ViewModel.CanNavigateBackgroundPropertyChanged += ViewportCanNavigateBackgroundPropertyChangedHandler;
             }
+
+            DynaShapeViewExtension.Parameters.CurrentWorkspaceCleared += ParametersOnCurrentWorkspaceCleared;
         }
 
 
@@ -393,14 +396,6 @@ namespace DynaShape
         {
             while (!ctSource.Token.IsCancellationRequested)
             {
-                // Even when the workspace is closed, the background task still runs
-                // Therefore we need to check for this case and terminate the while loop, so that the task can completed
-                if (!DynaShapeViewExtension.Parameters.CurrentWorkspaceModel.Nodes.Any())
-                {
-                    Dispose();
-                    break;
-                }
-
                 if (IterationCount > 0) Iterate(IterationCount);
                 else Iterate(25f);
 
@@ -501,6 +496,13 @@ namespace DynaShape
         {
             HandleNodeIndex = -1;
             NearestNodeIndex = -1;
+        }
+
+
+        private void ParametersOnCurrentWorkspaceCleared(IWorkspaceModel obj)
+        {
+            Dispose();
+            DynaShapeViewExtension.Parameters.CurrentWorkspaceCleared -= ParametersOnCurrentWorkspaceCleared;
         }
 
 
