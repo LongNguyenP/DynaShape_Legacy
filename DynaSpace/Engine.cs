@@ -539,27 +539,24 @@ namespace DynaSpace
         {
             if (clearancePolygonVertices == null)
             {
-                if (engine.ClearanceGoalActiveCount > 0)
-                    engine.Solver.Goals.RemoveRange(engine.Solver.Goals.Count - engine.ClearanceGoalActiveCount, engine.ClearanceGoalActiveCount);
+                engine.Solver.Goals.RemoveRange(engine.Solver.Goals.Count - engine.ClearanceGoalActiveCount, engine.ClearanceGoalActiveCount);
                 engine.ClearanceGoalActiveCount = 0;
+                return;
             }
-            else
-            {
-                int extraCount = clearancePolygonVertices.Count - engine.ClearanceGoalActiveCount;
-                if (extraCount > 0)
-                    for (int i = 0; i < extraCount; i++)
-                        engine.Solver.Goals.Add(engine.ClearanceGoals[engine.ClearanceGoalActiveCount + i]);
-                else if (extraCount < 0)
-                    engine.Solver.Goals.RemoveRange(engine.Solver.Goals.Count + extraCount, -extraCount);
 
-                engine.ClearanceGoalActiveCount = clearancePolygonVertices.Count;
-                for (int i = 0; i < engine.ClearanceGoalActiveCount; i++)
-                {
-                    engine.ClearanceGoals[i].PolygonVertices = clearancePolygonVertices[i].ToTriples();
-                    engine.ClearanceGoals[i].Weight = 1000f;
-                }
+            int extraCount = clearancePolygonVertices.Count - engine.ClearanceGoalActiveCount;
+            if (extraCount > 0)
+                for (int i = 0; i < extraCount; i++)
+                    engine.Solver.Goals.Add(engine.ClearanceGoals[engine.ClearanceGoalActiveCount + i]);
+            else if (extraCount < 0)
+                engine.Solver.Goals.RemoveRange(engine.Solver.Goals.Count + extraCount, -extraCount);
+
+            engine.ClearanceGoalActiveCount = clearancePolygonVertices.Count;
+            for (int i = 0; i < engine.ClearanceGoalActiveCount; i++)
+            {
+                engine.ClearanceGoals[i].PolygonVertices = clearancePolygonVertices[i].ToTriples();
+                engine.ClearanceGoals[i].Weight = 1000f;
             }
-            // -------------------------------------------------------------------------------------
         }
     }
 }

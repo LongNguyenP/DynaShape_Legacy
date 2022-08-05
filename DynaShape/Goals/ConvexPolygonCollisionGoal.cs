@@ -21,14 +21,14 @@ namespace DynaShape.Goals
             }
             set
             {
-                if (value == null)
-                {
-                    polygonVertices = null;
-                    return;
-                }
-
                 polygonVertices = value;
-                if (polygonVertices.Count < 3) throw new Exception("Polygon must has at least 3 vertices");
+
+                if (polygonVertices == null || polygonVertices.Count < 3) return;
+
+                //=====================================================
+                // Update the plane normal
+                //=====================================================
+
                 planeNormal = Triple.Zero;
                 for (int i = 0; i < polygonVertices.Count; i++)
                 {
@@ -41,6 +41,10 @@ namespace DynaShape.Goals
 
                 planeNormal.Normalise();
 
+                //=====================================================
+                // Update the normals of the polygon edges
+                //=====================================================
+
                 normals = new List<Triple>();
                 for (int i = 0; i < polygonVertices.Count; i++)
                 {
@@ -52,8 +56,8 @@ namespace DynaShape.Goals
         }
 
         private List<Triple> polygonVertices;
-        private List<Triple> normals;
-        private Triple planeNormal;
+        private List<Triple> normals; // The normals vectors of the polygon edges
+        private Triple planeNormal; // The normal of the 2D plane that contains the polygon
 
         public ConvexPolygonCollisionGoal(
             List<Triple> centers,
@@ -72,7 +76,7 @@ namespace DynaShape.Goals
 
         internal override void Compute(List<Node> allNodes)
         {
-            if (polygonVertices.Count <= 3) return;
+            if (polygonVertices == null || polygonVertices.Count < 3) return;
 
             Moves = new Triple[NodeCount];
             Weights = new float[NodeCount];
