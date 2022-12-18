@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -49,14 +48,13 @@ namespace DynaShape
             if (DynaShapeViewExtension.ViewModel != null) // This check is important in case ViewModel is null (e.g. in Refinery mode)
             {
                 Display = new DynaShapeDisplay(this);
+                DynaShapeViewExtension.Parameters.CurrentWorkspaceCleared += ParametersOnCurrentWorkspaceCleared;
                 DynaShapeViewExtension.ViewModel.ViewMouseDown += ViewportMouseDownHandler;
                 DynaShapeViewExtension.ViewModel.ViewMouseUp += ViewportMouseUpHandler;
                 DynaShapeViewExtension.ViewModel.ViewMouseMove += ViewportMouseMoveHandler;
                 DynaShapeViewExtension.ViewModel.ViewCameraChanged += ViewportCameraChangedHandler;
                 DynaShapeViewExtension.ViewModel.CanNavigateBackgroundPropertyChanged += ViewportCanNavigateBackgroundPropertyChangedHandler;
             }
-
-            DynaShapeViewExtension.Parameters.CurrentWorkspaceCleared += ParametersOnCurrentWorkspaceCleared;
         }
 
 
